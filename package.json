@@ -1,0 +1,46 @@
+{
+  "name": "videocon-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A video conferencing platform",
+  "main": "index.js",
+  "homepage": "https://github.com/SyTW12018/E01-videocon#readme",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node scripts/start-server.js",
+    "client": "node scripts/start-client.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "dev": "echo \"This command has been deprecated. Use 'npm start'\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "video",
+    "conferencing",
+    "react",
+    "platform"
+  ],
+  "author": "E01",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "concurrently": "^4.0.1",
+    "eslint": "^5.8.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-react-app": "^3.0.5",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "cuid": "^2.1.4",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "limax": "^1.7.0",
+    "mongoose": "^5.3.9",
+    "sanitize-html": "^1.19.1"
+  }
+}

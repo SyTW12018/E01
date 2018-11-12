@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import users from './routes/user.routes';
+import rooms from './routes/room.routes';
 
 // const fs = require('fs');
 
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 app.use('/api', users);
+app.use('/api', rooms);
 
 app.listen(app.get('port'), () => {
   console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import users from './routes/user.routes';
 import rooms from './routes/room.routes';
+import * as UsersService from './services/users/usersService';
 
 // const fs = require('fs');
 
@@ -15,6 +16,13 @@ app.set('port', process.env.PORT || 3001);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
+
+app.use((req, res, next) => {
+  UsersService.addTemporalUser().then((user) => {
+    req.user = user;
+    next();
+  });
+});
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;

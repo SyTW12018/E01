@@ -1,6 +1,7 @@
 import cuid from 'cuid';
 import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
+import * as UsersService from '../services/users/usersService';
 import User from '../models/user';
 
 /**
@@ -10,10 +11,7 @@ import User from '../models/user';
  * @returns void
  */
 export function getUsers(req, res) {
-  User.find().sort('-dateAdded').exec((err, users) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+  UsersService.getTemporalUsers().then((users) => {
     res.json({ users });
   });
 }

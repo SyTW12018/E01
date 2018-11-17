@@ -23,10 +23,21 @@ class ReactRouter extends Component { //class LandingPage extends Component {
             <Route path='/pagina1' component={Pagina1} />
             <Route path='/pagina2' component={Pagina2} />
           </Switch>
-          <Route exact={true} path="/" render={() => ( //
+          <Body />
+        </header> 
+        </div>
+    );
+  }
+}
+
+export default ReactRouter;
+
+const Body = () => (
+  <div>
+      <Route exact={true} path="/" render={() => ( //
             <div>
               <p>
-                Videocon.io landing page (WIP)
+                 Videocon.io landing page (WIP)
               </p>
               <a
                 className='LandingPage-link'
@@ -41,11 +52,7 @@ class ReactRouter extends Component { //class LandingPage extends Component {
               </Container>
             </div>
           )}/>
-        </header>
-        </div>
-    );
-  }
-}
+  </div>
+)
 
-export default ReactRouter;
 

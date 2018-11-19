@@ -20,9 +20,9 @@ class LandingPage extends Component {
           >
             GitHub
           </a>
-		  <Container className='LandingPage-semantic-example'>
-			<SemanticUIExample />
-		  </Container>
+          <Container className='LandingPage-semantic-example'>
+          <SemanticUIExample />
+          </Container>
         </header>
       </div>
     );

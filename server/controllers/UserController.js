@@ -41,8 +41,8 @@ function registerUser(req, res) {
   newUser.cuid = cuid();
 
   UsersService.registerUser(newUser)
-    .then(() => {
-      res.status(201).end();
+    .then((user) => {
+      res.status(201).json(user);
     })
     .catch((err) => {
       res.status(500).send(err);
@@ -85,8 +85,8 @@ function deleteUser(req, res) {
     res.status(400).end();
   } else {
     UsersService.deleteUser(req.params.cuid)
-      .then(() => {
-        res.status(200).end();
+      .then((result) => {
+        res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
       })
       .catch((err) => {
         res.status(500).send(err);
@@ -101,12 +101,14 @@ function deleteUser(req, res) {
  * @returns void
  */
 function updateUser(req, res) {
-  if (!req.body.user.cuid) {
+  // TODO validar body
+
+  if (!req.params.cuid) {
     res.status(400).end();
   } else {
     UsersService.updateUser()
-      .then(() => {
-        res.status(201).end();
+      .then((result) => {
+        res.status(result ? 201 : 404).json({ cuid: req.params.cuid });
       })
       .catch((err) => {
         res.status(500).send(err);

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as UserController from '../controllers/user.controller';
+import UserController from '../controllers/UserController';
 
 const router = new Router();
 
@@ -9,12 +9,11 @@ router.route('/users').get(UserController.getUsers);
 // Get one user by cuid
 router.route('/users/:cuid').get(UserController.getUser);
 
-
-// TODO Eliminar
-//router.route('/users/add').get(UserController.getUser);
-
 // Add a new user
-router.route('/users').post(UserController.addUser);
+router.route('/users').post(UserController.registerUser);
+
+// Update a user
+router.route('/users/:cuid').put(UserController.updateUser);
 
 // Delete a user by cuid
 router.route('/users/:cuid').delete(UserController.deleteUser);

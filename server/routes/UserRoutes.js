@@ -7,15 +7,15 @@ const router = new Router();
 router.get('/users', UserController.getUsers);
 
 // Get one user by cuid
-router.get('/users/:cuid', UserController.validate('getUser'), UserController.getUser);
+router.get('/users/:cuid', UserController.getUser);
 
 // Add a new user
-router.post('/users', UserController.validate('registerUser'), UserController.registerUser);
+router.post('/users', UserController.registerUser);
 
 // Update a user
-router.put('/users/:cuid', UserController.validate('updateUser'), UserController.updateUser);
+router.put('/users/:cuid', UserController.updateUser);
 
 // Delete a user by cuid
-router.delete('/users/:cuid', UserController.validate('deleteUser'), UserController.deleteUser);
+router.delete('/users/:cuid', UserController.deleteUser);
 
 export default router;

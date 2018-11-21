@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(expressValidator());
 
-// Express only serves static assets in production
-if (process.env.NODE_ENV === 'production') {
+// Express only serves static assets in production or debug
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'debug') {
   app.use(express.static('client/build'));
 }
 
@@ -50,28 +50,20 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/api', users);
 app.use('/api', rooms);
 
-/*
+
 // Errors handling
 app.use((err, req, res, next) => {
-  // Specific for validation errors
-
   if (err) {
-    if (err instanceof validation.ValidationError) {
-      return res.status(err.status)
-        .json(err);
-    }
-
-    // Other type of errors, it *might* also be a Runtime Error
+    // It can be a Runtime Error
     if (process.env.NODE_ENV !== 'production') {
-      return res.status(500).send(err.stack);
+      console.error(err.stack);
+      res.status(500).send(err.stack);
+    } else {
+      res.status(500).end();
     }
-
-    return res.status(500);
   }
-
-  return next();
 });
-*/
+
 
 app.listen(app.get('port'), () => {
   console.log(`Server running at: http://localhost:${app.get('port')}/`);

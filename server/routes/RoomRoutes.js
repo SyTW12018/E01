@@ -4,15 +4,15 @@ import RoomController from '../controllers/RoomController';
 const router = new Router();
 
 // Get all rooms
-router.route('/rooms').get(RoomController.getRooms);
+router.get('/rooms', RoomController.getRooms);
 
 // Get one room by name
-router.route('/rooms/:name').get(RoomController.getRoom);
+router.get('/rooms/:name', RoomController.getRoom);
 
 // Create a new room
-router.route('/rooms').post(RoomController.createRoom);
+router.post('/rooms', RoomController.createRoom);
 
 // Delete a room
-router.route('/rooms/:name').delete(RoomController.deleteRoom);
+router.delete('/rooms/:name', RoomController.deleteRoom);
 
 export default router;

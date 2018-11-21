@@ -3,7 +3,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import validation from 'express-validation';
+import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
@@ -16,6 +16,7 @@ dotenv.config();
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
+app.use(expressValidator());
 
 // Express only serves static assets in production
 if (process.env.NODE_ENV === 'production') {

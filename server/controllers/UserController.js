@@ -1,10 +1,10 @@
 import cuid from 'cuid';
 import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
-import validate from 'express-validation';
-import UserValidation from './validations/UserValidation';
 import UsersService from '../services/UsersService';
 import User from '../models/User';
+
+const { body } = require('express-validator/check');
 
 /**
  * Get all users
@@ -102,11 +102,12 @@ function deleteUser(req, res) {
  */
 function updateUser(req, res) {
   // TODO validar body
-
   if (!req.params.cuid) {
     res.status(400).end();
   } else {
-    UsersService.updateUser()
+    const { user } = req.body;
+    user.cuid = req.params.cuid;
+    UsersService.updateUser(user)
       .then((result) => {
         res.status(result ? 201 : 404).json({ cuid: req.params.cuid });
       })
@@ -116,10 +117,24 @@ function updateUser(req, res) {
   }
 }
 
+function validate(method) {
+  switch (method) {
+    case 'registerUser': {
+      // body('cuid').exists().isAlphanumeric().isLength({ min: 25, max: 25 });
+      body('email', 'Invalid email').exists().isEmail();
+      body('name').exists().isAlphanumeric().isLength({ min: 3, max: 25 });
+      body('password').exists().isLength({ min: 5, max: 40 });
+      break;
+    }
+    default: break;
+  }
+}
+
 export default {
   getUsers,
   registerUser,
   getUser,
   deleteUser,
   updateUser,
+  validate,
 };

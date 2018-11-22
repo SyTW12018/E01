@@ -1,84 +1,62 @@
 import cuid from 'cuid';
 import User from '../models/User';
 
-let userStorage = [
-  /*
-  {
-    cuid: 'asd78hfinsiufn',
-    dateAdded: new Date(),
-  },
-  */
-];
+let userStorage = [];
 
 /**
  * Get all temporal users
  * @returns Promise
  */
-function getTemporalUsers() {
-  return new Promise((resolve) => {
-    resolve(userStorage);
-  });
+async function getTemporalUsers() {
+  return userStorage;
 }
 
 /**
  * Get all registered users
  * @returns Promise
  */
-function getRegisteredUsers() {
-  return new Promise((resolve, reject) => {
-    User.find().select('cuid name email slug dateAdded').sort('-dateAdded').exec()
-      .then((users) => {
-        resolve(users);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+async function getRegisteredUsers() {
+  return User.find()
+    .select('cuid name email slug dateAdded')
+    .sort('-dateAdded')
+    .exec();
 }
 
 /**
  * Get all users
  * @returns Promise
  */
-function getUsers() {
-  return new Promise((resolve, reject) => {
-    let users = [];
-    getTemporalUsers()
-      .then((temporalUsers) => {
-        users = temporalUsers.map(user => ({ ...user, registered: false }));
-        return getRegisteredUsers();
-      })
-      .then((registeredUsers) => {
-        users = users.concat(registeredUsers.map(user => (
-          {
-            cuid: user.cuid,
-            name: user.name,
-            email: user.email,
-            slug: user.slug,
-            dateAdded: user.dateAdded,
-            registered: true,
-          })));
-        resolve(users);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+async function getUsers() {
+  let users = [];
+
+  const temporalUsers = await getTemporalUsers();
+  users = temporalUsers.map(user => ({ ...user, registered: false }));
+
+  const registeredUsers = await getRegisteredUsers();
+  users = users.concat(registeredUsers.map(user => (
+    {
+      cuid: user.cuid,
+      name: user.name,
+      email: user.email,
+      slug: user.slug,
+      dateAdded: user.dateAdded,
+      registered: true,
+    })));
+
+  return users;
 }
 
 /**
  * Add a temporal user
  * @returns Promise
  */
-function addTemporalUser() {
-  return new Promise((resolve) => {
-    const newUser = {
-      cuid: cuid(),
-      dateAdded: new Date(),
-    };
-    userStorage.push(newUser);
-    resolve(newUser);
-  });
+async function addTemporalUser() {
+  const newUser = {
+    cuid: cuid(),
+    dateAdded: new Date(),
+  };
+  userStorage.push(newUser);
+  return newUser;
 }
 
 async function removeTemporalUsers() {
@@ -90,23 +68,16 @@ async function removeTemporalUsers() {
  * @param user
  * @returns Promise
  */
-function registerUser(user) {
-  return new Promise((resolve, reject) => {
-    User.create(user)
-      .then((newUser) => {
-        resolve({
-          cuid: newUser.cuid,
-          name: newUser.name,
-          email: newUser.email,
-          slug: newUser.slug,
-          dateAdded: newUser.dateAdded,
-          registered: true,
-        });
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+async function registerUser(user) {
+  const newUser = await User.create(user);
+  return {
+    cuid: newUser.cuid,
+    name: newUser.name,
+    email: newUser.email,
+    slug: newUser.slug,
+    dateAdded: newUser.dateAdded,
+    registered: true,
+  };
 }
 
 /**
@@ -114,36 +85,27 @@ function registerUser(user) {
  * @param cuid
  * @returns Promise
  */
-function getUser(cuid) {
-  return new Promise((resolve, reject) => {
-    getTemporalUsers()
-      .then((tempUsers) => {
-        const tempUser = tempUsers.find(user => user.cuid === cuid);
+async function getUser(cuid) {
+  const temporalUser = (await getTemporalUsers()).find(user => user.cuid === cuid);
 
-        if (!tempUser) {
-          User.findOne({ cuid }).select('cuid name email slug dateAdded').exec()
-            .then((user) => {
-              if (!user) {
-                resolve(null);
-              } else {
-                resolve({
-                  cuid: user.cuid,
-                  name: user.name,
-                  email: user.email,
-                  slug: user.slug,
-                  dateAdded: user.dateAdded,
-                  registered: true,
-                });
-              }
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        } else {
-          resolve({ ...tempUser, registered: false });
-        }
-      });
-  });
+  if (!temporalUser) {
+    const user = await User.findOne({ cuid }).select('cuid name email slug dateAdded').exec();
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      cuid: user.cuid,
+      name: user.name,
+      email: user.email,
+      slug: user.slug,
+      dateAdded: user.dateAdded,
+      registered: true,
+    };
+  }
+
+  return ({ ...temporalUser, registered: false });
 }
 
 /**
@@ -151,26 +113,15 @@ function getUser(cuid) {
  * @param cuid
  * @returns Promise
  */
-function deleteUser(cuid) {
-  return new Promise((resolve, reject) => {
-    getTemporalUsers()
-      .then((tempUsers) => {
-        const tempUser = tempUsers.find(user => user.cuid === cuid);
+async function deleteUser(cuid) {
+  const temporalUser = (await getTemporalUsers()).find(user => user.cuid === cuid);
 
-        if (!tempUser) {
-          User.deleteOne({ cuid }).exec()
-            .then((result) => {
-              resolve(result.n ? { cuid } : null);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        } else {
-          userStorage = userStorage.filter(user => user.cuid !== cuid);
-          resolve({ cuid });
-        }
-      });
-  });
+  if (!temporalUser) {
+    const result = await User.deleteOne({ cuid }).exec();
+    return (result.n ? { cuid } : null);
+  }
+  userStorage = userStorage.filter(user => user.cuid !== cuid);
+  return { cuid };
 }
 
 /**
@@ -178,15 +129,9 @@ function deleteUser(cuid) {
  * @param user
  * @returns Promise
  */
-function updateUser(user) {
-  return new Promise((resolve, reject) => {
-    User.updateOne({ cuid: user.cuid }, user).exec()
-      .then((result) => {
-        resolve(result.n ? { cuid } : null);
-      }).catch((error) => {
-        reject(error);
-      });
-  });
+async function updateUser(user) {
+  const result = await User.updateOne({ cuid: user.cuid }, user).exec();
+  return (result.n ? { cuid } : null);
 }
 
 export default {
@@ -196,7 +141,5 @@ export default {
   removeTemporalUsers,
   registerUser,
   getUsers,
-  getRegisteredUsers,
-  getTemporalUsers,
   updateUser,
 };

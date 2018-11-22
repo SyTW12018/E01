@@ -10,7 +10,7 @@ const url = `http://localhost:${app.get('port')}`;
 
 beforeEach(cleanDatabase);
 
-describe('All users', () => {
+describe('Users', () => {
   it('should get all users', (done) => {
     chai.request(url)
       .get('/api/users')
@@ -24,7 +24,151 @@ describe('All users', () => {
         done();
       });
   });
-});
 
+  it('should get one user', (done) => {
+    chai.request(url)
+      .get('/api/users/cjoofresr00001ktst8obwhbs')
+      .end((err, res) => {
+        expect(res.body).to.have.property('user');
+        expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
+        expect(res.body.user).to.have.property('name').to.be.equal('May');
+        expect(res.body.user).to.have.property('email').to.be.equal('may@may.com');
+        expect(res.body.user).to.have.property('slug').to.be.equal('may');
+        expect(res.body.user).to.have.property('registered').to.be.equal(true);
+        expect(res.body.user).to.not.have.property('password');
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should create a user', (done) => {
+    chai.request(url)
+      .post('/api/users')
+      .send({
+        user: {
+          name: 'Monica',
+          email: 'monica@monica.com',
+          password: 'monica',
+        },
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.property('cuid').to.has.length(25);
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it('should update a user', (done) => {
+    chai.request(url)
+      .put('/api/users/cjoofresr00001ktst8obwhbs')
+      .send({
+        user: {
+          name: 'Monica',
+          email: 'monica@monica.com',
+          password: 'monica',
+        },
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
+        expect(res).to.have.status(200);
+
+        chai.request(url)
+          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .end((err, res) => {
+            expect(res.body).to.have.property('user');
+            expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
+            expect(res.body.user).to.have.property('name').to.be.equal('Monica');
+            expect(res.body.user).to.have.property('email').to.be.equal('monica@monica.com');
+            expect(res.body.user).to.have.property('slug').to.be.equal('monica');
+            expect(res.body.user).to.have.property('registered').to.be.equal(true);
+            expect(res.body.user).to.not.have.property('password');
+            expect(res).to.have.status(200);
+            done();
+          });
+      });
+  });
+
+  it('should delete a user', (done) => {
+    chai.request(url)
+      .delete('/api/users/cjoofresr00001ktst8obwhbs')
+      .end((err, res) => {
+        expect(res.body).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
+        expect(res).to.have.status(200);
+
+        chai.request(url)
+          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .end((err, res) => {
+            expect(res).to.have.status(404);
+            done();
+          });
+      });
+  });
+
+  it('should not get a user when the request is invalid', (done) => {
+    chai.request(url)
+      .get('/api/users/cjoofresr00001ktst8obws')
+      .end((err, res) => {
+        expect(res.body).to.have.property('errors').to.has.length(1);
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('should not create a user when the request is invalid', (done) => {
+    chai.request(url)
+      .post('/api/users')
+      .send({
+        user: {
+          name: 'm',
+          email: 'monicamonica.com',
+          password: 'moa',
+        },
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.property('errors').to.has.length(3);
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it('should not update a user when the request is invalid', (done) => {
+    chai.request(url)
+      .put('/api/users/cjoofresr00001ktst8obwhbs')
+      .send({
+        user: {
+          name: 'm',
+          email: 'monicamonica.com',
+          password: 'moa',
+        },
+      })
+      .end((err, res) => {
+        expect(res.body).to.have.property('errors').to.has.length(3);
+        expect(res).to.have.status(400);
+
+        chai.request(url)
+          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .end((err, res) => {
+            expect(res.body).to.have.property('user');
+            expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
+            expect(res.body.user).to.have.property('name').to.be.equal('May');
+            expect(res.body.user).to.have.property('email').to.be.equal('may@may.com');
+            expect(res.body.user).to.have.property('slug').to.be.equal('may');
+            expect(res.body.user).to.have.property('registered').to.be.equal(true);
+            expect(res.body.user).to.not.have.property('password');
+            expect(res).to.have.status(200);
+            done();
+          });
+      });
+  });
+
+  it('should get 404 when user does not exist', (done) => {
+    chai.request(url)
+      .get('/api/users/cjoofresr00001ktst8obphbl')
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+});
 
 setTimeout(() => run(), 3000);

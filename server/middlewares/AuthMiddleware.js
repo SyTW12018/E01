@@ -6,15 +6,15 @@ async function generateToken(cuid) {
 }
 
 async function validateToken(token) {
-  // TODO verify authToken and get user from cuid
-  const cuid = 'get this cuid from the token payload';
+  // TODO verify authToken and get user from cuid (the cuid is in the payload of the token)
+  const cuid = token.replace('token', '');
   return UserService.getUser(cuid);
 }
 
 async function createTempUser(req, res) {
   req.user = await UserService.addTemporalUser();
   const token = await generateToken(req.user.cuid);
-  res.cookie('authToken', token, { maxAge: 100800 });
+  res.cookie('authToken', token, { maxAge: 18000000 });
 }
 
 async function middleware(req, res, next) {

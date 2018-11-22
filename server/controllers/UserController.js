@@ -104,6 +104,7 @@ function updateUser(req, res) {
   if (validate('updateUser', req, res)) {
     const { user } = req.body;
     user.cuid = req.params.cuid;
+    if (user.name) user.slug = slug(user.name.toLowerCase(), { lowercase: true });
     UsersService.updateUser(user)
       .then((result) => {
         res.status(result ? 200 : 404)

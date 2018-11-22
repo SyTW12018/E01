@@ -27,7 +27,6 @@ app.use(expressValidator());
 app.use(express.static('client/build'));
 app.use(auth());
 
-
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
 
@@ -41,21 +40,21 @@ if (process.env.NODE_ENV === 'test') {
 // MongoDB Connection
 mongoose.connect(mongoUrl, { useNewUrlParser: true })
   .then(() => {
-    console.log(`Mongoose connection open to ${mongoUrl}`);
+    console.log(`MongoDB connection open to ${mongoUrl}`);
   })
   .catch((error) => {
     if (error) {
       console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
-      // throw error;
+      console.error(error.errmsg);
+      process.exit(1);
     }
   });
 
 app.use('/api', users);
 app.use('/api', rooms);
 
-
 // Errors handling
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err) {
     // It can be a Runtime Error
     if (process.env.NODE_ENV === 'debug') {
@@ -66,7 +65,6 @@ app.use((err, req, res, next) => {
     }
   }
 });
-
 
 app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);

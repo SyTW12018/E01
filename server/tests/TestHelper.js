@@ -33,4 +33,4 @@ async function cleanDatabase() {
   await UserService.removeTemporalUsers();
 }
 
-export { cleanDatabase };
+export { cleanDatabase }; // eslint-disable-line import/prefer-default-export

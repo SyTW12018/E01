@@ -12,9 +12,11 @@ const agent = chai.request.agent(app);
 beforeEach(cleanDatabase);
 
 describe('Temporal users', () => {
-  it('should add a temporal user', (done) => {
-    agent.get('/api/users')
+  it('should add a temporal user when don\'t have auth token', (done) => {
+    chai.request(url)
+      .get('/api/users')
       .end((err, res) => {
+        expect(res).to.have.cookie('authToken');
         expect(res.body).to.have.property('users').to.has.length(4);
         expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
         expect(res).to.have.status(200);
@@ -22,24 +24,43 @@ describe('Temporal users', () => {
       });
   });
 
-  it('should not add a temporal user', (done) => {
+  it('should not add a temporal user when have auth token', (done) => {
     agent.get('/api/users')
       .end((err, res) => {
-        expect(res.body).to.have.property('users').to.has.length(3);
-        expect(res.body.users[0]).to.have.property('registered').to.be.equal(true);
+        expect(res).to.have.cookie('authToken');
+        expect(res.body).to.have.property('users').to.has.length(4);
+        expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
         expect(res).to.have.status(200);
-        done();
+
+        agent.get('/api/users')
+          .end((err, res) => {
+            expect(res).not.to.have.cookie('authToken');
+            expect(res.body).to.have.property('users').to.has.length(4);
+            expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
+            expect(res).to.have.status(200);
+            done();
+          });
       });
   });
 });
 
 describe('Web tokens', () => {
-  it('should get auth token', (done) => {
+  it('should get auth token on valid request', (done) => {
     chai.request(url)
       .get('/api/users')
       .end((err, res) => {
         expect(res).to.have.cookie('authToken');
         expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it('should get auth token on any request', (done) => {
+    chai.request(url)
+      .get('/ujbujvbuov')
+      .end((err, res) => {
+        expect(res).to.have.cookie('authToken');
+        expect(res).to.have.status(404);
         done();
       });
   });

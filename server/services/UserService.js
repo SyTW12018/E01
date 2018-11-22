@@ -2,10 +2,12 @@ import cuid from 'cuid';
 import User from '../models/User';
 
 let userStorage = [
+  /*
   {
     cuid: 'asd78hfinsiufn',
     dateAdded: new Date(),
   },
+  */
 ];
 
 /**
@@ -77,6 +79,10 @@ function addTemporalUser() {
     userStorage.push(newUser);
     resolve(newUser);
   });
+}
+
+async function removeTemporalUsers() {
+  userStorage = [];
 }
 
 /**
@@ -187,6 +193,7 @@ export default {
   deleteUser,
   getUser,
   addTemporalUser,
+  removeTemporalUsers,
   registerUser,
   getUsers,
   getRegisteredUsers,

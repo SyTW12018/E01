@@ -1,7 +1,7 @@
 import cuid from 'cuid';
 import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
-import UsersService from '../services/UsersService';
+import UsersService from '../services/UserService';
 import User from '../models/User';
 
 /**
@@ -57,7 +57,7 @@ function registerUser(req, res) {
  * @returns void
  */
 function getUser(req, res) {
-  if (validate('getUsers', req, res)) {
+  if (validate('getUser', req, res)) {
     UsersService.getUser(req.params.cuid)
       .then((user) => {
         if (!user) {
@@ -143,7 +143,7 @@ function validate(method, req, res) {
       req.checkBody('user.password', 'Invalid password').exists().isLength({ min: 5, max: 40 });
       break;
     }
-    default: return false;
+    default: return res.status(500).end();
   }
 
   const errors = req.validationErrors();

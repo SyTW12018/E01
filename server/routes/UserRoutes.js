@@ -4,18 +4,18 @@ import UserController from '../controllers/UserController';
 const router = new Router();
 
 // Get all users
-router.route('/users').get(UserController.getUsers);
+router.get('/users', UserController.getUsers);
 
 // Get one user by cuid
-router.route('/users/:cuid').get(UserController.getUser);
+router.get('/users/:cuid', UserController.getUser);
 
 // Add a new user
-router.route('/users').post(UserController.registerUser);
+router.post('/users', UserController.registerUser);
 
 // Update a user
-router.route('/users/:cuid').put(UserController.updateUser);
+router.put('/users/:cuid', UserController.updateUser);
 
 // Delete a user by cuid
-router.route('/users/:cuid').delete(UserController.deleteUser);
+router.delete('/users/:cuid', UserController.deleteUser);
 
 export default router;

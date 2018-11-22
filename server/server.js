@@ -3,75 +3,73 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import validation from 'express-validation';
+import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import methodOverride from 'method-override';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
-
-// const fs = require('fs');
+import auth from './middlewares/AuthMiddleware';
 
 const app = express();
 dotenv.config();
 
 app.set('port', process.env.PORT || 3001);
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(bodyParser.json()); // support json encoded bodies
 
-// Express only serves static assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
-}
+if (process.env.NODE_ENV === 'debug') app.use(morgan('dev')); // log every request to the console
+app.use(bodyParser.urlencoded({ extended: 'true' })); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+app.use(cookieParser());
+app.use(methodOverride());
+app.use(expressValidator());
+app.use(express.static('client/build'));
+app.use(auth());
 
-// Example of middleware
-/*
-app.use((req, res, next) => {
-  UsersService.addTemporalUser().then((user) => {
-    req.user = user;
-    next();
-  });
-});
-*/
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
 
-if (process.env.NODE_ENV !== 'test') {
-  // MongoDB Connection
-  mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/videocon', { useNewUrlParser: true })
-    .catch((error) => {
-      if (error) {
-        console.error('Cannot connect to MongoDB!');
-        // throw error;
-      }
-    });
+let mongoUrl;
+if (process.env.NODE_ENV === 'test') {
+  mongoUrl = process.env.MONGO_URL_TEST || 'mongodb://localhost:27017/videocon-test';
+} else {
+  mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/videocon';
 }
+
+// MongoDB Connection
+mongoose.connect(mongoUrl, { useNewUrlParser: true })
+  .then(() => {
+    console.log(`Mongoose connection open to ${mongoUrl}`);
+  })
+  .catch((error) => {
+    if (error) {
+      console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
+      // throw error;
+    }
+  });
 
 app.use('/api', users);
 app.use('/api', rooms);
 
-/*
+
 // Errors handling
 app.use((err, req, res, next) => {
-  // Specific for validation errors
-
   if (err) {
-    if (err instanceof validation.ValidationError) {
-      return res.status(err.status)
-        .json(err);
+    // It can be a Runtime Error
+    if (process.env.NODE_ENV === 'debug') {
+      console.error(err.stack);
+      res.status(500).send(err.stack);
+    } else {
+      res.status(500).end();
     }
-
-    // Other type of errors, it *might* also be a Runtime Error
-    if (process.env.NODE_ENV !== 'production') {
-      return res.status(500).send(err.stack);
-    }
-
-    return res.status(500);
   }
-
-  return next();
 });
-*/
+
 
 app.listen(app.get('port'), () => {
-  console.log(`Server running at: http://localhost:${app.get('port')}/`);
+  console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
+
+export default app;

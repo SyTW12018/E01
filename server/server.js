@@ -30,24 +30,21 @@ app.use(auth());
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
 
-let mongoUrl;
-if (process.env.NODE_ENV === 'test') {
-  mongoUrl = process.env.MONGO_URL_TEST || 'mongodb://localhost:27017/videocon-test';
-} else {
-  mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/videocon';
-}
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/videocon';
 
 // MongoDB Connection
-mongoose.connect(mongoUrl, { useNewUrlParser: true })
-  .then(() => {
-    console.log(`MongoDB connection open to ${mongoUrl}`);
-  })
-  .catch((error) => {
-    if (error) {
-      console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
-      process.exit(1);
-    }
-  });
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(mongoUrl, { useNewUrlParser: true })
+    .then(() => {
+      console.log(`MongoDB connection open to ${mongoUrl}`);
+    })
+    .catch((error) => {
+      if (error) {
+        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
+        process.exit(1);
+      }
+    });
+}
 
 app.use('/api', users);
 app.use('/api', rooms);

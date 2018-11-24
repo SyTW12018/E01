@@ -6,7 +6,7 @@
   "main": "index.js",
   "homepage": "https://github.com/SyTW12018/E01-videocon#readme",
   "scripts": {
-    "test": "cross-env NODE_ENV=test MONGO_URL_TEST=mongodb://admin:niunI98@ds115094.mlab.com:15094/videocon-test mocha server/tests --delay --exit --require babel-polyfill --require babel-register",
+    "test": "cross-env NODE_ENV=test mocha server/tests --opts mocha.opts",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node scripts/start-server.js",
     "client": "node scripts/start-client.js",
@@ -35,7 +35,8 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "mockgoose": "^7.3.5"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

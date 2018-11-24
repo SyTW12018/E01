@@ -1,7 +1,14 @@
+import mongoose from 'mongoose';
+import { Mockgoose } from 'mockgoose'; // eslint-disable-line import/no-extraneous-dependencies
 import User from '../models/User';
 import UserService from '../services/UserService';
 
-// TODO base de datos de pruebas
+const mockgoose = new Mockgoose(mongoose);
+
+async function prepareDatabase() {
+  await mockgoose.prepareStorage();
+  await mongoose.connect('mongodb://videocon.io/test', { useNewUrlParser: true });
+}
 
 async function cleanDatabase() {
   await User.deleteMany();
@@ -33,4 +40,4 @@ async function cleanDatabase() {
   await UserService.removeTemporalUsers();
 }
 
-export { cleanDatabase }; // eslint-disable-line import/prefer-default-export
+export { cleanDatabase, prepareDatabase };

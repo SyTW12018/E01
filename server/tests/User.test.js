@@ -1,13 +1,14 @@
-/* global it describe run beforeEach */
+/* global it describe run beforeEach before */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../server';
-import { cleanDatabase } from './TestHelper';
+import { cleanDatabase, prepareDatabase } from './TestHelper';
 
 chai.use(chaiHttp);
 
 const url = `http://localhost:${app.get('port')}`;
 
+before(prepareDatabase);
 beforeEach(cleanDatabase);
 
 describe('Users', () => {

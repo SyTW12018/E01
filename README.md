@@ -1,4 +1,5 @@
 # videocon.io
+[![Build Status](https://travis-ci.org/SyTW12018/E01-videocon.svg?branch=master)](https://travis-ci.org/SyTW12018/E01-videocon)
 
 videocon.io es una aplicación web para realizar videoconferencias de forma sencilla, segura y rápida, diseñada para ser escalable y fácilmente distribuible.
 

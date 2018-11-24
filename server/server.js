@@ -45,7 +45,6 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true })
   .catch((error) => {
     if (error) {
       console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
-      console.error(error.errmsg);
       process.exit(1);
     }
   });

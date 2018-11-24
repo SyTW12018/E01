@@ -24,7 +24,7 @@ export default () => (
 
       <Segment
         vertical
-        transparent
+        transparent='true'
         style={{
           height: '100%',
         }}

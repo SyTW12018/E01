@@ -9,4 +9,9 @@ cache:
     - node_modules
     - client/node_modules
 script:
-  - cd client && npm i && npm test
+  - cd client
+  - npm install --ignore-scripts
+  - npm test
+  - cd ..
+  - npm install
+  - npm test

@@ -1,6 +1,6 @@
 import { Button, Container, Menu } from 'semantic-ui-react';
 import React from 'react';
-import LogUp from './SignupForm/SignupForm'
+import LogUp from './components/SignupForm/SignupForm'
 
 export default () => (
   <Menu
@@ -16,7 +16,7 @@ export default () => (
         </Button>
         
         <LogUp />
-        
+
       </Menu.Item>
     </Container>
   </Menu>

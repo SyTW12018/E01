@@ -42,7 +42,13 @@ export default class SignupForm extends Component {
       this.setState({ emailError: true });
       error = true;
     } else {
-      this.setState({ emailError: false });
+      const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i;
+      if (emailRegex.test(this.state.email)){
+        console.log(this.state.email);
+        this.setState({ emailError: false });
+      } else {
+        this.setState({ emailError: true });
+      }
     }
 
     if (this.state.password.length < 8) {
@@ -97,6 +103,13 @@ export default class SignupForm extends Component {
                   onChange={this.handleChange}
                   error={this.state.emailError}
                 />
+                {this.state.emailError ?
+                  <Message
+                    error
+                    header="Invalid Email format"
+                    content="Introduce a valid email Example:(example@email.com)."
+                  /> : null
+                }
               </Form.Field>
               <Form.Field >
                 <Form.Input required
@@ -145,4 +158,3 @@ export default class SignupForm extends Component {
     )
   }
 }
-

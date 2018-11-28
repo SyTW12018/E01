@@ -10,9 +10,9 @@ import sanitizeHtml from 'sanitize-html';
  * @param res
  * @returns void
  */
-export function getRooms(req, res) {
+function getRooms(req, res) {
   // TODO obtener salas
-  res.json({error: "not implemented yet"});
+  res.json({ error: 'not implemented yet' });
 }
 
 /**
@@ -21,9 +21,9 @@ export function getRooms(req, res) {
  * @param res
  * @returns void
  */
-export function createRoom(req, res) {
+function createRoom(req, res) {
   // TODO crear sala
-  res.json({error: "not implemented yet"});
+  res.json({ error: 'not implemented yet' });
 }
 
 /**
@@ -32,9 +32,9 @@ export function createRoom(req, res) {
  * @param res
  * @returns void
  */
-export function getRoom(req, res) {
+function getRoom(req, res) {
   // TODO obtener una sala por su nombre
-  res.json({error: "not implemented yet"});
+  res.json({ error: 'not implemented yet' });
 }
 
 /**
@@ -43,7 +43,14 @@ export function getRoom(req, res) {
  * @param res
  * @returns void
  */
-export function deleteRoom(req, res) {
+function deleteRoom(req, res) {
   // TODO eliminar sala
-  res.json({error: "not implemented yet"});
+  res.json({ error: 'not implemented yet' });
 }
+
+export default {
+  getRooms,
+  createRoom,
+  getRoom,
+  deleteRoom,
+};

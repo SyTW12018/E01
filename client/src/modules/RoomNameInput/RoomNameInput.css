@@ -1,0 +1,16 @@
+:local(.roomNameInput) {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    width: 30rem;
+}
+
+:local(.roomNameInputButton) {
+    font-size: 1em !important;
+}
+
+@media only screen and (max-device-width : 456px) {
+    :local(.roomNameInput) {
+        margin-left: 50px;
+        margin-right: 50px;
+        width: 100%;
+    }
+}

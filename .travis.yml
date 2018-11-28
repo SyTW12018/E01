@@ -9,4 +9,13 @@ cache:
     - node_modules
     - client/node_modules
 script:
-  - cd client && npm i && npm test
+  - cd client
+  - npm install --ignore-scripts
+  - npm test
+  - cd ..
+  - npm install
+  - npm test
+env:
+  global:
+    - SKIP_PREFLIGHT_CHECK=true
+    - NODE_ENV=test

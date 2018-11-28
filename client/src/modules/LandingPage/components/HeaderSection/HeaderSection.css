@@ -1,0 +1,28 @@
+:local(.fullWidth) {
+    height: 100vh !important;
+}
+
+:local(.headerContainer) {
+    margin-bottom: 7rem;
+}
+
+:local(.header) {
+    font-size: 3.5em !important;
+    text-shadow: 0 0 5px rgb(0, 0, 0);
+    margin-bottom: -3.5rem;
+}
+
+:local(.subHeader) {
+    margin-left: 4em !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+@media only screen and (max-device-width : 456px) {
+    :local(.header) {
+        margin-bottom: -2.5rem;
+    }
+
+    :local(.subHeader) {
+        margin-left: 0 !important;
+    }
+}

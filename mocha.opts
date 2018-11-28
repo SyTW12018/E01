@@ -1,0 +1,5 @@
+--timeout 120000
+--delay
+--exit
+--require babel-polyfill
+--require babel-register

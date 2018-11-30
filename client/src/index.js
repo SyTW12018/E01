@@ -11,8 +11,8 @@ import Room from './modules/Room/Room';
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
-      <Route exact path='/' component={LandingPage} />
       <Route path='/room/:roomName' component={Room} />
+      <Route component={LandingPage} />
     </Switch>
   </BrowserRouter>,
   document.getElementById('root'),

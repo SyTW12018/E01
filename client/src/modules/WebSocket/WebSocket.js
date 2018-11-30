@@ -2,35 +2,31 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import SockJS from 'sockjs-client';
 
-const connect = () => {
-  console.log('WebSocket open');
-};
-
-const setupWebSocket = () => {
-  const { onMessage, onError } = this.props;
-  this.socket.onopen = connect;
-  this.socket.onmessage = onMessage;
-  this.socket.error = onError;
-};
-
 class WebSocket extends Component {
   constructor(props) {
     super(props);
 
-    this.socket = new SockJS('http://localhost:3001/ws');
-    /*
-    this.state = {
-      socket: new SockJS('http://localhost:3001/ws'),
-    };
-    */
+    this.socket = new SockJS(`http${props.secure ? 's' : ''}://${props.serverDomain}/${props.wsPath}`);
   }
 
   componentDidMount() {
-    setupWebSocket.bind(this);
+    const { onConnected, onData, onError } = this.props;
+    this.socket.onopen = () => onConnected();
+    this.socket.onmessage = msg => onData(JSON.parse(msg.data));
+    this.socket.error = onError;
   }
 
-  send(message) {
-    this.socket.send(message);
+  send(data) {
+    let dataJson;
+    if (typeof data === 'object') {
+      dataJson = JSON.stringify(data);
+    } else if (typeof data === 'string') {
+      dataJson = data;
+    } else {
+      throw new Error('Invalid data format.');
+    }
+
+    this.socket.send(dataJson);
   }
 
   render() {
@@ -39,14 +35,21 @@ class WebSocket extends Component {
 }
 
 WebSocket.propTypes = {
-  wsPath: PropTypes.string.isRequired,
   channel: PropTypes.string.isRequired,
-  onMessage: PropTypes.func.isRequired,
+  onData: PropTypes.func.isRequired,
+  secure: PropTypes.bool,
+  serverDomain: PropTypes.string,
+  wsPath: PropTypes.string,
   onError: PropTypes.func,
+  onConnected: PropTypes.func,
 };
 
 WebSocket.defaultProps = {
+  secure: false,
+  serverDomain: window.location.host,
+  wsPath: 'ws',
   onError: () => {},
+  onConnected: () => {},
 };
 
 export default WebSocket;

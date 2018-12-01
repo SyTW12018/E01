@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { Form } from 'formsy-semantic-ui-react';
 import {
@@ -15,13 +15,14 @@ class SignUpForm extends Component {
     isValid: false,
     isLoading: false,
     errors: [],
+    redirect: false,
   };
 
   register = async (formData) => {
     this.setState({ isLoading: true });
-    const { history } = this.props;
 
     let errors = [];
+    let redirect = false;
     try {
       const result = await axios.post('/signup', {
         email: formData.email,
@@ -29,7 +30,7 @@ class SignUpForm extends Component {
         password: formData.password,
       });
       if (result.status === 200) {
-        history.push('/welcome');
+        redirect = true;
       } else {
         errors = result.data.errors ? result.data.errors : [ 'Unknown error' ];
       }
@@ -40,6 +41,7 @@ class SignUpForm extends Component {
     this.setState({
       isLoading: false,
       errors,
+      redirect,
     });
   };
 
@@ -47,8 +49,12 @@ class SignUpForm extends Component {
 
   render() {
     const {
-      isModalOpen, isValid, isLoading, errors,
+      isModalOpen, isValid, isLoading, errors, redirect,
     } = this.state;
+
+    if (redirect) {
+      return (<Redirect push to='/welcome' />);
+    }
 
     return (
       <Modal
@@ -58,6 +64,7 @@ class SignUpForm extends Component {
         size='tiny'
         closeIcon
       >
+
         <Modal.Content>
           <Grid verticalAlign='middle'>
             <Grid.Column>
@@ -183,4 +190,4 @@ class SignUpForm extends Component {
     );
   }
 }
-export default withRouter(SignUpForm);
+export default SignUpForm;

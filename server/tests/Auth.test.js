@@ -15,7 +15,7 @@ beforeEach(cleanDatabase);
 describe('Temporal users', () => {
   it('should add a temporal user when don\'t have auth token', (done) => {
     chai.request(url)
-      .get('/api/users')
+      .get('/users')
       .end((err, res) => {
         expect(res).to.have.cookie('authToken');
         expect(res.body).to.have.property('users').to.has.length(4);
@@ -26,14 +26,14 @@ describe('Temporal users', () => {
   });
 
   it('should not add a temporal user when have auth token', (done) => {
-    agent.get('/api/users')
+    agent.get('/users')
       .end((err, res) => {
         expect(res).to.have.cookie('authToken');
         expect(res.body).to.have.property('users').to.has.length(4);
         expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
         expect(res).to.have.status(200);
 
-        agent.get('/api/users')
+        agent.get('/users')
           .end((err, res) => {
             expect(res).not.to.have.cookie('authToken');
             expect(res.body).to.have.property('users').to.has.length(4);
@@ -48,7 +48,7 @@ describe('Temporal users', () => {
 describe('Web tokens', () => {
   it('should get auth token on isValid request', (done) => {
     chai.request(url)
-      .get('/api/users')
+      .get('/users')
       .end((err, res) => {
         expect(res).to.have.cookie('authToken');
         expect(res).to.have.status(200);

@@ -12,6 +12,7 @@ ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path='/room/:roomName' component={Room} />
+      <Route path='/welcome' component={LandingPage} />
       <Route component={LandingPage} />
     </Switch>
   </BrowserRouter>,

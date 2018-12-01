@@ -7,8 +7,6 @@ export default () => (
   <Container>
     <Menu
       size='large'
-      inverted
-      pointing
       secondary
     >
 

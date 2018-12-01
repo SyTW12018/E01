@@ -14,7 +14,7 @@ beforeEach(cleanDatabase);
 describe('Users', () => {
   it('should get all users', (done) => {
     chai.request(url)
-      .get('/api/users')
+      .get('/users')
       .end((err, res) => {
         expect(res.body).to.have.property('users').to.has.length(4);
         expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
@@ -28,7 +28,7 @@ describe('Users', () => {
 
   it('should get one user', (done) => {
     chai.request(url)
-      .get('/api/users/cjoofresr00001ktst8obwhbs')
+      .get('/users/cjoofresr00001ktst8obwhbs')
       .end((err, res) => {
         expect(res.body).to.have.property('user');
         expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
@@ -44,7 +44,7 @@ describe('Users', () => {
 
   it('should create a user', (done) => {
     chai.request(url)
-      .post('/api/users')
+      .post('/users')
       .send({
         user: {
           name: 'Monica',
@@ -61,7 +61,7 @@ describe('Users', () => {
 
   it('should update a user', (done) => {
     chai.request(url)
-      .put('/api/users/cjoofresr00001ktst8obwhbs')
+      .put('/users/cjoofresr00001ktst8obwhbs')
       .send({
         user: {
           name: 'Monica',
@@ -74,7 +74,7 @@ describe('Users', () => {
         expect(res).to.have.status(200);
 
         chai.request(url)
-          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .get('/users/cjoofresr00001ktst8obwhbs')
           .end((err, res) => {
             expect(res.body).to.have.property('user');
             expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
@@ -91,13 +91,13 @@ describe('Users', () => {
 
   it('should delete a user', (done) => {
     chai.request(url)
-      .delete('/api/users/cjoofresr00001ktst8obwhbs')
+      .delete('/users/cjoofresr00001ktst8obwhbs')
       .end((err, res) => {
         expect(res.body).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
         expect(res).to.have.status(200);
 
         chai.request(url)
-          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .get('/users/cjoofresr00001ktst8obwhbs')
           .end((err, res) => {
             expect(res).to.have.status(404);
             done();
@@ -107,7 +107,7 @@ describe('Users', () => {
 
   it('should not get a user when the request is invalid', (done) => {
     chai.request(url)
-      .get('/api/users/cjoofresr00001ktst8obws')
+      .get('/users/cjoofresr00001ktst8obws')
       .end((err, res) => {
         expect(res.body).to.have.property('errors').to.has.length(1);
         expect(res).to.have.status(400);
@@ -117,7 +117,7 @@ describe('Users', () => {
 
   it('should not create a user when the request is invalid', (done) => {
     chai.request(url)
-      .post('/api/users')
+      .post('/users')
       .send({
         user: {
           name: 'm',
@@ -134,7 +134,7 @@ describe('Users', () => {
 
   it('should not update a user when the request is invalid', (done) => {
     chai.request(url)
-      .put('/api/users/cjoofresr00001ktst8obwhbs')
+      .put('/users/cjoofresr00001ktst8obwhbs')
       .send({
         user: {
           name: 'm',
@@ -147,7 +147,7 @@ describe('Users', () => {
         expect(res).to.have.status(400);
 
         chai.request(url)
-          .get('/api/users/cjoofresr00001ktst8obwhbs')
+          .get('/users/cjoofresr00001ktst8obwhbs')
           .end((err, res) => {
             expect(res.body).to.have.property('user');
             expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
@@ -164,7 +164,7 @@ describe('Users', () => {
 
   it('should get 404 when user does not exist', (done) => {
     chai.request(url)
-      .get('/api/users/cjoofresr00001ktst8obphbl')
+      .get('/users/cjoofresr00001ktst8obphbl')
       .end((err, res) => {
         expect(res).to.have.status(404);
         done();

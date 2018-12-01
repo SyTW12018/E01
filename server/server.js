@@ -19,7 +19,7 @@ dotenv.config();
 
 app.set('port', process.env.PORT || 3001);
 
-if (process.env.NODE_ENV === 'debug') app.use(morgan('dev')); // log every request to the console
+if (process.env.DEBUG) app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.urlencoded({ extended: 'true' })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
@@ -47,8 +47,8 @@ if (process.env.NODE_ENV !== 'test') {
     });
 }
 
-app.use('/api', users);
-app.use('/api', rooms);
+app.use('/', users);
+app.use('/', rooms);
 
 // TODO register
 app.post('/login', (req, res) => res.json({ ok: 'ok' }));

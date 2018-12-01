@@ -10,14 +10,13 @@ import User from '../models/User';
  * @param res
  * @returns void
  */
-function getUsers(req, res) {
-  UsersService.getUsers()
-    .then((users) => {
-      res.json({ users });
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
+async function getUsers(req, res) {
+  try {
+    const users = await UsersService.getUsers();
+    return res.json({ users });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 }
 
 /**
@@ -26,7 +25,7 @@ function getUsers(req, res) {
  * @param res
  * @returns void
  */
-function registerUser(req, res) {
+async function registerUser(req, res) {
   if (validate('registerUser', req, res)) {
     const newUser = new User({
       name: req.body.user.name,
@@ -38,16 +37,15 @@ function registerUser(req, res) {
     newUser.slug = slug(newUser.name.toLowerCase(), { lowercase: true });
     newUser.cuid = cuid();
 
-    UsersService.registerUser(newUser)
-      .then((user) => {
-        res.status(201)
-          .json(user);
-      })
-      .catch((err) => {
-        res.status(500)
-          .send(err);
-      });
+    try {
+      const user = await UsersService.registerUser(newUser);
+      return res.status(201).json(user);
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
+
+  return null;
 }
 
 /**
@@ -56,22 +54,20 @@ function registerUser(req, res) {
  * @param res
  * @returns void
  */
-function getUser(req, res) {
+async function getUser(req, res) {
   if (validate('getUser', req, res)) {
-    UsersService.getUser(req.params.cuid)
-      .then((user) => {
-        if (!user) {
-          res.status(404)
-            .send({ user });
-        } else {
-          res.json({ user });
-        }
-      })
-      .catch((err) => {
-        res.status(500)
-          .send(err);
-      });
+    try {
+      const user = await UsersService.getUser(req.params.cuid);
+      if (!user) {
+        return res.status(404).send({ user });
+      }
+      return res.json({ user });
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
+
+  return null;
 }
 
 /**
@@ -80,18 +76,17 @@ function getUser(req, res) {
  * @param res
  * @returns void
  */
-function deleteUser(req, res) {
+async function deleteUser(req, res) {
   if (validate('deleteUser', req, res)) {
-    UsersService.deleteUser(req.params.cuid)
-      .then((result) => {
-        res.status(result ? 200 : 404)
-          .json({ cuid: req.params.cuid });
-      })
-      .catch((err) => {
-        res.status(500)
-          .send(err);
-      });
+    try {
+      const result = await UsersService.deleteUser(req.params.cuid);
+      return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
+
+  return null;
 }
 
 /**
@@ -100,21 +95,20 @@ function deleteUser(req, res) {
  * @param res
  * @returns void
  */
-function updateUser(req, res) {
+async function updateUser(req, res) {
   if (validate('updateUser', req, res)) {
     const { user } = req.body;
     user.cuid = req.params.cuid;
     if (user.name) user.slug = slug(user.name.toLowerCase(), { lowercase: true });
-    UsersService.updateUser(user)
-      .then((result) => {
-        res.status(result ? 200 : 404)
-          .json({ cuid: req.params.cuid });
-      })
-      .catch((err) => {
-        res.status(500)
-          .send(err);
-      });
+    try {
+      const result = await UsersService.updateUser(user);
+      return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
+
+  return null;
 }
 
 /**
@@ -157,6 +151,8 @@ function validate(method, req, res) {
 }
 
 export default {
+  login,
+  signup,
   getUsers,
   registerUser,
   getUser,

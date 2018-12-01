@@ -24,6 +24,7 @@ async function cleanDatabase() {
   await User.create({
     cuid: 'cjoofresr00001ktst8obwhbs',
     name: 'May',
+    role: 'admin',
     email: 'may@may.com',
     password: 'maymay',
     slug: 'may',
@@ -40,4 +41,14 @@ async function cleanDatabase() {
   await UserService.removeTemporalUsers();
 }
 
-export { cleanDatabase, prepareDatabase };
+async function loginAsAdmin(agent) {
+  return agent.post('/login')
+    .send({
+      user: {
+        email: 'may@may.com',
+        password: 'maymay',
+      },
+    });
+}
+
+export { cleanDatabase, prepareDatabase, loginAsAdmin };

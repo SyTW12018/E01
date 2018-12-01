@@ -3,6 +3,17 @@ import User from '../models/User';
 
 let userStorage = [];
 
+function parseUser(user) {
+  return {
+    cuid: user.cuid,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    slug: user.slug,
+    dateAdded: user.dateAdded,
+  };
+}
+
 /**
  * Get all temporal users
  * @returns Promise
@@ -17,7 +28,7 @@ async function getTemporalUsers() {
  */
 async function getRegisteredUsers() {
   return User.find()
-    .select('cuid name email slug dateAdded')
+    .select('cuid name email role slug dateAdded')
     .sort('-dateAdded')
     .exec();
 }
@@ -30,18 +41,10 @@ async function getUsers() {
   let users = [];
 
   const temporalUsers = await getTemporalUsers();
-  users = temporalUsers.map(user => ({ ...user, registered: false }));
+  users = temporalUsers.map(user => ({ ...user, role: 'temporalUser' }));
 
   const registeredUsers = await getRegisteredUsers();
-  users = users.concat(registeredUsers.map(user => (
-    {
-      cuid: user.cuid,
-      name: user.name,
-      email: user.email,
-      slug: user.slug,
-      dateAdded: user.dateAdded,
-      registered: true,
-    })));
+  users = users.concat(registeredUsers.map(user => (parseUser(user))));
 
   return users;
 }
@@ -59,6 +62,10 @@ async function addTemporalUser() {
   return newUser;
 }
 
+/**
+ * Delete all temporal users
+ * @returns Promise
+ */
 async function removeTemporalUsers() {
   userStorage = [];
 }
@@ -70,14 +77,7 @@ async function removeTemporalUsers() {
  */
 async function registerUser(user) {
   const newUser = await User.create(user);
-  return {
-    cuid: newUser.cuid,
-    name: newUser.name,
-    email: newUser.email,
-    slug: newUser.slug,
-    dateAdded: newUser.dateAdded,
-    registered: true,
-  };
+  return parseUser(newUser);
 }
 
 /**
@@ -89,23 +89,16 @@ async function getUser(cuid) {
   const temporalUser = (await getTemporalUsers()).find(user => user.cuid === cuid);
 
   if (!temporalUser) {
-    const user = await User.findOne({ cuid }).select('cuid name email slug dateAdded').exec();
+    const user = await User.findOne({ cuid }).select('cuid name email role slug dateAdded').exec();
 
     if (!user) {
       return null;
     }
 
-    return {
-      cuid: user.cuid,
-      name: user.name,
-      email: user.email,
-      slug: user.slug,
-      dateAdded: user.dateAdded,
-      registered: true,
-    };
+    return parseUser(user);
   }
 
-  return ({ ...temporalUser, registered: false });
+  return ({ ...temporalUser, role: 'temporalUser' });
 }
 
 /**

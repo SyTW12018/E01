@@ -1,6 +1,6 @@
 export default role => (req, res, next) => {
-  if (req.user && req.user.role) {
-    if (req.user.role === role) {
+  if (req.user) {
+    if (req.user.role && req.user.role === role) {
       next();
     } else {
       res.status(401).json({

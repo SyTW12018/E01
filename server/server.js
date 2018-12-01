@@ -50,12 +50,6 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/', users);
 app.use('/', rooms);
 
-// TODO register
-app.post('/login', (req, res) => res.json({ ok: 'ok' }));
-
-// TODO sign up
-app.post('/signup', (req, res) => res.json({ ok: 'ok' }));
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 
@@ -71,9 +65,9 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     // It can be a Runtime Error
     if (process.env.DEBUG) {
       console.error(`[DEBUG] ${err.stack}`);
-      res.status(500).send(err.stack);
+      res.status(500).json({ errors: [ 'Unknown server error', err ] });
     } else {
-      res.status(500).end();
+      res.status(500).json({ errors: [ 'Unknown server error' ] });
     }
   }
 });

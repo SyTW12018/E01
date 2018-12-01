@@ -9,6 +9,7 @@
     "test": "cross-env NODE_ENV=test mocha server/tests --opts mocha.opts",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node scripts/start-server.js",
+    "server:debug": "cross-env DEBUG=true node scripts/start-server.js",
     "client": "node scripts/start-client.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -53,6 +54,7 @@
     "method-override": "^3.0.0",
     "mongoose": "^5.3.9",
     "morgan": "^1.9.1",
-    "sanitize-html": "^1.19.1"
+    "sanitize-html": "^1.19.1",
+    "sockjs": "^0.3.19"
   }
 }

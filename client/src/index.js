@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
-import { Container } from 'semantic-ui-react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './index.css';
 import './semantic/dist/semantic.min.css';
 import LandingPage from './modules/LandingPage/LandingPage';
@@ -11,10 +10,10 @@ import Room from './modules/Room/Room';
 // ReactDOM.render(<LandingPage />, document.getElementById('root'));
 ReactDOM.render(
   <BrowserRouter>
-    <Container fluid>
-      <Route exact path='/' component={LandingPage} />
+    <Switch>
       <Route path='/room/:roomName' component={Room} />
-    </Container>
+      <Route component={LandingPage} />
+    </Switch>
   </BrowserRouter>,
   document.getElementById('root'),
 );

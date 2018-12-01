@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
+import path from 'path';
 import express from 'express';
+import sockjs from 'sockjs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import expressValidator from 'express-validator';
@@ -24,7 +26,6 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(cookieParser());
 app.use(methodOverride());
 app.use(expressValidator());
-app.use(express.static('client/build'));
 app.use(auth());
 
 // Set native promises as mongoose promise
@@ -55,12 +56,21 @@ app.post('/login', (req, res) => res.json({ ok: 'ok' }));
 // TODO sign up
 app.post('/signup', (req, res) => res.json({ ok: 'ok' }));
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+
+  // Redirect unknown requests to the react app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(`${__dirname}/../client/build/index.html`));
+  });
+}
+
 // Errors handling
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err) {
     // It can be a Runtime Error
-    if (process.env.NODE_ENV === 'debug') {
-      console.errors(err.stack);
+    if (process.env.DEBUG) {
+      console.error(`[DEBUG] ${err.stack}`);
       res.status(500).send(err.stack);
     } else {
       res.status(500).end();
@@ -68,8 +78,21 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   }
 });
 
-app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
+
+// WebSocket server
+const wsServer = sockjs.createServer();
+wsServer.on('connection', (connection) => {
+  console.log('Connected client');
+
+  connection.on('data', (msg) => {
+    console.log(`Data: ${msg}`);
+    connection.write(msg);
+  });
+});
+
+wsServer.installHandlers(server, { prefix: '/ws' });
 
 export default app;

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:3001/",
+  "author": "E01",
+  "license": "GPL-3.0",
   "dependencies": {
     "axios": "^0.18.0",
     "formsy-react": "^1.1.5",
@@ -27,9 +29,6 @@
     "test": "cross-env CI=true SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
-  },
-  "eslintConfig": {
-    "extends": "airbnb"
   },
   "browserslist": [
     ">0.2%",

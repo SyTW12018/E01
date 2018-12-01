@@ -5,7 +5,7 @@ async function generateToken(cuid) {
   return `token${cuid}`;
 }
 
-async function validateToken(token) {
+async function getUser(token) {
   // TODO verify authToken and get user from cuid (the cuid is in the payload of the token)
   const cuid = token.replace('token', '');
   return UserService.getUser(cuid);
@@ -23,7 +23,7 @@ async function middleware(req, res, next) {
   if (!authToken) {
     await createTempUser(req, res);
   } else {
-    const user = await validateToken(authToken);
+    const user = await getUser(authToken);
     if (user) {
       req.user = user;
     } else {

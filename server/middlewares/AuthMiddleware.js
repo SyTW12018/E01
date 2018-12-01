@@ -1,14 +1,29 @@
 import UserService from '../services/UserService';
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+
+const cert = fs.readFileSync('private.key');
 
 async function generateToken(cuid) {
   // TODO generate token with cuid as payload
-  return `token${cuid}`;
+  const token = await jwt.sign({
+      cuid
+    },
+    cert,
+    {
+      algorithm: 'RS256', expiresIn: 60*60*24 
+    });
+  return token;
 }
 
 async function getUser(token) {
   // TODO verify authToken and get user from cuid (the cuid is in the payload of the token)
-  const cuid = token.replace('token', '');
-  return UserService.getUser(cuid);
+  try {
+    const decoded = await jwt.verify(token,cert);
+    return UserService.getUser(decoded.cuid);
+  } catch(err) {
+    return null;
+  }
 }
 
 async function createTempUser(req, res) {

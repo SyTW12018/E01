@@ -71,7 +71,7 @@ $.fn.transition = function() {
 
           // shorthand
           className       = settings.className;
-          error           = settings.error;
+          error           = settings.errors;
           metadata        = settings.metadata;
 
           // define namespace
@@ -168,7 +168,7 @@ $.fn.transition = function() {
         animate: function(overrideSettings) {
           settings = overrideSettings || settings;
           if(!module.is.supported()) {
-            module.error(error.support);
+            module.errors(error.support);
             return false;
           }
           module.debug('Preparing animation', settings.animation);
@@ -195,7 +195,7 @@ $.fn.transition = function() {
             module.set.animating(settings.animation);
           }
           else {
-            module.error(error.noAnimation, settings.animation, element);
+            module.errors(error.noAnimation, settings.animation, element);
           }
         },
 
@@ -885,8 +885,8 @@ $.fn.transition = function() {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1082,7 +1082,7 @@ $.fn.transition.settings = {
   },
 
   // possible errors
-  error: {
+  errors: {
     noAnimation : 'Element is no longer attached to DOM. Unable to animate.  Use silent setting to surpress this warning in production.',
     repeated    : 'That animation is already occurring, cancelling repeated animation',
     method      : 'The method you called is not defined',

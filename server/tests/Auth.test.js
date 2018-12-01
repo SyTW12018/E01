@@ -46,7 +46,7 @@ describe('Temporal users', () => {
 });
 
 describe('Web tokens', () => {
-  it('should get auth token on valid request', (done) => {
+  it('should get auth token on isValid request', (done) => {
     chai.request(url)
       .get('/api/users')
       .end((err, res) => {

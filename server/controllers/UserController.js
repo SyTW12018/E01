@@ -118,7 +118,7 @@ function updateUser(req, res) {
 }
 
 /**
- * Validate the request, returns true if it is valid, false otherwise
+ * Validate the request, returns true if it is isValid, false otherwise
  * @param method
  * @param req
  * @param res

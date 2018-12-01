@@ -1,23 +1,24 @@
 import { Container, Menu } from 'semantic-ui-react';
 import React from 'react';
-import LogUp from './components/SignupForm/SignupForm'
-import LogIn from './components/SigninForm/SigninForm'
+import SignUpForm from './components/SignUpForm/SignUpForm';
+import LogInForm from './components/LogInForm/LogInForm';
 
 export default () => (
-  <Menu
-    size='large'
-    inverted
-    pointing
-    secondary
-  >
-    <Container>
-      <Menu.Item position='right'>
-        
-        <LogIn />
-        
-        <LogUp />
+  <Container>
+    <Menu
+      size='large'
+      inverted
+      pointing
+      secondary
+    >
 
+      <Menu.Item position='right'>
+        <LogInForm />
       </Menu.Item>
-    </Container>
-  </Menu>
+
+      <Menu.Item>
+        <SignUpForm />
+      </Menu.Item>
+    </Menu>
+  </Container>
 );

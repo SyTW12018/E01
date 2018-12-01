@@ -175,11 +175,11 @@ $.fn.form = function(parameters) {
                 defaultValue = $field.data(metadata.defaultValue) || '',
                 isCheckbox   = $element.is(selector.uiCheckbox),
                 isDropdown   = $element.is(selector.uiDropdown),
-                isErrored    = $fieldGroup.hasClass(className.error)
+                isErrored    = $fieldGroup.hasClass(className.errors)
               ;
               if(isErrored) {
-                module.verbose('Resetting error on field', $fieldGroup);
-                $fieldGroup.removeClass(className.error);
+                module.verbose('Resetting errors on field', $fieldGroup);
+                $fieldGroup.removeClass(className.errors);
                 $prompt.remove();
               }
               if(isDropdown) {
@@ -208,14 +208,14 @@ $.fn.form = function(parameters) {
                 defaultValue = $field.data(metadata.defaultValue),
                 isCheckbox   = $element.is(selector.uiCheckbox),
                 isDropdown   = $element.is(selector.uiDropdown),
-                isErrored    = $fieldGroup.hasClass(className.error)
+                isErrored    = $fieldGroup.hasClass(className.errors)
               ;
               if(defaultValue === undefined) {
                 return;
               }
               if(isErrored) {
-                module.verbose('Resetting error on field', $fieldGroup);
-                $fieldGroup.removeClass(className.error);
+                module.verbose('Resetting errors on field', $fieldGroup);
+                $fieldGroup.removeClass(className.errors);
                 $prompt.remove();
               }
               if(isDropdown) {
@@ -277,18 +277,18 @@ $.fn.form = function(parameters) {
           blank: function($field) {
             return $.trim($field.val()) === '';
           },
-          valid: function(field) {
+          isValid: function(field) {
             var
               allValid = true
             ;
             if(field) {
-              module.verbose('Checking if field is valid', field);
+              module.verbose('Checking if field is isValid', field);
               return module.validate.field(validation[field], field, false);
             }
             else {
-              module.verbose('Checking if form is valid');
+              module.verbose('Checking if form is isValid');
               $.each(validation, function(fieldName, field) {
-                if( !module.is.valid(fieldName) ) {
+                if( !module.is.isValid(fieldName) ) {
                   allValid = false;
                 }
               });
@@ -352,7 +352,7 @@ $.fn.form = function(parameters) {
                 $fieldGroup     = $field.closest($group),
                 validationRules = module.get.validation($field)
               ;
-              if( $fieldGroup.hasClass(className.error) ) {
+              if( $fieldGroup.hasClass(className.errors) ) {
                 module.debug('Revalidating field', $field, validationRules);
                 if(validationRules) {
                   module.validate.field( validationRules );
@@ -370,7 +370,7 @@ $.fn.form = function(parameters) {
                 $fieldGroup = $field.closest($group),
                 validationRules = module.get.validation($field)
               ;
-              if(validationRules && (settings.on == 'change' || ( $fieldGroup.hasClass(className.error) && settings.revalidate) )) {
+              if(validationRules && (settings.on == 'change' || ( $fieldGroup.hasClass(className.errors) && settings.revalidate) )) {
                 clearTimeout(module.timer);
                 module.timer = setTimeout(function() {
                   module.debug('Revalidating field', $field,  module.get.validation($field));
@@ -476,7 +476,7 @@ $.fn.form = function(parameters) {
                 // 1.x (ducktyped)
                 settings   = $.extend(true, {}, $.fn.form.settings, legacyParameters);
                 validation = $.extend({}, $.fn.form.settings.defaults, parameters);
-                module.error(settings.error.oldSyntax, element);
+                module.errors(settings.errors.oldSyntax, element);
                 module.verbose('Extending settings from legacy parameters', validation, settings);
               }
               else {
@@ -501,7 +501,7 @@ $.fn.form = function(parameters) {
             selector        = settings.selector;
             className       = settings.className;
             regExp          = settings.regExp;
-            error           = settings.error;
+            error           = settings.errors;
             moduleNamespace = 'module-' + namespace;
             eventNamespace  = '.' + namespace;
 
@@ -634,7 +634,7 @@ $.fn.form = function(parameters) {
             module.verbose('Checking for existence of a field with identifier', identifier);
             identifier = module.escape.string(identifier);
             if(typeof identifier !== 'string') {
-              module.error(error.identifier, identifier);
+              module.errors(error.identifier, identifier);
             }
             if($field.filter('#' + identifier).length > 0 ) {
               return true;
@@ -707,9 +707,9 @@ $.fn.form = function(parameters) {
               ? [errors]
               : errors
             ;
-            module.verbose('Adding field error state', identifier);
+            module.verbose('Adding field errors state', identifier);
             $fieldGroup
-              .addClass(className.error)
+              .addClass(className.errors)
             ;
             if(settings.inline) {
               if(!promptExists) {
@@ -723,26 +723,26 @@ $.fn.form = function(parameters) {
               ;
               if(!promptExists) {
                 if(settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
-                  module.verbose('Displaying error with css transition', settings.transition);
+                  module.verbose('Displaying errors with css transition', settings.transition);
                   $prompt.transition(settings.transition + ' in', settings.duration);
                 }
                 else {
-                  module.verbose('Displaying error with fallback javascript animation');
+                  module.verbose('Displaying errors with fallback javascript animation');
                   $prompt
                     .fadeIn(settings.duration)
                   ;
                 }
               }
               else {
-                module.verbose('Inline errors are disabled, no inline error added', identifier);
+                module.verbose('Inline errors are disabled, no inline errors added', identifier);
               }
             }
           },
           errors: function(errors) {
-            module.debug('Adding form error messages', errors);
-            module.set.error();
+            module.debug('Adding form errors messages', errors);
+            module.set.errors();
             $message
-              .html( settings.templates.error(errors) )
+              .html( settings.templates.errors(errors) )
             ;
           }
         },
@@ -800,7 +800,7 @@ $.fn.form = function(parameters) {
               $prompt     = $fieldGroup.children(selector.prompt)
             ;
             $fieldGroup
-              .removeClass(className.error)
+              .removeClass(className.errors)
             ;
             if(settings.inline && $prompt.is(':visible')) {
               module.verbose('Removing prompt for field', identifier);
@@ -823,7 +823,7 @@ $.fn.form = function(parameters) {
         set: {
           success: function() {
             $module
-              .removeClass(className.error)
+              .removeClass(className.errors)
               .addClass(className.success)
             ;
           },
@@ -841,10 +841,10 @@ $.fn.form = function(parameters) {
               })
             ;
           },
-          error: function() {
+          errors: function() {
             $module
               .removeClass(className.success)
-              .addClass(className.error)
+              .addClass(className.errors)
             ;
           },
           value: function (field, value) {
@@ -934,7 +934,7 @@ $.fn.form = function(parameters) {
             }
             else {
               module.debug('Form has errors');
-              module.set.error();
+              module.set.errors();
               if(!settings.inline) {
                 module.add.errors(formErrors);
               }
@@ -1022,7 +1022,7 @@ $.fn.form = function(parameters) {
               ruleFunction = settings.rules[ruleName]
             ;
             if( !$.isFunction(ruleFunction) ) {
-              module.error(error.noRule, ruleName);
+              module.errors(error.noRule, ruleName);
               return;
             }
             // cast to string avoiding encoding special values
@@ -1080,8 +1080,8 @@ $.fn.form = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1246,15 +1246,15 @@ $.fn.form.settings = {
   },
 
   text: {
-    unspecifiedRule  : 'Please enter a valid value',
+    unspecifiedRule  : 'Please enter a isValid value',
     unspecifiedField : 'This field'
   },
 
   prompt: {
     empty                : '{name} must have a value',
     checked              : '{name} must be checked',
-    email                : '{name} must be a valid e-mail',
-    url                  : '{name} must be a valid url',
+    email                : '{name} must be a isValid e-mail',
+    url                  : '{name} must be a isValid url',
     regExp               : '{name} is not formatted correctly',
     integer              : '{name} must be an integer',
     decimal              : '{name} must be a decimal number',
@@ -1273,7 +1273,7 @@ $.fn.form.settings = {
     maxLength            : '{name} cannot be longer than {ruleValue} characters',
     match                : '{name} must match {ruleValue} field',
     different            : '{name} must have a different value than {ruleValue} field',
-    creditCard           : '{name} must be a valid credit card number',
+    creditCard           : '{name} must be a isValid credit card number',
     minCount             : '{name} must have at least {ruleValue} choices',
     exactCount           : '{name} must have exactly {ruleValue} choices',
     maxCount             : '{name} must have {ruleValue} or less choices'
@@ -1295,13 +1295,13 @@ $.fn.form.settings = {
   },
 
   className : {
-    error   : 'error',
+    errors   : 'error',
     label   : 'ui prompt label',
     pressed : 'down',
     success : 'success'
   },
 
-  error: {
+  errors: {
     identifier : 'You must specify a string identifier for each field',
     method     : 'The method you called is not defined.',
     noRule     : 'There is no rule matching the one you specified',
@@ -1310,8 +1310,8 @@ $.fn.form.settings = {
 
   templates: {
 
-    // template that produces error message
-    error: function(errors) {
+    // template that produces errors message
+    errors: function(errors) {
       var
         html = '<ul class="list">'
       ;
@@ -1376,7 +1376,7 @@ $.fn.form.settings = {
       return value.match( new RegExp(regExp, flags) );
     },
 
-    // is valid integer or matches range
+    // is isValid integer or matches range
     integer: function(value, range) {
       var
         intRegExp = $.fn.form.settings.regExp.integer,
@@ -1408,12 +1408,12 @@ $.fn.form.settings = {
       );
     },
 
-    // is valid number (with decimal)
+    // is isValid number (with decimal)
     decimal: function(value) {
       return $.fn.form.settings.regExp.decimal.test(value);
     },
 
-    // is valid number
+    // is isValid number
     number: function(value) {
       return $.fn.form.settings.regExp.number.test(value);
     },

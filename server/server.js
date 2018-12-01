@@ -40,7 +40,7 @@ if (process.env.NODE_ENV !== 'test') {
     })
     .catch((error) => {
       if (error) {
-        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
+        console.errors(`Cannot connect to MongoDB on ${mongoUrl}`);
         process.exit(1);
       }
     });
@@ -49,12 +49,18 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/api', users);
 app.use('/api', rooms);
 
+// TODO register
+app.post('/login', (req, res) => res.json({ ok: 'ok' }));
+
+// TODO sign up
+app.post('/signup', (req, res) => res.json({ ok: 'ok' }));
+
 // Errors handling
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err) {
     // It can be a Runtime Error
     if (process.env.NODE_ENV === 'debug') {
-      console.error(err.stack);
+      console.errors(err.stack);
       res.status(500).send(err.stack);
     } else {
       res.status(500).end();

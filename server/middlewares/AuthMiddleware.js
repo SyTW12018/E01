@@ -4,7 +4,6 @@ import NodeRSA from 'node-rsa';
 import UserService from '../services/UserService';
 import loginValidator from '../validators/LoginValidator';
 import registerUserValidator from '../validators/RegisterUserValidator';
-import User from '../models/User';
 
 const cert = new NodeRSA({ b: 2048 });
 // cert = fs.readFileSync('keys/private.key');
@@ -50,7 +49,7 @@ const login = () => (req, res) => {
   });
 };
 
-const register = () => async (req, res) => {
+const register = () => (req, res) => {
   registerUserValidator(req, res, async () => {
     const user = await UserService.getUserByEmail(req.body.user.email);
     if (user) {
@@ -61,6 +60,17 @@ const register = () => async (req, res) => {
     await UserService.deleteTemporalUser(req.user.cuid);
     return res.status(201).json({ cuid: newUser.cuid });
   });
+};
+
+const getCurrentUser = () => async (req, res) => {
+  const { authToken } = req.cookies;
+
+  if (!authToken) {
+    return res.status(401).json({ errors: [ 'No authentication token received' ] });
+  }
+
+  const user = await getUser(authToken);
+  return res.status(200).json({ ...user });
 };
 
 const middleware = () => async (req, res, next) => {
@@ -85,4 +95,5 @@ export default middleware;
 export {
   login,
   register,
+  getCurrentUser,
 };

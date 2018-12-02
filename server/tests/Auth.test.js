@@ -20,7 +20,8 @@ describe('Temporal users', () => {
     const res = await agent.get('/users');
     expect(res).not.to.have.cookie('authToken');
     expect(res.body).to.have.property('users').to.has.length(4);
-    expect(res.body.users[0]).to.have.property('role').to.be.equal('temporalUser');
+    const users = res.body.users.filter(user => user.role === 'temporalUser');
+    expect(users).to.has.length(1);
     expect(res).to.have.status(200);
   });
 
@@ -30,7 +31,8 @@ describe('Temporal users', () => {
     const res = await agent.get('/users');
     expect(res).not.to.have.cookie('authToken');
     expect(res.body).to.have.property('users').to.has.length(3);
-    expect(res.body.users[0]).to.have.property('role').to.be.equal('registeredUser');
+    const users = res.body.users.filter(user => user.role === 'temporalUser');
+    expect(users).to.has.length(0);
     expect(res).to.have.status(200);
   });
 });
@@ -95,12 +97,30 @@ describe('Register', () => {
 
     res = await agent.get('/users');
     expect(res.body).to.have.property('users').to.has.length(4);
-    expect(res.body.users[0]).to.have.property('name').to.be.equal('Maria');
-    expect(res.body.users[0]).to.have.property('email').to.be.equal('maria@maria.com');
-    expect(res.body.users[0]).to.have.property('role').to.be.equal('registeredUser');
-    expect(res.body.users[1]).to.have.property('role').to.be.equal('registeredUser');
-    expect(res.body.users[2]).to.have.property('role').to.be.equal('admin');
-    expect(res.body.users[3]).to.have.property('role').to.be.equal('registeredUser');
+
+    res.body.users.forEach((user) => {
+      expect(user).to.have.property('name');
+      expect(user).to.have.property('email');
+      expect(user).to.have.property('role');
+
+      switch (user.name) {
+        case 'Maria':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        case 'Juan':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        case 'May':
+          expect(user.role).to.be.equal('admin');
+          break;
+        case 'Alberto':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        default:
+          break;
+      }
+    });
+
     expect(res).to.have.status(200);
   });
 

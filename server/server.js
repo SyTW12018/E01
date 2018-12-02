@@ -11,7 +11,7 @@ import morgan from 'morgan';
 import methodOverride from 'method-override';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
-import auth, { login, register } from './middlewares/AuthMiddleware';
+import auth, { login, register, getCurrentUser } from './middlewares/AuthMiddleware';
 
 const app = express();
 dotenv.config();
@@ -27,6 +27,7 @@ app.use(methodOverride());
 app.use(auth());
 app.post('/login', login());
 app.post('/signup', register());
+app.get('/user', getCurrentUser());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;

@@ -1,28 +1,35 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { Form } from 'formsy-semantic-ui-react';
 import {
   Modal, Button, Message, Grid, Header, Icon, Container, Divider,
 } from 'semantic-ui-react';
 import '../Form.css';
+import PropTypes from 'prop-types';
 
-class SignUpForm extends Component {
-  form = null;
-
-  state = {
-    isModalOpen: false,
-    isValid: false,
-    isLoading: false,
-    errors: [],
-    redirect: false,
+export default class SignUpForm extends Component {
+  static propTypes = {
+    refreshAuth: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isModalOpen: false,
+      isValid: false,
+      isLoading: false,
+      errors: [],
+    };
+
+    this.form = null;
+    this.refreshAuth = props.refreshAuth;
+  }
 
   register = async (formData) => {
     this.setState({ isLoading: true });
 
     let errors = [];
-    let redirect = false;
     try {
       const result = await axios.post('/signup', {
         user: {
@@ -32,7 +39,8 @@ class SignUpForm extends Component {
         },
       });
       if (result.status === 201) {
-        redirect = true;
+        this.refreshAuth();
+        return;
       }
     } catch (e) {
       const responseErrors = e.response.data.errors;
@@ -49,18 +57,13 @@ class SignUpForm extends Component {
     this.setState({
       isLoading: false,
       errors,
-      redirect,
     });
   };
 
   render() {
     const {
-      isModalOpen, isValid, isLoading, errors, redirect,
+      isModalOpen, isValid, isLoading, errors,
     } = this.state;
-
-    if (redirect) {
-      return (<Redirect push to='/welcome' />);
-    }
 
     return (
       <Modal
@@ -195,4 +198,3 @@ class SignUpForm extends Component {
     );
   }
 }
-export default SignUpForm;

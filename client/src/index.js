@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { AuthProvider } from 'react-check-auth';
 import './index.css';
 import './semantic/dist/semantic.min.css';
 import LandingPage from './modules/LandingPage/LandingPage';
@@ -9,13 +10,14 @@ import Room from './modules/Room/Room';
 
 // ReactDOM.render(<LandingPage />, document.getElementById('root'));
 ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route path='/room/:roomName' component={Room} />
-      <Route path='/welcome' component={LandingPage} />
-      <Route component={LandingPage} />
-    </Switch>
-  </BrowserRouter>,
+  <AuthProvider authUrl='/user'>
+    <BrowserRouter>
+      <Switch>
+        <Route path='/room/:roomName' component={Room} />
+        <Route component={LandingPage} />
+      </Switch>
+    </BrowserRouter>
+  </AuthProvider>,
   document.getElementById('root'),
 );
 // If you want your app to work offline and load faster, you can change

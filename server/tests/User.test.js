@@ -17,9 +17,10 @@ describe('Users', () => {
 
     const res = await agent.get('/users');
     expect(res.body).to.have.property('users').to.has.length(3);
-    expect(res.body.users[0]).to.have.property('role').to.be.equal('registeredUser');
-    expect(res.body.users[1]).to.have.property('role').to.be.equal('admin');
-    expect(res.body.users[2]).to.have.property('role').to.be.equal('registeredUser');
+    const registeredUsers = res.body.users.filter(user => user.role === 'registeredUser');
+    expect(registeredUsers).to.has.length(2);
+    const adminUsers = res.body.users.filter(user => user.role === 'admin');
+    expect(adminUsers).to.has.length(1);
     expect(res).to.have.status(200);
   });
 

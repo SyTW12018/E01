@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import { Form } from 'formsy-semantic-ui-react';
 import {
   Modal, Button, Message, Grid, Header, Icon, Container, Divider,
@@ -7,14 +8,23 @@ import {
 import '../Form.css';
 
 export default class LogInForm extends Component {
-  form = null;
-
-  state = {
-    isModalOpen: false,
-    isValid: false,
-    isLoading: false,
-    errors: [],
+  static propTypes = {
+    refreshAuth: PropTypes.func.isRequired,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isModalOpen: false,
+      isValid: false,
+      isLoading: false,
+      errors: [],
+    };
+
+    this.form = null;
+    this.refreshAuth = props.refreshAuth;
+  }
 
   login = async (formData) => {
     this.setState({ isLoading: true });
@@ -28,7 +38,8 @@ export default class LogInForm extends Component {
         },
       });
       if (result.status === 200) {
-        window.location.reload();
+        this.refreshAuth();
+        return;
       }
     } catch (e) {
       const responseErrors = e.response.data.errors;

@@ -59,7 +59,7 @@ async function addTemporalUser() {
     dateAdded: new Date(),
   };
   userStorage.push(newUser);
-  return newUser;
+  return { ...newUser, role: 'temporalUser' };
 }
 
 /**
@@ -76,8 +76,10 @@ async function removeTemporalUsers() {
  * @returns Promise
  */
 async function registerUser(user) {
-  const newUser = await User.create(user);
-  return parseUser(newUser);
+  const newUser = user;
+  if (!newUser.cuid) newUser.cuid = cuid();
+  const registeredUser = await User.create(newUser);
+  return parseUser(registeredUser);
 }
 
 /**
@@ -90,7 +92,6 @@ async function getUser(cuid) {
 
   if (!temporalUser) {
     const user = await User.findOne({ cuid }).select('cuid name email role slug dateAdded').exec();
-
     if (!user) {
       return null;
     }
@@ -99,6 +100,35 @@ async function getUser(cuid) {
   }
 
   return ({ ...temporalUser, role: 'temporalUser' });
+}
+
+/**
+ * Get a single user by email
+ * @param email
+ * @returns Promise
+ */
+async function getUserByEmail(email) {
+  const user = await User.findOne({ email }).select('cuid name email role slug dateAdded').exec();
+  if (!user) {
+    return null;
+  }
+
+  return parseUser(user);
+}
+
+/**
+ * Get a single user by email and password
+ * @param email
+ * @param password
+ * @returns Promise
+ */
+async function getUserByEmailAndPassword(email, password) {
+  const user = await User.findOne({ email, password }).select('cuid name email password role slug dateAdded').exec();
+  if (!user) {
+    return null;
+  }
+
+  return parseUser(user);
 }
 
 /**
@@ -118,6 +148,21 @@ async function deleteUser(cuid) {
 }
 
 /**
+ * Delete a temporal user by cuid
+ * @param cuid
+ * @returns Promise
+ */
+async function deleteTemporalUser(cuid) {
+  const temporalUser = (await getTemporalUsers()).find(user => user.cuid === cuid);
+
+  if (!temporalUser) {
+    return null;
+  }
+  userStorage = userStorage.filter(user => user.cuid !== cuid);
+  return { cuid };
+}
+
+/**
  * Update a registered user
  * @param user
  * @returns Promise
@@ -129,7 +174,10 @@ async function updateUser(user) {
 
 export default {
   deleteUser,
+  deleteTemporalUser,
   getUser,
+  getUserByEmail,
+  getUserByEmailAndPassword,
   addTemporalUser,
   removeTemporalUsers,
   registerUser,

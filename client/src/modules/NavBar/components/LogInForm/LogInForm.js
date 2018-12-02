@@ -22,16 +22,24 @@ export default class LogInForm extends Component {
     let errors = [];
     try {
       const result = await axios.post('/login', {
-        email: formData.email,
-        password: formData.password,
+        user: {
+          email: formData.email,
+          password: formData.password,
+        },
       });
       if (result.status === 200) {
         window.location.reload();
-      } else {
-        errors = result.data.errors ? result.data.errors : [ 'Unknown error' ];
       }
     } catch (e) {
-      errors.push(e.message);
+      const responseErrors = e.response.data.errors;
+      if (responseErrors && Array.isArray(responseErrors)) {
+        errors = responseErrors.map((error) => {
+          if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
+          return error;
+        });
+      } else {
+        errors = [ e.message ];
+      }
     }
 
     this.setState({
@@ -39,8 +47,6 @@ export default class LogInForm extends Component {
       errors,
     });
   };
-
-  submit = () => { this.form.submit(); };
 
   render() {
     const {
@@ -121,7 +127,6 @@ export default class LogInForm extends Component {
                     size='large'
                     color='orange'
                     content='Login'
-                    onClick={this.submit}
                     disabled={!isValid || isLoading}
                   />
                 </Container>

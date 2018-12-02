@@ -5,14 +5,13 @@ import express from 'express';
 import sockjs from 'sockjs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import methodOverride from 'method-override';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
-import auth from './middlewares/AuthMiddleware';
+import auth, { login, register } from './middlewares/AuthMiddleware';
 
 const app = express();
 dotenv.config();
@@ -25,8 +24,9 @@ app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(cookieParser());
 app.use(methodOverride());
-app.use(expressValidator());
 app.use(auth());
+app.post('/login', login());
+app.post('/signup', register());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     // It can be a Runtime Error
     if (process.env.DEBUG) {
       console.error(`[DEBUG] ${err.stack}`);
-      res.status(500).json({ errors: [ 'Unknown server error', err ] });
+      res.status(500).json({ errors: [ 'Unknown server error', err.stack ] });
     } else {
       res.status(500).json({ errors: [ 'Unknown server error' ] });
     }

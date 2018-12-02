@@ -4,7 +4,7 @@ export default role => (req, res, next) => {
       next();
     } else {
       res.status(401).json({
-        errors: 'Unauthorized request',
+        errors: [ 'Unauthorized request' ],
       });
     }
   } else {

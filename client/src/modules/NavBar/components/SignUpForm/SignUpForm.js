@@ -25,17 +25,25 @@ class SignUpForm extends Component {
     let redirect = false;
     try {
       const result = await axios.post('/signup', {
-        email: formData.email,
-        username: formData.username,
-        password: formData.password,
+        user: {
+          email: formData.email,
+          name: formData.username,
+          password: formData.password,
+        },
       });
-      if (result.status === 200) {
+      if (result.status === 201) {
         redirect = true;
-      } else {
-        errors = result.data.errors ? result.data.errors : [ 'Unknown error' ];
       }
     } catch (e) {
-      errors.push(e.message);
+      const responseErrors = e.response.data.errors;
+      if (responseErrors && Array.isArray(responseErrors)) {
+        errors = responseErrors.map((error) => {
+          if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
+          return error;
+        });
+      } else {
+        errors = [ e.message ];
+      }
     }
 
     this.setState({
@@ -44,8 +52,6 @@ class SignUpForm extends Component {
       redirect,
     });
   };
-
-  submit = () => { this.form.submit(); };
 
   render() {
     const {
@@ -176,7 +182,6 @@ class SignUpForm extends Component {
                     size='large'
                     color='orange'
                     content='Register'
-                    onClick={this.submit}
                     disabled={!isValid || isLoading}
                   />
                 </Container>

@@ -1,5 +1,9 @@
 {
   "extends": "airbnb",
+  "env": {
+    "browser": false,
+    "node": true
+  },
   "parser": "babel-eslint",
   "rules": {
     "array-bracket-spacing": [2, "always"],

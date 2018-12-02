@@ -1,31 +1,33 @@
 /* eslint-disable no-console */
 
+import path from 'path';
 import express from 'express';
+import sockjs from 'sockjs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import methodOverride from 'method-override';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
-import auth from './middlewares/AuthMiddleware';
+import auth, { login, register, getCurrentUser } from './middlewares/AuthMiddleware';
 
 const app = express();
 dotenv.config();
 
 app.set('port', process.env.PORT || 3001);
 
-if (process.env.NODE_ENV === 'debug') app.use(morgan('dev')); // log every request to the console
+if (process.env.DEBUG) app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.urlencoded({ extended: 'true' })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(cookieParser());
 app.use(methodOverride());
-app.use(expressValidator());
-app.use(express.static('client/build'));
 app.use(auth());
+app.post('/login', login());
+app.post('/signup', register());
+app.get('/user', getCurrentUser());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
@@ -40,30 +42,52 @@ if (process.env.NODE_ENV !== 'test') {
     })
     .catch((error) => {
       if (error) {
-        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
+        console.errors(`Cannot connect to MongoDB on ${mongoUrl}`);
         process.exit(1);
       }
     });
 }
 
-app.use('/api', users);
-app.use('/api', rooms);
+app.use('/', users);
+app.use('/', rooms);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+
+  // Redirect unknown requests to the react app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(`${__dirname}/../client/build/index.html`));
+  });
+}
 
 // Errors handling
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err) {
     // It can be a Runtime Error
-    if (process.env.NODE_ENV === 'debug') {
-      console.error(err.stack);
-      res.status(500).send(err.stack);
+    if (process.env.DEBUG) {
+      console.error(`[DEBUG] ${err.stack}`);
+      res.status(500).json({ errors: [ 'Unknown server error', err.stack ] });
     } else {
-      res.status(500).end();
+      res.status(500).json({ errors: [ 'Unknown server error' ] });
     }
   }
 });
 
-app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
+
+// WebSocket server
+const wsServer = sockjs.createServer();
+wsServer.on('connection', (connection) => {
+  console.log('Connected client');
+
+  connection.on('data', (msg) => {
+    console.log(`Data: ${msg}`);
+    connection.write(msg);
+  });
+});
+
+wsServer.installHandlers(server, { prefix: '/ws' });
 
 export default app;

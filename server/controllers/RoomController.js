@@ -12,7 +12,7 @@ import sanitizeHtml from 'sanitize-html';
  */
 function getRooms(req, res) {
   // TODO obtener salas
-  res.json({ error: 'not implemented yet' });
+  res.json({ errors: 'not implemented yet' });
 }
 
 /**
@@ -23,7 +23,7 @@ function getRooms(req, res) {
  */
 function createRoom(req, res) {
   // TODO crear sala
-  res.json({ error: 'not implemented yet' });
+  res.json({ errors: 'not implemented yet' });
 }
 
 /**
@@ -34,7 +34,7 @@ function createRoom(req, res) {
  */
 function getRoom(req, res) {
   // TODO obtener una sala por su nombre
-  res.json({ error: 'not implemented yet' });
+  res.json({ errors: 'not implemented yet' });
 }
 
 /**
@@ -45,7 +45,7 @@ function getRoom(req, res) {
  */
 function deleteRoom(req, res) {
   // TODO eliminar sala
-  res.json({ error: 'not implemented yet' });
+  res.json({ errors: 'not implemented yet' });
 }
 
 export default {

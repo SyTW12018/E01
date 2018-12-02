@@ -44,7 +44,7 @@ $.fn.search = function(parameters) {
         regExp           = settings.regExp,
         fields           = settings.fields,
         selector         = settings.selector,
-        error            = settings.error,
+        error            = settings.errors,
         namespace        = settings.namespace,
 
         eventNamespace   = '.' + namespace,
@@ -352,7 +352,7 @@ $.fn.search = function(parameters) {
                 },
                 onAbort : function(response) {
                 },
-                onError           : module.error
+                onError           : module.errors
               },
               searchHTML
             ;
@@ -406,7 +406,7 @@ $.fn.search = function(parameters) {
           settings: function() {
             if($.isPlainObject(parameters) && parameters.searchFullText) {
               settings.fullTextSearch = parameters.searchFullText;
-              module.error(settings.error.oldSearchSyntax, element);
+              module.errors(settings.errors.oldSearchSyntax, element);
             }
           },
           inputEvent: function() {
@@ -533,7 +533,7 @@ $.fn.search = function(parameters) {
                 module.search.remote(searchTerm, callback);
               }
               else {
-                module.error(error.source);
+                module.errors(error.source);
                 callback();
               }
             }
@@ -617,7 +617,7 @@ $.fn.search = function(parameters) {
 
             // exit conditions if no source
             if(source === undefined || source === false) {
-              module.error(error.source);
+              module.errors(error.source);
               return [];
             }
             // iterate through search fields looking for matches
@@ -1003,7 +1003,7 @@ $.fn.search = function(parameters) {
             if(settings.maxResults > 0) {
               if(isProperObject) {
                 if(settings.type == 'standard') {
-                  module.error(error.maxResults);
+                  module.errors(error.maxResults);
                 }
               }
               else {
@@ -1014,7 +1014,7 @@ $.fn.search = function(parameters) {
               html = template(response, fields);
             }
             else {
-              module.error(error.noTemplate, false);
+              module.errors(error.noTemplate, false);
             }
           }
           else if(settings.showNoResults) {
@@ -1077,8 +1077,8 @@ $.fn.search = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1295,12 +1295,12 @@ $.fn.search.settings = {
     pressed   : 'down'
   },
 
-  error : {
+  errors : {
     source          : 'Cannot search. No source used, and Semantic API module was not included',
     noResults       : 'Your search returned no results',
     logging         : 'Error in debug logging, exiting.',
     noEndpoint      : 'No search endpoint was specified',
-    noTemplate      : 'A valid template name was not specified.',
+    noTemplate      : 'A isValid template name was not specified.',
     oldSearchSyntax : 'searchFullText setting has been renamed fullTextSearch for consistency, please adjust your settings.',
     serverError     : 'There was an issue querying the server.',
     maxResults      : 'Results must be an array to use maxResults setting',

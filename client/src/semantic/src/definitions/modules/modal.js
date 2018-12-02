@@ -54,7 +54,7 @@ $.fn.modal = function(parameters) {
         selector        = settings.selector,
         className       = settings.className,
         namespace       = settings.namespace,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -116,7 +116,7 @@ $.fn.modal = function(parameters) {
               dimmerSettings = $.extend(true, defaultSettings, settings.dimmerSettings)
             ;
             if($.fn.dimmer === undefined) {
-              module.error(error.dimmer);
+              module.errors(error.dimmer);
               return;
             }
             module.debug('Creating dimmer');
@@ -194,7 +194,7 @@ $.fn.modal = function(parameters) {
             ;
           }
           else {
-            module.error(error.notFound, selector);
+            module.errors(error.notFound, selector);
           }
         },
 
@@ -386,7 +386,7 @@ $.fn.modal = function(parameters) {
                 ;
               }
               else {
-                module.error(error.noTransition);
+                module.errors(error.noTransition);
               }
             }
           }
@@ -434,7 +434,7 @@ $.fn.modal = function(parameters) {
               ;
             }
             else {
-              module.error(error.noTransition);
+              module.errors(error.noTransition);
             }
           }
         },
@@ -668,7 +668,7 @@ $.fn.modal = function(parameters) {
           },
           dimmerSettings: function() {
             if($.fn.dimmer === undefined) {
-              module.error(error.dimmer);
+              module.errors(error.dimmer);
               return;
             }
             var
@@ -816,8 +816,8 @@ $.fn.modal = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1013,7 +1013,7 @@ $.fn.modal.settings = {
     deny     : '.actions .negative, .actions .deny, .actions .cancel',
     modal    : '.ui.modal'
   },
-  error : {
+  errors : {
     dimmer    : 'UI Dimmer, a required component is not included in this page',
     method    : 'The method you called is not defined.',
     notFound  : 'The element you specified could not be found'

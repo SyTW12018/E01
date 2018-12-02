@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import {
   Header, Segment, Grid, Icon,
 } from 'semantic-ui-react';
@@ -29,7 +28,7 @@ export default () => (
           <Icon size='huge' color='orange' name='shield' />
           <Header inverted size='large' content='SECURE' />
           <p style={{ fontSize: '1.2em' }}>
-            videocon.io encrypts all connections and doesn't record any information
+            {"videocon.io encrypts all connections and doesn't record any information"}
           </p>
         </Grid.Column>
         <Grid.Column>

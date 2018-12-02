@@ -50,7 +50,7 @@ $.fn.tab = function(parameters) {
         className       = settings.className,
         metadata        = settings.metadata,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + settings.namespace,
         moduleNamespace = 'module-' + settings.namespace,
@@ -164,12 +164,12 @@ $.fn.tab = function(parameters) {
               if(parameters.onTabLoad) {
                 parameters.onLoad = parameters.onTabLoad;
                 delete parameters.onTabLoad;
-                module.error(error.legacyLoad, parameters.onLoad);
+                module.errors(error.legacyLoad, parameters.onLoad);
               }
               if(parameters.onTabInit) {
                 parameters.onFirstLoad = parameters.onTabInit;
                 delete parameters.onTabInit;
-                module.error(error.legacyInit, parameters.onFirstLoad);
+                module.errors(error.legacyInit, parameters.onFirstLoad);
               }
               settings = $.extend(true, {}, $.fn.tab.settings, parameters);
             }
@@ -179,7 +179,7 @@ $.fn.tab = function(parameters) {
         initializeHistory: function() {
           module.debug('Initializing page state');
           if( $.address === undefined ) {
-            module.error(error.state);
+            module.errors(error.state);
             return false;
           }
           else {
@@ -192,7 +192,7 @@ $.fn.tab = function(parameters) {
                 ;
               }
               else {
-                module.error(error.path);
+                module.errors(error.path);
                 return false;
               }
             }
@@ -401,7 +401,7 @@ $.fn.tab = function(parameters) {
               }
             }
             else {
-              module.error(error.missingTab, $module, $context, currentPath);
+              module.errors(error.missingTab, $module, $context, currentPath);
               return false;
             }
           });
@@ -530,7 +530,7 @@ $.fn.tab = function(parameters) {
               $tab.api(requestSettings);
             }
             else {
-              module.error(error.api);
+              module.errors(error.api);
             }
           }
         },
@@ -629,7 +629,7 @@ $.fn.tab = function(parameters) {
                 recursionDepth++;
                 return module.get.defaultPath(defaultTab);
               }
-              module.error(error.recursion);
+              module.errors(error.recursion);
             }
             else {
               module.debug('No default tabs found for', tabPath, $tabs);
@@ -744,8 +744,8 @@ $.fn.tab = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -831,7 +831,7 @@ $.fn.tab = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -919,7 +919,7 @@ $.fn.tab.settings = {
     determineTitle: function(tabArray) {} // returns page title for path
   },
 
-  error: {
+  errors: {
     api        : 'You attempted to load content without API module',
     method     : 'The method you called is not defined',
     missingTab : 'Activated tab cannot be found. Tabs are case-sensitive.',

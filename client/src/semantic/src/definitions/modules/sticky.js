@@ -42,7 +42,7 @@ $.fn.sticky = function(parameters) {
 
         className             = settings.className,
         namespace             = settings.namespace,
-        error                 = settings.error,
+        error                 = settings.errors,
 
         eventNamespace        = '.' + namespace,
         moduleNamespace       = 'module-' + namespace,
@@ -151,18 +151,18 @@ $.fn.sticky = function(parameters) {
             $context = $container;
           }
           if($context.length === 0) {
-            module.error(error.invalidContext, settings.context, $module);
+            module.errors(error.invalidContext, settings.context, $module);
             return;
           }
         },
 
         checkErrors: function() {
           if( module.is.hidden() ) {
-            module.error(error.visible, $module);
+            module.errors(error.visible, $module);
           }
           if(module.cache.element.height > module.cache.context.height) {
             module.reset();
-            module.error(error.elementSize, $module);
+            module.errors(error.elementSize, $module);
             return;
           }
         },
@@ -398,7 +398,7 @@ $.fn.sticky = function(parameters) {
             ;
             if(tagName === 'HTML' || tagName == 'body') {
               // this can trigger for too many reasons
-              //module.error(error.container, tagName, $module);
+              //module.errors(errors.container, tagName, $module);
               module.determineContainer();
             }
             else {
@@ -755,8 +755,8 @@ $.fn.sticky = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -938,7 +938,7 @@ $.fn.sticky.settings = {
   // Called when element reaches bottom of context
   onBottom       : function(){},
 
-  error         : {
+  errors         : {
     container      : 'Sticky element must be inside a relative container',
     visible        : 'Element is hidden, you must call refresh after element becomes visible. Use silent setting to surpress this warning in production.',
     method         : 'The method you called is not defined.',

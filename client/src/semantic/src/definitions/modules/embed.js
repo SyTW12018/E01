@@ -46,7 +46,7 @@ $.fn.embed = function(parameters) {
         selector        = settings.selector,
         className       = settings.className,
         sources         = settings.sources,
-        error           = settings.error,
+        error           = settings.errors,
         metadata        = settings.metadata,
         namespace       = settings.namespace,
         templates       = settings.templates,
@@ -345,7 +345,7 @@ $.fn.embed = function(parameters) {
               html       = templates.iframe(url, parameters);
             }
             else {
-              module.error(error.noURL, $module);
+              module.errors(error.noURL, $module);
             }
             return html;
           },
@@ -440,8 +440,8 @@ $.fn.embed = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -530,7 +530,7 @@ $.fn.embed = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -614,7 +614,7 @@ $.fn.embed.settings = {
     url         : 'url'
   },
 
-  error : {
+  errors : {
     noURL  : 'No URL specified',
     method : 'The method you called is not defined'
   },

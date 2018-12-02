@@ -56,7 +56,7 @@ $.fn.sidebar = function(parameters) {
         className       = settings.className,
         namespace       = settings.namespace,
         regExp          = settings.regExp,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -321,7 +321,7 @@ $.fn.sidebar = function(parameters) {
           layout: function() {
             if( $context.children(selector.pusher).length === 0 ) {
               module.debug('Adding wrapper element for sidebar');
-              module.error(error.pusher);
+              module.errors(error.pusher);
               $pusher = $('<div class="pusher" />');
               $context
                 .children()
@@ -333,7 +333,7 @@ $.fn.sidebar = function(parameters) {
             }
             if($module.nextAll(selector.pusher).length === 0 || $module.nextAll(selector.pusher)[0] !== $pusher[0]) {
               module.debug('Moved sidebar to correct parent element');
-              module.error(error.movedSidebar, element);
+              module.errors(error.movedSidebar, element);
               $module.detach().prependTo($context);
               module.refresh();
             }
@@ -358,7 +358,7 @@ $.fn.sidebar = function(parameters) {
             ;
           }
           else {
-            module.error(error.notFound, selector);
+            module.errors(error.notFound, selector);
           }
         },
 
@@ -370,7 +370,7 @@ $.fn.sidebar = function(parameters) {
           if(module.is.hidden()) {
             module.refreshSidebars();
             if(settings.overlay)  {
-              module.error(error.overlay);
+              module.errors(error.overlay);
               settings.transition = 'overlay';
             }
             module.refresh();
@@ -815,8 +815,8 @@ $.fn.sidebar = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -902,7 +902,7 @@ $.fn.sidebar = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -1019,7 +1019,7 @@ $.fn.sidebar.settings = {
     mobile       : /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/g
   },
 
-  error   : {
+  errors   : {
     method       : 'The method you called is not defined.',
     pusher       : 'Had to add pusher element. For optimal performance make sure body content is inside a pusher element',
     movedSidebar : 'Had to move sidebar. For optimal performance make sure sidebar and pusher are direct children of your body tag',

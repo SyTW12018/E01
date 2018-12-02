@@ -2,7 +2,7 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../server';
-import { cleanDatabase, prepareDatabase } from './TestHelper';
+import { cleanDatabase, prepareDatabase, loginAsAdmin } from './TestHelper';
 
 chai.use(chaiHttp);
 
@@ -13,57 +13,137 @@ before(prepareDatabase);
 beforeEach(cleanDatabase);
 
 describe('Temporal users', () => {
-  it('should add a temporal user when don\'t have auth token', (done) => {
-    chai.request(url)
-      .get('/api/users')
-      .end((err, res) => {
-        expect(res).to.have.cookie('authToken');
-        expect(res.body).to.have.property('users').to.has.length(4);
-        expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
-        expect(res).to.have.status(200);
-        done();
-      });
+  it('should add a temporal user when don\'t have auth token', async () => {
+    await chai.request(url).get('/users');
+    await loginAsAdmin(agent);
+
+    const res = await agent.get('/users');
+    expect(res).not.to.have.cookie('authToken');
+    expect(res.body).to.have.property('users').to.has.length(4);
+    const users = res.body.users.filter(user => user.role === 'temporalUser');
+    expect(users).to.has.length(1);
+    expect(res).to.have.status(200);
   });
 
-  it('should not add a temporal user when have auth token', (done) => {
-    agent.get('/api/users')
-      .end((err, res) => {
-        expect(res).to.have.cookie('authToken');
-        expect(res.body).to.have.property('users').to.has.length(4);
-        expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
-        expect(res).to.have.status(200);
+  it('should not add a temporal user when have auth token', async () => {
+    await loginAsAdmin(agent);
 
-        agent.get('/api/users')
-          .end((err, res) => {
-            expect(res).not.to.have.cookie('authToken');
-            expect(res.body).to.have.property('users').to.has.length(4);
-            expect(res.body.users[0]).to.have.property('registered').to.be.equal(false);
-            expect(res).to.have.status(200);
-            done();
-          });
-      });
+    const res = await agent.get('/users');
+    expect(res).not.to.have.cookie('authToken');
+    expect(res.body).to.have.property('users').to.has.length(3);
+    const users = res.body.users.filter(user => user.role === 'temporalUser');
+    expect(users).to.has.length(0);
+    expect(res).to.have.status(200);
   });
 });
 
 describe('Web tokens', () => {
-  it('should get auth token on valid request', (done) => {
-    chai.request(url)
-      .get('/api/users')
-      .end((err, res) => {
-        expect(res).to.have.cookie('authToken');
-        expect(res).to.have.status(200);
-        done();
-      });
+  it('should get auth token on valid request', async () => {
+    const res = await chai.request(url).get('/users');
+    expect(res).to.have.cookie('authToken');
+    expect(res).to.have.status(401);
   });
 
-  it('should get auth token on any request', (done) => {
-    chai.request(url)
-      .get('/ujbujvbuov')
-      .end((err, res) => {
-        expect(res).to.have.cookie('authToken');
-        expect(res).to.have.status(404);
-        done();
-      });
+  it('should get auth token on any request', async () => {
+    const res = await chai.request(url).get('/fasdasfg');
+    expect(res).to.have.cookie('authToken');
+    expect(res).to.have.status(404);
+  });
+
+  it('should not get auth token when have authToken', async () => {
+    await loginAsAdmin(agent);
+    const res = await agent.get('/users');
+    expect(res).to.not.have.cookie('authToken');
+    expect(res).to.have.status(200);
+  });
+});
+
+describe('Login', () => {
+  it('should login on valid request', async () => {
+    const res = await chai.request(url).post('/login').send({
+      user: {
+        email: 'alberto@alberto.com',
+        password: 'albertoalberto',
+      },
+    });
+    expect(res).to.have.cookie('authToken');
+    expect(res).to.have.status(200);
+  });
+
+  it('should not login on invalid request', async () => {
+    const res = await chai.request(url).post('/login').send({
+      user: {
+        email: 'alberto@alberto.com',
+        password: 'albertoalbert',
+      },
+    });
+    expect(res).to.have.status(401);
+  });
+});
+
+describe('Register', () => {
+  it('should register on valid request', async () => {
+    let res = await chai.request(url).post('/signup').send({
+      user: {
+        name: 'Maria',
+        email: 'maria@maria.com',
+        password: 'mariamaria',
+      },
+    });
+    expect(res).to.have.cookie('authToken');
+    expect(res).to.have.status(201);
+
+    await loginAsAdmin(agent);
+
+    res = await agent.get('/users');
+    expect(res.body).to.have.property('users').to.has.length(4);
+
+    res.body.users.forEach((user) => {
+      expect(user).to.have.property('name');
+      expect(user).to.have.property('email');
+      expect(user).to.have.property('role');
+
+      switch (user.name) {
+        case 'Maria':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        case 'Juan':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        case 'May':
+          expect(user.role).to.be.equal('admin');
+          break;
+        case 'Alberto':
+          expect(user.role).to.be.equal('registeredUser');
+          break;
+        default:
+          break;
+      }
+    });
+
+    expect(res).to.have.status(200);
+  });
+
+  it('should not register on invalid request', async () => {
+    const res = await chai.request(url).post('/signup').send({
+      user: {
+        name: 'Maria',
+        email: 'mariamaria.com',
+        password: 'mariamaria',
+      },
+    });
+    expect(res).to.have.status(400);
+  });
+
+  it('should not register on invalid request (same email)', async () => {
+    const res = await chai.request(url).post('/signup').send({
+      user: {
+        name: 'Maria',
+        email: 'may@may.com',
+        password: 'mariamaria',
+      },
+    });
+    expect(res).to.have.status(400);
   });
 });
 

@@ -1,14 +1,67 @@
-import React from 'react';
-import { Container, Header } from 'semantic-ui-react';
+import React, { Component } from 'react';
+import {
+  Container, Header, Input,
+} from 'semantic-ui-react';
+import WebSocket from '../WebSocket/WebSocket';
 
-const Room = () => (
-  <Container fluid>
+class Room extends Component {
+  constructor(props) {
+    super(props);
 
-    <Header>
-      ROOM
-    </Header>
+    this.state = {
+      connected: false,
+      messages: [],
+    };
+  }
 
-  </Container>
-);
+  onMessage = (message) => {
+    this.setState(state => ({ messages: [ ...state.messages, message ] }));
+  };
+
+  onConnected = () => {
+    this.setState(() => ({ connected: true }));
+  };
+
+  sendMessage = () => {
+    const { connected } = this.state;
+    if (connected) {
+      this.ws.send({
+        text: this.messageInput.value,
+      });
+    }
+  };
+
+  render() {
+    const { messages, connected } = this.state;
+    return (
+      <Container>
+        <WebSocket
+          onConnected={this.onConnected}
+          onData={this.onMessage}
+          channel='room'
+          ref={(ws) => { this.ws = ws; }}
+        />
+        <Header>
+          ROOM
+        </Header>
+        <Input
+          ref={(input) => { if (input) this.messageInput = input.inputRef; }}
+          placeholder='Message...'
+          action={{
+            loading: !connected, content: 'Send', onClick: this.sendMessage, primary: true,
+          }}
+        />
+        <div>
+          <ul>
+            {messages.map((msg, i) => (
+              <li key={i}>{msg.text}</li>
+            ))}
+          </ul>
+        </div>
+
+      </Container>
+    );
+  }
+}
 
 export default Room;

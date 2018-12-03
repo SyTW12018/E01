@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Container } from 'semantic-ui-react'
 import SemanticUIExample from '../SemanticUIExample/SemanticUIExample.js'
+//import ChatBox from '../ComponenteChats/components/ChatSection/ChatSection.js'
 // import logo from './logo.svg';
 import './LandingPage.css';
+import ChatSection from "../ComponenteChats/components/ChatSection/ChatSection";
 
 class LandingPage extends Component {
   render() {
@@ -21,7 +23,7 @@ class LandingPage extends Component {
             GitHub
           </a>
 		  <Container className='LandingPage-semantic-example'>
-			<SemanticUIExample />
+			<ChatSection />
 		  </Container>
         </header>
       </div>

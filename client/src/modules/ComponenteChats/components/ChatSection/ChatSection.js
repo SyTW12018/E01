@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Message from './Message.js';
 
 
 class ChatSection extends React.Component {
@@ -78,6 +79,23 @@ class ChatSection extends React.Component {
         return (
             <div className="Chatroom">
                 <h3>Chat</h3>
+                <div className="ui raised very padded text container segment">
+                    <ul className="ui list" ref="chats">
+                        {
+                            chats.map((chat) =>
+                                <Message chat={chat} user={username} />
+                            )
+                        }
+                    </ul>
+                    <form className="ui form" onSubmit={(e) => this.submitMessage(e)}>
+                        <div className="two fields">
+                            <input type="text" ref="msg" />
+                            <button type='submit' className='ui compact orange button'>
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         );
     }

@@ -42,7 +42,7 @@ if (process.env.NODE_ENV !== 'test') {
     })
     .catch((error) => {
       if (error) {
-        console.errors(`Cannot connect to MongoDB on ${mongoUrl}`);
+        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
         process.exit(1);
       }
     });

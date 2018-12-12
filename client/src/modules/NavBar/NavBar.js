@@ -6,7 +6,7 @@ import { AuthConsumer } from 'react-check-auth';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
-import Settings from './components/Settings/Settings.js'
+import SettingsForm from './components/SettingsForm/SettingsForm.js'
 import './NavBar.css';
 
 const NotLogged = refreshAuth => (
@@ -38,7 +38,7 @@ const Logged = (userInfo, refreshAuth) => (
     <Menu.Item >
       <Header inverted size='small'>
         <Header.Content>
-          <Settings/>
+          <SettingsForm refreshAuth={refreshAuth}/>
         </Header.Content>
       </Header>
     </Menu.Item>

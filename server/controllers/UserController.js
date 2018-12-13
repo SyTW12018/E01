@@ -3,6 +3,7 @@ import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
 import UserService from '../services/UserService';
 import User from '../models/User';
+import wrapAsync from '../utils/AsyncWrapper';
 
 /**
  * Get all users
@@ -76,9 +77,9 @@ async function updateUser(req, res) {
 }
 
 export default {
-  getUsers,
-  registerUser,
-  getUser,
-  deleteUser,
-  updateUser,
+  getUsers: wrapAsync(getUsers),
+  registerUser: wrapAsync(registerUser),
+  getUser: wrapAsync(getUser),
+  deleteUser: wrapAsync(deleteUser),
+  updateUser: wrapAsync(updateUser),
 };

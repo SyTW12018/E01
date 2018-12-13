@@ -1,4 +1,5 @@
 import RoomService from '../services/RoomService';
+import wrapAsync from '../utils/AsyncWrapper';
 
 /**
  * Get all rooms
@@ -66,8 +67,8 @@ async function deleteRoom(req, res) {
 }
 
 export default {
-  getRooms,
-  joinRoom,
-  getRoom,
-  deleteRoom,
+  getRooms: wrapAsync(getRooms),
+  joinRoom: wrapAsync(joinRoom),
+  getRoom: wrapAsync(getRoom),
+  deleteRoom: wrapAsync(deleteRoom),
 };

@@ -12,10 +12,10 @@ before(prepareDatabase);
 beforeEach(cleanDatabase);
 
 describe('Users', () => {
-  it('should get all users', async () => {
+  it('should get all usersRoutes', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/users');
+    const res = await agent.get('/usersRoutes');
     expect(res.body).to.have.property('users').to.has.length(3);
     const registeredUsers = res.body.users.filter(user => user.role === 'registeredUser');
     expect(registeredUsers).to.has.length(2);
@@ -27,7 +27,7 @@ describe('Users', () => {
   it('should get one user', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/users/cjoofresr00001ktst8obwhbs');
+    const res = await agent.get('/usersRoutes/cjoofresr00001ktst8obwhbs');
     expect(res.body).to.have.property('user');
     expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
     expect(res.body.user).to.have.property('name').to.be.equal('May');
@@ -41,7 +41,7 @@ describe('Users', () => {
   it('should create a user', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.post('/users').send({
+    const res = await agent.post('/usersRoutes').send({
       user: {
         name: 'Monica',
         email: 'monica@monica.com',
@@ -55,7 +55,7 @@ describe('Users', () => {
   it('should update a user', async () => {
     await loginAsAdmin(agent);
 
-    let res = await agent.put('/users/cjoogdu2x0000gctsqv3m95nd').send({
+    let res = await agent.put('/usersRoutes/cjoogdu2x0000gctsqv3m95nd').send({
       user: {
         name: 'Monica',
         email: 'monica@monica.com',
@@ -65,7 +65,7 @@ describe('Users', () => {
     expect(res.body).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
     expect(res).to.have.status(200);
 
-    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    res = await agent.get('/usersRoutes/cjoogdu2x0000gctsqv3m95nd');
     expect(res.body).to.have.property('user');
     expect(res.body.user).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
     expect(res.body.user).to.have.property('name').to.be.equal('Monica');
@@ -79,18 +79,18 @@ describe('Users', () => {
   it('should delete a user', async () => {
     await loginAsAdmin(agent);
 
-    let res = await agent.delete('/users/cjoogdu2x0000gctsqv3m95nd');
+    let res = await agent.delete('/usersRoutes/cjoogdu2x0000gctsqv3m95nd');
     expect(res.body).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
     expect(res).to.have.status(200);
 
-    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    res = await agent.get('/usersRoutes/cjoogdu2x0000gctsqv3m95nd');
     expect(res).to.have.status(404);
   });
 
   it('should not get a user when the request is invalid', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/users/cjoofresr00001ktst8obws');
+    const res = await agent.get('/usersRoutes/cjoofresr00001ktst8obws');
     expect(res.body).to.have.property('errors').to.has.length(1);
     expect(res).to.have.status(400);
   });
@@ -98,7 +98,7 @@ describe('Users', () => {
   it('should not create a user when the request is invalid', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.post('/users').send({
+    const res = await agent.post('/usersRoutes').send({
       user: {
         name: 'm',
         email: 'monicamonica.com',
@@ -112,7 +112,7 @@ describe('Users', () => {
   it('should not update a user when the request is invalid', async () => {
     await loginAsAdmin(agent);
 
-    let res = await agent.put('/users/cjoofresr00001ktst8obwhbs').send({
+    let res = await agent.put('/usersRoutes/cjoofresr00001ktst8obwhbs').send({
       user: {
         name: 'm',
         email: 'monicamonica.com',
@@ -122,7 +122,7 @@ describe('Users', () => {
     expect(res.body).to.have.property('errors').to.has.length(3);
     expect(res).to.have.status(400);
 
-    res = await agent.get('/users/cjoofresr00001ktst8obwhbs');
+    res = await agent.get('/usersRoutes/cjoofresr00001ktst8obwhbs');
     expect(res.body).to.have.property('user');
     expect(res.body.user).to.have.property('cuid').to.be.equal('cjoofresr00001ktst8obwhbs');
     expect(res.body.user).to.have.property('name').to.be.equal('May');
@@ -136,7 +136,7 @@ describe('Users', () => {
   it('should get 404 when user does not exist', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/users/cjoofresr00001ktst8obphbl');
+    const res = await agent.get('/usersRoutes/cjoofresr00001ktst8obphbl');
     expect(res).to.have.status(404);
   });
 });

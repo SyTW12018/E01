@@ -6,7 +6,7 @@ import User from '../models/User';
 import wrapAsync from '../utils/AsyncWrapper';
 
 /**
- * Get all users
+ * Get all usersRoutes
  * @param req
  * @param res
  * @returns void

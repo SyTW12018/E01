@@ -7,26 +7,26 @@ import RoleRequired from '../middlewares/RoleRequired';
 
 const router = new Router();
 
-// Get all users
-router.get('/users', RoleRequired('admin'), UserController.getUsers);
+// Get all usersRoutes
+router.get('/usersRoutes', RoleRequired('admin'), UserController.getUsers);
 
 // Get one user by cuid
-router.get('/users/:cuid',
+router.get('/usersRoutes/:cuid',
   [ RoleRequired('admin'), cuidValidator ],
   UserController.getUser);
 
 // Add a new user
-router.post('/users',
+router.post('/usersRoutes',
   [ RoleRequired('admin'), registerUserValidator ],
   UserController.registerUser);
 
 // Update a user
-router.put('/users/:cuid',
+router.put('/usersRoutes/:cuid',
   [ RoleRequired('admin'), cuidValidator, updateUserValidator ],
   UserController.updateUser);
 
 // Delete a user by cuid
-router.delete('/users/:cuid',
+router.delete('/usersRoutes/:cuid',
   [ RoleRequired('admin'), cuidValidator ],
   UserController.deleteUser);
 

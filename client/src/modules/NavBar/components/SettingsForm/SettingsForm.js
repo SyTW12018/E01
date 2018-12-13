@@ -67,6 +67,7 @@ export default class SettingsForm extends Component {
       isModalOpen, isValid, isLoading, errors,
     } = this.state;
 
+
     return (
       <Modal
         trigger={<Button onClick={() => this.setState({ isModalOpen: true })} inverted>Settings</Button>}

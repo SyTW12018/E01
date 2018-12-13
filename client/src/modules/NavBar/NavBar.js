@@ -1,12 +1,12 @@
 import {
-  Container, Menu, Header, Loader, Dimmer, Icon,
+  Container, Menu, Header, Loader, Dimmer, Icon, Dropdown,
 } from 'semantic-ui-react';
 import React from 'react';
 import { AuthConsumer } from 'react-check-auth';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
-import SettingsForm from './components/SettingsForm/SettingsForm.js'
+import SettingsForm from './components/SettingsForm/SettingsForm.js';
 import './NavBar.css';
 
 const NotLogged = refreshAuth => (
@@ -28,6 +28,7 @@ const Logged = (userInfo, refreshAuth) => (
   <Menu
     size='large'
     secondary
+    inverted
   >
     <Menu.Item position='right'>
       <Header inverted size='small'>
@@ -35,13 +36,36 @@ const Logged = (userInfo, refreshAuth) => (
         <Header.Content>{userInfo.name}</Header.Content>
       </Header>
     </Menu.Item>
-    <Menu.Item >
+
+    <Menu.Item>
+      <Icon name='cog' size='large' />
+
+        <Dropdown inline text='Settings'>
+          <Dropdown.Menu>
+            <Dropdown.Item text='New' />
+            <Dropdown.Item text='Open...' description='ctrl + o' />
+            <Dropdown.Item text='Save as...' description='ctrl + s' />
+            <Dropdown.Item text='Rename' description='ctrl + r' />
+            <Dropdown.Item text='Make a copy' />
+            <Dropdown.Item icon='folder' text='Move to folder' />
+            <Dropdown.Item icon='trash' text='Move to trash' />
+            <Dropdown.Divider />
+            <Dropdown.Item text='Download As...' />
+            <Dropdown.Item text='Publish To Web' />
+            <Dropdown.Item text='E-mail Collaborators' />
+          </Dropdown.Menu>
+        </Dropdown>
+    </Menu.Item>
+
+    {/*
+    <Menu.Item>
       <Header inverted size='small'>
         <Header.Content>
           <SettingsForm refreshAuth={refreshAuth}/>
         </Header.Content>
       </Header>
     </Menu.Item>
+    */}
 
     <Menu.Item>
       <LogOutButton refreshAuth={refreshAuth} />

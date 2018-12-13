@@ -4,6 +4,8 @@ import { Form } from 'formsy-semantic-ui-react';
 import { Message, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styles from './RoomNameInput.css';
+import removeAccents from  'remove-accents'
+var stripchar = require('stripchar').StripChar;
 
 export default class RoomNameInput extends Component {
   static propTypes = {
@@ -14,12 +16,26 @@ export default class RoomNameInput extends Component {
     super(props);
 
     this.state = {
+      rommName: '',
       isLoading: false,
       errors: [],
     };
 
     this.form = null;
     this.refreshAuth = props.refreshAuth;
+  }
+  
+  formateo = (str) => {
+    str = str.toLowerCase();
+    str = str.replace(/ /g,"-");
+    str = removeAccents(str);
+    str = stripchar.RSExceptUnsAlpNum(str, '-');
+    return str;
+  }
+
+  handleChange = (e, { name, value }) => {
+    let formatedNameRoom = this.formateo(value); 
+    this.setState({ [name]: formatedNameRoom })
   }
   
   register = async (formData) => {
@@ -56,7 +72,7 @@ export default class RoomNameInput extends Component {
 
   render() {
     const {
-      isLoading, errors,
+      roomName, isLoading, errors,
     } = this.state;
 
     return (
@@ -78,14 +94,14 @@ export default class RoomNameInput extends Component {
               icon='video camera'
               iconPosition='left'
               placeholder='Room Name'
+              value={roomName}
               action={{ icon: 'video camera', color: 'orange', className: styles.roomNameInputButton }}
-              validations={{
-                isAlphanumeric: true,
-              }}
+              onChange={this.handleChange}
               errorLabel={<Message warning />}
               validationErrors={{
-                isAlphanumeric: 'Enter a valid Room Name',
+                isAlphanumeric: 'Enter a valid Room Name, without special characters, accent and spaces',
                 isDefaultRequiredValue: 'Room Name is required',
+
               }}
             />
 

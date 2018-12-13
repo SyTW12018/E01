@@ -16,7 +16,6 @@ export default class RoomNameInput extends Component {
     super(props);
 
     this.state = {
-      rommName: '',
       isLoading: false,
       errors: [],
     };

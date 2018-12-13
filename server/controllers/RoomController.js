@@ -2,7 +2,7 @@ import RoomService from '../services/RoomService';
 import wrapAsync from '../utils/AsyncWrapper';
 
 /**
- * Get all roomsRoutes
+ * Get all rooms
  * @param req
  * @param res
  * @returns void

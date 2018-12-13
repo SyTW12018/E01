@@ -6,18 +6,18 @@ import roomNameValidator from '../validators/RoomNameValidator';
 const router = new Router();
 
 // Join a room
-router.post('/roomsRoutes/:name', roomNameValidator, RoomController.joinRoom);
+router.post('/rooms/:name', roomNameValidator, RoomController.joinRoom);
 
-// Get all roomsRoutes
-router.get('/roomsRoutes', RoleRequired('admin'), RoomController.getRooms);
+// Get all rooms
+router.get('/rooms', RoleRequired('admin'), RoomController.getRooms);
 
 // Get one room by name
-router.get('/roomsRoutes/:name',
+router.get('/rooms/:name',
   [ RoleRequired('admin'), roomNameValidator ],
   RoomController.getRoom);
 
 // Delete a room
-router.delete('/roomsRoutes/:name',
+router.delete('/rooms/:name',
   [ RoleRequired('admin'), roomNameValidator ],
   RoomController.deleteRoom);
 

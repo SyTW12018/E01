@@ -1,7 +1,7 @@
 let roomsStorage = [];
 
 /**
- * Get all roomsRoutes
+ * Get all rooms
  * @returns {Promise<Array>}
  */
 async function getRooms() {
@@ -12,7 +12,7 @@ async function getRooms() {
  * Create a room
  * @param name
  * @param owner
- * @returns {Promise<{name: string, usersRoutes: {owner: boolean, cuid: string}[], dateAdded: Date}>}
+ * @returns {Promise<{name: string, users: {owner: boolean, cuid: string}[], dateAdded: Date}>}
  */
 async function createRoom(name, owner) {
   const room = await getRoom(name);

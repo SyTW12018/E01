@@ -12,12 +12,12 @@ const agent = chai.request.agent(app);
 before(prepareDatabase);
 beforeEach(cleanDatabase);
 
-describe('Temporal usersRoutes', () => {
+describe('Temporal users', () => {
   it('should add a temporal user when don\'t have auth token', async () => {
-    await chai.request(url).get('/usersRoutes');
+    await chai.request(url).get('/users');
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/usersRoutes');
+    const res = await agent.get('/users');
     expect(res).not.to.have.cookie('authToken');
     expect(res.body).to.have.property('users').to.has.length(4);
     const users = res.body.users.filter(user => user.role === 'temporalUser');
@@ -28,7 +28,7 @@ describe('Temporal usersRoutes', () => {
   it('should not add a temporal user when have auth token', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/usersRoutes');
+    const res = await agent.get('/users');
     expect(res).not.to.have.cookie('authToken');
     expect(res.body).to.have.property('users').to.has.length(3);
     const users = res.body.users.filter(user => user.role === 'temporalUser');
@@ -39,7 +39,7 @@ describe('Temporal usersRoutes', () => {
 
 describe('Web tokens', () => {
   it('should get auth token on valid request', async () => {
-    const res = await chai.request(url).get('/usersRoutes');
+    const res = await chai.request(url).get('/users');
     expect(res).to.have.cookie('authToken');
     expect(res).to.have.status(401);
   });
@@ -52,7 +52,7 @@ describe('Web tokens', () => {
 
   it('should not get auth token when have authToken', async () => {
     await loginAsAdmin(agent);
-    const res = await agent.get('/usersRoutes');
+    const res = await agent.get('/users');
     expect(res).to.not.have.cookie('authToken');
     expect(res).to.have.status(200);
   });
@@ -95,7 +95,7 @@ describe('Register', () => {
 
     await loginAsAdmin(agent);
 
-    res = await agent.get('/usersRoutes');
+    res = await agent.get('/users');
     expect(res.body).to.have.property('users').to.has.length(4);
 
     res.body.users.forEach((user) => {

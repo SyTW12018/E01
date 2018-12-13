@@ -14,7 +14,7 @@ beforeEach(cleanDatabase);
 
 describe('Rooms', () => {
   it('should create a room', async () => {
-    const res = await chai.request(url).post('/roomsRoutes/room_1');
+    const res = await chai.request(url).post('/rooms/room_1');
     expect(res.body).to.have.property('room');
     expect(res.body.room).to.have.property('name').to.be.equal('room_1');
     expect(res.body.room).to.have.property('users').to.has.length(1);
@@ -23,7 +23,7 @@ describe('Rooms', () => {
   });
 
   it('should join a room', async () => {
-    const res = await chai.request(url).post('/roomsRoutes/room_1');
+    const res = await chai.request(url).post('/rooms/room_1');
     expect(res.body).to.have.property('room');
     expect(res.body.room).to.have.property('name').to.be.equal('room_1');
     expect(res.body.room).to.have.property('users').to.has.length(2);
@@ -32,10 +32,10 @@ describe('Rooms', () => {
     expect(res).to.have.status(200);
   });
 
-  it('should get all roomsRoutes', async () => {
+  it('should get all rooms', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/roomsRoutes');
+    const res = await agent.get('/rooms');
     expect(res.body).to.have.property('rooms').to.has.length(1);
     expect(res.body.rooms[0]).to.have.property('name').to.be.equal('room_1');
     expect(res).to.have.status(200);
@@ -44,7 +44,7 @@ describe('Rooms', () => {
   it('should get one room', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/roomsRoutes/room_1');
+    const res = await agent.get('/rooms/room_1');
     expect(res.body).to.have.property('room');
     expect(res.body.room).to.have.property('name').to.be.equal('room_1');
     expect(res.body.room).to.have.property('users').to.has.length(2);
@@ -54,14 +54,14 @@ describe('Rooms', () => {
   it('should get 404', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.get('/roomsRoutes/room_2');
+    const res = await agent.get('/rooms/room_2');
     expect(res).to.have.status(404);
   });
 
   it('should delete a room', async () => {
     await loginAsAdmin(agent);
 
-    const res = await agent.delete('/roomsRoutes/room_1');
+    const res = await agent.delete('/rooms/room_1');
     expect(res.body).to.have.property('room');
     expect(res.body.room).to.have.property('name').to.be.equal('room_1');
     expect(res).to.have.status(200);

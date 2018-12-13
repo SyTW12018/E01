@@ -15,7 +15,7 @@ function parseUser(user) {
 }
 
 /**
- * Get all temporal usersRoutes
+ * Get all temporal users
  * @returns {Promise<Array>}
  */
 async function getTemporalUsers() {
@@ -23,7 +23,7 @@ async function getTemporalUsers() {
 }
 
 /**
- * Get all registered usersRoutes
+ * Get all registered users
  * @returns {Promise}
  */
 async function getRegisteredUsers() {
@@ -34,7 +34,7 @@ async function getRegisteredUsers() {
 }
 
 /**
- * Get all usersRoutes
+ * Get all users
  * @returns {Promise<Array>}
  */
 async function getUsers() {
@@ -63,7 +63,7 @@ async function addTemporalUser() {
 }
 
 /**
- * Delete all temporal usersRoutes
+ * Delete all temporal users
  * @returns {Promise<void>}
  */
 async function removeTemporalUsers() {

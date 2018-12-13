@@ -12,6 +12,8 @@ import methodOverride from 'method-override';
 import users from './routes/UserRoutes';
 import rooms from './routes/RoomRoutes';
 import auth, { login, register, getCurrentUser } from './middlewares/AuthMiddleware';
+import loginValidator from './validators/LoginValidator';
+import registerUserValidator from './validators/RegisterUserValidator';
 
 const app = express();
 dotenv.config();
@@ -25,8 +27,8 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(cookieParser());
 app.use(methodOverride());
 app.use(auth());
-app.post('/login', login());
-app.post('/signup', register());
+app.post('/login', loginValidator, login());
+app.post('/signup', registerUserValidator, register());
 app.get('/user', getCurrentUser());
 
 // Set native promises as mongoose promise

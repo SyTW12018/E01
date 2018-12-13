@@ -52,9 +52,30 @@ async function deleteRoom(name) {
   return { name };
 }
 
+/**
+ * Update a room
+ * @param name
+ * @param newRoom
+ * @returns {Promise<*>}
+ */
+async function updateRoom(name, newRoom) {
+  const oldRoom = await getRoom(name);
+
+  if (!oldRoom) {
+    return null;
+  }
+
+  // TODO validate newRoom, throw if not valid, ex. is full
+
+  roomsStorage = roomsStorage.filter(room => room.name !== name);
+  roomsStorage.push(newRoom);
+  return { newRoom };
+}
+
 export default {
   getRooms,
   createRoom,
   getRoom,
   deleteRoom,
+  updateRoom,
 };

@@ -27,7 +27,7 @@ export default class RoomNameInput extends Component {
     this.refreshAuth = props.refreshAuth;
   }
   
-  formateo = (str) => {
+  formatName = (str) => {
     str = str.toLowerCase();
     str = str.replace(/ /g,"_");
     str = removeAccents(str);
@@ -36,7 +36,7 @@ export default class RoomNameInput extends Component {
   }
 
   handleChange = (e, { name, value }) => {
-    let formatedNameRoom = this.formateo(value); 
+    let formatedNameRoom = this.formatName(value); 
     this.setState({ roomName: formatedNameRoom })
   }
   

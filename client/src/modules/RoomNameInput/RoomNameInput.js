@@ -5,7 +5,8 @@ import { Message, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styles from './RoomNameInput.css';
 import removeAccents from  'remove-accents'
-var stripchar = require('stripchar').StripChar;
+import { Redirect } from 'react-router'
+import { StripChar } from 'stripchar'
 
 export default class RoomNameInput extends Component {
   static propTypes = {
@@ -16,6 +17,8 @@ export default class RoomNameInput extends Component {
     super(props);
 
     this.state = {
+      roomName: '',
+      redirect: false,
       isLoading: false,
       errors: [],
     };
@@ -26,15 +29,15 @@ export default class RoomNameInput extends Component {
   
   formateo = (str) => {
     str = str.toLowerCase();
-    str = str.replace(/ /g,"-");
+    str = str.replace(/ /g,"_");
     str = removeAccents(str);
-    str = stripchar.RSExceptUnsAlpNum(str, '-');
+    str = StripChar.RSExceptUnsAlpNum(str, '_');
     return str;
   }
 
   handleChange = (e, { name, value }) => {
     let formatedNameRoom = this.formateo(value); 
-    this.setState({ [name]: formatedNameRoom })
+    this.setState({ roomName: formatedNameRoom })
   }
   
   register = async (formData) => {
@@ -42,13 +45,9 @@ export default class RoomNameInput extends Component {
 
     let errors = [];
     try {
-      const result = await axios.post('/room', {
-        room: {
-          roomName: formData.roomName,
-        },
-      });
-      if (result.status === 201) {
-        this.refreshAuth();
+      const result = await axios.post(`/rooms/${formData.roomName}`);
+      if (result.status === 201 || result.status === 200) {
+          this.setState({ redirect: true })
         return;
       }
     } catch (e) {
@@ -74,47 +73,54 @@ export default class RoomNameInput extends Component {
       roomName, isLoading, errors,
     } = this.state;
 
-    return (
+    if(this.state.redirect){
+      return (
+        <Redirect to={`/room/${this.state.roomName}`} />
+      )
+    } else {
 
-      <Grid verticalAlign='middle'>
-        <Grid.Column>
-          <Form
-            warning
-            loading={isLoading}
-            onValidSubmit={this.register}
-            onValid={() => this.setState({ isValid: true })}
-            onInvalid={() => this.setState({ isValid: false })}
-            ref={(ref) => { this.form = ref; }}
-          >
-            <Form.Input
-              className='hiddenLabel'
-              name='roomName'
-              size='huge'
-              icon='video camera'
-              iconPosition='left'
-              placeholder='Room Name'
-              value={roomName}
-              action={{ icon: 'video camera', color: 'orange', className: styles.roomNameInputButton }}
-              onChange={this.handleChange}
-              errorLabel={<Message warning />}
-              validationErrors={{
-                isAlphanumeric: 'Enter a valid Room Name, without special characters, accent and spaces',
-                isDefaultRequiredValue: 'Room Name is required',
+      return (
 
-              }}
-            />
+        <Grid verticalAlign='middle'>
+          <Grid.Column>
+            <Form
+              warning
+              loading={isLoading}
+              onValidSubmit={this.register}
+              onValid={() => this.setState({ isValid: true })}
+              onInvalid={() => this.setState({ isValid: false })}
+              ref={(ref) => { this.form = ref; }}
+            >
+              <Form.Input
+                className='hiddenLabel'
+                name='roomName'
+                size='huge'
+                icon='video camera'
+                iconPosition='left'
+                placeholder='Room Name'
+                value={roomName}
+                action={{ icon: 'video camera', color: 'orange', className: styles.roomNameInputButton }}
+                onChange={this.handleChange}
+                errorLabel={<Message warning />}
+                validationErrors={{
+                  isAlphanumeric: 'Enter a valid Room Name, without special characters, accent and spaces',
+                  isDefaultRequiredValue: 'Room Name is required',
 
-            { errors.length > 0 ? (
-              <Message
-                negative
-                header="Can't create a new room!"
-                list={errors}
+                }}
               />
-            ) : (null)}
 
-          </Form>
-        </Grid.Column>
-      </Grid>
-    );
+              { errors.length > 0 ? (
+                <Message
+                  negative
+                  header="Can't create a new room!"
+                  list={errors}
+                />
+              ) : (null)}
+
+            </Form>
+          </Grid.Column>
+        </Grid>
+      );
+    }
   }
 }

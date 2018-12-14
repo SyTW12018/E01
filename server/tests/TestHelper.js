@@ -8,6 +8,7 @@ const mockgoose = new Mockgoose(mongoose);
 async function prepareDatabase() {
   await mockgoose.prepareStorage();
   await mongoose.connect('mongodb://videocon.io/test', { useNewUrlParser: true });
+  // await mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
 }
 
 async function cleanDatabase() {

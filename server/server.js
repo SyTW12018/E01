@@ -9,9 +9,10 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import methodOverride from 'method-override';
-import users from './routes/UserRoutes';
-import rooms from './routes/RoomRoutes';
-import auth, { login, register, getCurrentUser } from './middlewares/AuthMiddleware';
+import usersRoutes from './routes/UserRoutes';
+import roomsRoutes from './routes/RoomRoutes';
+import authRoutes from './routes/AuthRoutes';
+import auth from './middlewares/AuthMiddleware';
 
 const app = express();
 dotenv.config();
@@ -25,9 +26,6 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(cookieParser());
 app.use(methodOverride());
 app.use(auth());
-app.post('/login', login());
-app.post('/signup', register());
-app.get('/user', getCurrentUser());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
@@ -42,14 +40,15 @@ if (process.env.NODE_ENV !== 'test') {
     })
     .catch((error) => {
       if (error) {
-        console.errors(`Cannot connect to MongoDB on ${mongoUrl}`);
+        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
         process.exit(1);
       }
     });
 }
 
-app.use('/', users);
-app.use('/', rooms);
+app.use('/', authRoutes);
+app.use('/', usersRoutes);
+app.use('/', roomsRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

@@ -1,8 +1,5 @@
-import cuid from 'cuid';
-import slug from 'limax';
-import sanitizeHtml from 'sanitize-html';
-
-// TODO almacenar las salas en memoria siguiendo el modelo propuesto
+import RoomService from '../services/RoomService';
+import wrapAsync from '../utils/AsyncWrapper';
 
 /**
  * Get all rooms
@@ -10,20 +7,37 @@ import sanitizeHtml from 'sanitize-html';
  * @param res
  * @returns void
  */
-function getRooms(req, res) {
-  // TODO obtener salas
-  res.json({ errors: 'not implemented yet' });
+async function getRooms(req, res) {
+  const rooms = await RoomService.getRooms();
+  return res.status(200).json({ rooms });
 }
 
 /**
- * Create a room
+ * Join a room
  * @param req
  * @param res
  * @returns void
  */
-function createRoom(req, res) {
-  // TODO crear sala
-  res.json({ errors: 'not implemented yet' });
+async function joinRoom(req, res) {
+  const roomName = req.params.name;
+
+  const room = await RoomService.getRoom(roomName);
+  if (room) {
+    if (room.users.find(user => user.cuid === req.user.cuid)) {
+      return res.status(200).json({ room });
+    }
+
+    room.users.push({ cuid: req.user.cuid, owner: false });
+    try {
+      await RoomService.updateRoom(roomName, room);
+    } catch (error) {
+      return res.status(202).json({ errors: [ 'The room is full' ] });
+    }
+    return res.status(200).json({ room });
+  }
+
+  const newRoom = await RoomService.createRoom(roomName, req.user);
+  return res.status(201).json({ room: newRoom });
 }
 
 /**
@@ -32,9 +46,11 @@ function createRoom(req, res) {
  * @param res
  * @returns void
  */
-function getRoom(req, res) {
-  // TODO obtener una sala por su nombre
-  res.json({ errors: 'not implemented yet' });
+async function getRoom(req, res) {
+  const room = await RoomService.getRoom(req.params.name);
+  if (room) return res.status(200).json({ room });
+
+  return res.status(404).json({ errors: [ 'The room doesn\'t exist' ] });
 }
 
 /**
@@ -43,14 +59,16 @@ function getRoom(req, res) {
  * @param res
  * @returns void
  */
-function deleteRoom(req, res) {
-  // TODO eliminar sala
-  res.json({ errors: 'not implemented yet' });
+async function deleteRoom(req, res) {
+  const room = await RoomService.deleteRoom(req.params.name);
+  if (room) return res.status(200).json({ room });
+
+  return res.status(404).json({ errors: [ 'The room doesn\'t exist' ] });
 }
 
 export default {
-  getRooms,
-  createRoom,
-  getRoom,
-  deleteRoom,
+  getRooms: wrapAsync(getRooms),
+  joinRoom: wrapAsync(joinRoom),
+  getRoom: wrapAsync(getRoom),
+  deleteRoom: wrapAsync(deleteRoom),
 };

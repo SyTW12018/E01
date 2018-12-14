@@ -1,8 +1,9 @@
 import cuid from 'cuid';
 import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
-import UsersService from '../services/UserService';
+import UserService from '../services/UserService';
 import User from '../models/User';
+import wrapAsync from '../utils/AsyncWrapper';
 
 /**
  * Get all users
@@ -11,12 +12,8 @@ import User from '../models/User';
  * @returns void
  */
 async function getUsers(req, res) {
-  try {
-    const users = await UsersService.getUsers();
-    return res.json({ users });
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+  const users = await UserService.getUsers();
+  return res.status(200).json({ users });
 }
 
 /**
@@ -36,12 +33,8 @@ async function registerUser(req, res) {
   newUser.slug = slug(newUser.name.toLowerCase(), { lowercase: true });
   newUser.cuid = cuid();
 
-  try {
-    const user = await UsersService.registerUser(newUser);
-    return res.status(201).json(user);
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+  const user = await UserService.registerUser(newUser);
+  return res.status(201).json(user);
 }
 
 /**
@@ -51,15 +44,11 @@ async function registerUser(req, res) {
  * @returns void
  */
 async function getUser(req, res) {
-  try {
-    const user = await UsersService.getUser(req.params.cuid);
-    if (!user) {
-      return res.status(404).send({ user });
-    }
-    return res.json({ user });
-  } catch (err) {
-    return res.status(500).send(err);
+  const user = await UserService.getUser(req.params.cuid);
+  if (!user) {
+    return res.status(404).send({ user });
   }
+  return res.status(200).json({ user });
 }
 
 /**
@@ -69,12 +58,8 @@ async function getUser(req, res) {
  * @returns void
  */
 async function deleteUser(req, res) {
-  try {
-    const result = await UsersService.deleteUser(req.params.cuid);
-    return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+  const result = await UserService.deleteUser(req.params.cuid);
+  return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
 }
 
 /**
@@ -87,18 +72,14 @@ async function updateUser(req, res) {
   const { user } = req.body;
   user.cuid = req.params.cuid;
   if (user.name) user.slug = slug(user.name.toLowerCase(), { lowercase: true });
-  try {
-    const result = await UsersService.updateUser(user);
-    return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+  const result = await UserService.updateUser(user);
+  return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
 }
 
 export default {
-  getUsers,
-  registerUser,
-  getUser,
-  deleteUser,
-  updateUser,
+  getUsers: wrapAsync(getUsers),
+  registerUser: wrapAsync(registerUser),
+  getUser: wrapAsync(getUser),
+  deleteUser: wrapAsync(deleteUser),
+  updateUser: wrapAsync(updateUser),
 };

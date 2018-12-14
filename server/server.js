@@ -2,7 +2,6 @@
 
 import path from 'path';
 import express from 'express';
-import sockjs from 'sockjs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
@@ -13,6 +12,7 @@ import usersRoutes from './routes/UserRoutes';
 import roomsRoutes from './routes/RoomRoutes';
 import authRoutes from './routes/AuthRoutes';
 import auth from './middlewares/AuthMiddleware';
+import createWSServer from './controllers/WebSocketController';
 
 const app = express();
 dotenv.config();
@@ -36,7 +36,7 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/videocon';
 if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(mongoUrl, { useNewUrlParser: true })
     .then(() => {
-      console.log(`MongoDB connection open to ${mongoUrl}`);
+      if (process.env.DEBUG) console.log(`MongoDB connection open to ${mongoUrl}`);
     })
     .catch((error) => {
       if (error) {
@@ -76,17 +76,6 @@ const server = app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
 
-// WebSocket server
-const wsServer = sockjs.createServer();
-wsServer.on('connection', (connection) => {
-  console.log('Connected client');
-
-  connection.on('data', (msg) => {
-    console.log(`Data: ${msg}`);
-    connection.write(msg);
-  });
-});
-
-wsServer.installHandlers(server, { prefix: '/ws' });
+createWSServer(server);
 
 export default app;

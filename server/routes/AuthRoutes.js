@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import auth, { login, register, getCurrentUser } from '../middlewares/AuthMiddleware';
-import RoleRequired from '../middlewares/RoleRequired';
+import { login, register, getCurrentUser } from '../middlewares/AuthMiddleware';
 import loginValidator from '../validators/LoginValidator';
 import registerUserValidator from '../validators/RegisterUserValidator';
 

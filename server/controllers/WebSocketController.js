@@ -8,16 +8,18 @@ const onConnection = (conn) => {
 
         if (dataObj && dataObj.authToken) {
           // TODO autentificar
+
         } else {
-          throw new Error('');
+          return conn.write(JSON.stringify({ errors: [ 'Authentication needed' ] }));
         }
 
-
-        conn.write(JSON.stringify(dataObj));
+        return conn.write(JSON.stringify(dataObj));
       } catch (error) {
-        conn.write(JSON.stringify({ errors: [ error.message ] }));
+        return conn.write(JSON.stringify({ errors: [ error.message ] }));
       }
     }
+
+    return null;
   });
 };
 

@@ -47,7 +47,7 @@ $.fn.popup = function(parameters) {
 
         selector           = settings.selector,
         className          = settings.className,
-        error              = settings.error,
+        error              = settings.errors,
         metadata           = settings.metadata,
         namespace          = settings.namespace,
 
@@ -439,7 +439,7 @@ $.fn.popup = function(parameters) {
               ;
             }
             else {
-              module.error(error.noTransition);
+              module.errors(error.noTransition);
             }
           },
           hide: function(callback) {
@@ -466,7 +466,7 @@ $.fn.popup = function(parameters) {
               ;
             }
             else {
-              module.error(error.noTransition);
+              module.errors(error.noTransition);
             }
           }
         },
@@ -740,7 +740,7 @@ $.fn.popup = function(parameters) {
 
             // exit conditions
             if($target.length === 0 || $popup.length === 0) {
-              module.error(error.notFound);
+              module.errors(error.notFound);
               return;
             }
             var
@@ -882,7 +882,7 @@ $.fn.popup = function(parameters) {
               break;
             }
             if(positioning === undefined) {
-              module.error(error.invalidPosition, position);
+              module.errors(error.invalidPosition, position);
             }
 
             module.debug('Calculated popup positioning values', positioning);
@@ -917,7 +917,7 @@ $.fn.popup = function(parameters) {
                 }
                 else {
                   module.debug('Popup could not find a position to display', $popup);
-                  module.error(error.cannotPlace, element);
+                  module.errors(error.cannotPlace, element);
                   module.remove.attempts();
                   module.remove.loading();
                   module.reset();
@@ -1193,8 +1193,8 @@ $.fn.popup = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1425,7 +1425,7 @@ $.fn.popup.settings = {
   // number of pixels from edge of popup to pointing arrow center (used from centering)
   arrowPixelsFromEdge: 20,
 
-  // delay used to prevent accidental refiring of animations due to user error
+  // delay used to prevent accidental refiring of animations due to user errors
   delay : {
     show : 50,
     hide : 70
@@ -1450,8 +1450,8 @@ $.fn.popup.settings = {
   // maximum times to look for a position before failing (9 positions total)
   maxSearchDepth : 15,
 
-  error: {
-    invalidPosition : 'The position you specified is not a valid position',
+  errors: {
+    invalidPosition : 'The position you specified is not a isValid position',
     cannotPlace     : 'Popup does not fit within the boundaries of the viewport',
     method          : 'The method you called is not defined.',
     noTransition    : 'This module requires ui transitions <https://github.com/Semantic-Org/UI-Transition>',

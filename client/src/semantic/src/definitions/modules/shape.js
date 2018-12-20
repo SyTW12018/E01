@@ -51,7 +51,7 @@ $.fn.shape = function(parameters) {
         // internal aliases
         namespace     = settings.namespace,
         selector      = settings.selector,
-        error         = settings.error,
+        error         = settings.errors,
         className     = settings.className,
 
         // define namespaces for modules
@@ -280,7 +280,7 @@ $.fn.shape = function(parameters) {
             nextIndex = $side.index($nextSide);
             if($nextSide.length === 0) {
               module.set.defaultSide();
-              module.error(error.side);
+              module.errors(error.side);
             }
             module.verbose('Next side manually set to', $nextSide);
           },
@@ -722,8 +722,8 @@ $.fn.shape = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -896,7 +896,7 @@ $.fn.shape.settings = {
   duration   : false,
 
   // possible errors
-  error: {
+  errors: {
     side   : 'You tried to switch to a side that does not exist.',
     method : 'The method you called is not defined'
   },

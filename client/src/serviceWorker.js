@@ -1,3 +1,5 @@
+/* eslint-disable no-console,no-param-reassign */
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -94,7 +96,7 @@ function registerValidSW(swUrl, config) {
       };
     })
     .catch((error) => {
-      console.error('Error during service worker registration:', error);
+      console.errors('Error during service worker registration:', error);
     });
 }
 

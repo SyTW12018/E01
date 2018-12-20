@@ -51,7 +51,7 @@ $.fn.dropdown = function(parameters) {
         namespace       = settings.namespace,
         regExp          = settings.regExp,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
         templates       = settings.templates,
 
         eventNamespace  = '.' + namespace,
@@ -364,7 +364,7 @@ $.fn.dropdown = function(parameters) {
                 .insertBefore($input)
               ;
               if($input.hasClass(className.multiple) && $input.prop('multiple') === false) {
-                module.error(error.missingMultiple);
+                module.errors(error.missingMultiple);
                 $input.prop('multiple', true);
               }
               if($input.is('[multiple]')) {
@@ -727,7 +727,7 @@ $.fn.dropdown = function(parameters) {
               });
             }
             else {
-              module.error(error.noAPI);
+              module.errors(error.noAPI);
             }
           }
           else {
@@ -1558,7 +1558,7 @@ $.fn.dropdown = function(parameters) {
               settings.action.call(element, text, value, this);
             }
             else {
-              module.error(error.action, settings.action);
+              module.errors(error.action, settings.action);
             }
           },
           eventInModule: function(event, callback) {
@@ -2050,7 +2050,7 @@ $.fn.dropdown = function(parameters) {
           labels: function() {
             if(settings.allowAdditions) {
               if(!settings.useLabels) {
-                module.error(error.labels);
+                module.errors(error.labels);
                 settings.useLabels = true;
               }
               module.debug('Restoring selected values');
@@ -2105,7 +2105,7 @@ $.fn.dropdown = function(parameters) {
               name
             ;
             if(window.Storage === undefined) {
-              module.error(error.noStorage);
+              module.errors(error.noStorage);
               return;
             }
             name = sessionStorage.getItem(value);
@@ -2148,7 +2148,7 @@ $.fn.dropdown = function(parameters) {
           },
           remoteData: function(name, value) {
             if(window.Storage === undefined) {
-              module.error(error.noStorage);
+              module.errors(error.noStorage);
               return;
             }
             module.verbose('Saving remote data to session storage', value, name);
@@ -3402,7 +3402,7 @@ $.fn.dropdown = function(parameters) {
                 ;
               }
               else {
-                module.error(error.noTransition, transition);
+                module.errors(error.noTransition, transition);
               }
             }
           },
@@ -3450,7 +3450,7 @@ $.fn.dropdown = function(parameters) {
                 ;
               }
               else {
-                module.error(error.transition);
+                module.errors(error.transition);
               }
             }
           }
@@ -3563,8 +3563,8 @@ $.fn.dropdown = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -3650,7 +3650,7 @@ $.fn.dropdown = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -3786,10 +3786,10 @@ $.fn.dropdown.settings = {
     count         : '{count} selected',
     maxSelections : 'Max {maxCount} selections',
     noResults     : 'No results found.',
-    serverError   : 'There was an error contacting the server'
+    serverError   : 'There was an errors contacting the server'
   },
 
-  error : {
+  errors : {
     action          : 'You called a dropdown action that was not defined',
     alreadySetup    : 'Once a select has been initialized behaviors must be called on the created ui dropdown',
     labels          : 'Allowing user additions currently requires the use of labels.',

@@ -45,7 +45,7 @@ $.fn.visibility = function(parameters) {
 
         className       = settings.className,
         namespace       = settings.namespace,
-        error           = settings.error,
+        error           = settings.errors,
         metadata        = settings.metadata,
 
         eventNamespace  = '.' + namespace,
@@ -99,7 +99,7 @@ $.fn.visibility = function(parameters) {
 
           module.save.position();
           if( !module.is.visible() ) {
-            module.error(error.visible, $module);
+            module.errors(error.visible, $module);
           }
 
           if(settings.initialCheck) {
@@ -1074,8 +1074,8 @@ $.fn.visibility = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -1161,7 +1161,7 @@ $.fn.visibility = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -1301,7 +1301,7 @@ $.fn.visibility.settings = {
     visible     : 'visible'
   },
 
-  error : {
+  errors : {
     method  : 'The method you called is not defined.',
     visible : 'Element is hidden, you must call refresh after element becomes visible'
   }

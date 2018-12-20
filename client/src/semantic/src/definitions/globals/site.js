@@ -24,7 +24,7 @@ $.site = $.fn.site = function(parameters) {
       : $.extend({}, $.site.settings),
 
     namespace       = settings.namespace,
-    error           = settings.error,
+    error           = settings.errors,
 
     eventNamespace  = '.' + namespace,
     moduleNamespace = 'module-' + namespace,
@@ -220,7 +220,7 @@ $.site = $.fn.site = function(parameters) {
     console: function(enable) {
       if(enable) {
         if(instance.cache.console === undefined) {
-          module.error(error.console);
+          module.errors(error.console);
           return;
         }
         module.debug('Restoring console function');
@@ -297,8 +297,8 @@ $.site = $.fn.site = function(parameters) {
       }
     },
     error: function() {
-      module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-      module.error.apply(console, arguments);
+      module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+      module.errors.apply(console, arguments);
     },
     performance: {
       log: function(message) {
@@ -380,7 +380,7 @@ $.site = $.fn.site = function(parameters) {
             return false;
           }
           else {
-            module.error(error.method, query);
+            module.errors(error.method, query);
             return false;
           }
         });
@@ -427,7 +427,7 @@ $.site.settings = {
   name        : 'Site',
   namespace   : 'site',
 
-  error : {
+  errors : {
     console : 'Console cannot be restored, most likely it was overwritten outside of module',
     method : 'The method you called is not defined.'
   },

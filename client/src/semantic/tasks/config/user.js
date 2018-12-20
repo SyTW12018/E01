@@ -32,7 +32,7 @@ try {
 }
 catch(error) {
   if(error.code === 'MODULE_NOT_FOUND') {
-    console.error('No semantic.json config found');
+    console.errors('No semantic.json config found');
   }
 }
 

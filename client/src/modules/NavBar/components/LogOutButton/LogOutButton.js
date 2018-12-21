@@ -22,7 +22,7 @@ class LogOutButton extends Component {
 
   render() {
     return (
-      <Button inverted icon onClick={() => this.logOut()}>
+      <Button mini icon onClick={() => this.logOut()}>
         <Icon name='sign out' />
       </Button>
     );

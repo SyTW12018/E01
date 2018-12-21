@@ -2,12 +2,14 @@ import {
   Container, Menu, Header, Loader, Dimmer, Icon, Dropdown,
 } from 'semantic-ui-react';
 import React from 'react';
+import { withCookies } from 'react-cookie';
 import { AuthConsumer } from 'react-check-auth';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
 import SettingsForm from './components/SettingsForm/SettingsForm.js';
 import './NavBar.css';
+
 
 const NotLogged = refreshAuth => (
   <Menu
@@ -42,17 +44,11 @@ const Logged = (userInfo, refreshAuth) => (
 
         <Dropdown inline text='Settings'>
           <Dropdown.Menu>
-            <Dropdown.Item text='New' />
-            <Dropdown.Item text='Open...' description='ctrl + o' />
-            <Dropdown.Item text='Save as...' description='ctrl + s' />
-            <Dropdown.Item text='Rename' description='ctrl + r' />
-            <Dropdown.Item text='Make a copy' />
-            <Dropdown.Item icon='folder' text='Move to folder' />
-            <Dropdown.Item icon='trash' text='Move to trash' />
+            <Dropdown.Item text='Profile' />
             <Dropdown.Divider />
-            <Dropdown.Item text='Download As...' />
-            <Dropdown.Item text='Publish To Web' />
-            <Dropdown.Item text='E-mail Collaborators' />
+            <Menu.Item>
+              <LogOutButton refreshAuth={refreshAuth} />
+            </Menu.Item>
           </Dropdown.Menu>
         </Dropdown>
     </Menu.Item>
@@ -67,10 +63,10 @@ const Logged = (userInfo, refreshAuth) => (
     </Menu.Item>
     */}
 
-    <Menu.Item>
+    {/*<Menu.Item>
       <LogOutButton refreshAuth={refreshAuth} />
-    </Menu.Item>
-  </Menu>
+    </Menu.Item>*/}
+    </Menu>
 );
 
 const Loading = () => (

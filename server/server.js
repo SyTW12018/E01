@@ -12,7 +12,8 @@ import usersRoutes from './routes/UserRoutes';
 import roomsRoutes from './routes/RoomRoutes';
 import authRoutes from './routes/AuthRoutes';
 import auth from './middlewares/AuthMiddleware';
-import createWSServer from './controllers/WebSocketController';
+import createWSServer, { register } from './controllers/WebSocketController';
+import ChatsController from './controllers/ChatsController';
 
 const app = express();
 dotenv.config();
@@ -77,5 +78,6 @@ const server = app.listen(app.get('port'), () => {
 });
 
 createWSServer(server);
+register('chats', ChatsController());
 
 export default app;

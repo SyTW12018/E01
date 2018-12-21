@@ -1,28 +1,6 @@
-import jwt from 'jsonwebtoken';
 import ms from 'ms';
-import NodeRSA from 'node-rsa';
+import AuthService from '../services/AuthService';
 import UserService from '../services/UserService';
-
-const cert = new NodeRSA({ b: 2048 });
-// cert = fs.readFileSync('keys/private.key');
-
-async function generateToken(cuid) {
-  // Generate token with cuid as payload
-  return jwt.sign({ cuid }, cert.exportKey('private'), {
-    algorithm: 'RS256',
-    expiresIn: ms('0.5y'),
-  });
-}
-
-async function getUser(token) {
-  // Verify authToken and get user from cuid (the cuid is in the payload of the token)
-  try {
-    const decoded = await jwt.verify(token, cert.exportKey('public'), { algorithms: [ 'RS256' ] });
-    return UserService.getUser(decoded.cuid);
-  } catch (err) {
-    return null;
-  }
-}
 
 async function createTempUser(req, res) {
   req.user = await UserService.addTemporalUser();
@@ -30,7 +8,7 @@ async function createTempUser(req, res) {
 }
 
 async function sendToken(user, res) {
-  const token = await generateToken(user.cuid);
+  const token = await AuthService.generateToken(user.cuid);
   res.cookie('authToken', token, { maxAge: ms('0.5y') });
 }
 
@@ -63,7 +41,7 @@ const getCurrentUser = () => async (req, res) => {
     return res.status(401).json({ errors: [ 'No authentication token received' ] });
   }
 
-  const user = await getUser(authToken);
+  const user = await AuthService.getUser(authToken);
   return res.status(200).json({ ...user });
 };
 
@@ -73,7 +51,7 @@ const middleware = () => async (req, res, next) => {
   if (!authToken) {
     await createTempUser(req, res);
   } else {
-    const user = await getUser(authToken);
+    const user = await AuthService.getUser(authToken);
     if (user) {
       req.user = user;
     } else {

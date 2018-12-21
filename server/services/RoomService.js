@@ -72,10 +72,24 @@ async function updateRoom(name, newRoom) {
   return { newRoom };
 }
 
+/**
+ * Get all rooms where the user belongs
+ * @param user
+ * @returns {Promise<*[]>}
+ */
+async function getRoomsOfUser(user) {
+  const rooms = await getRooms();
+  return rooms.filter((room) => {
+    const users = room.users.filter(roomUser => roomUser.cuid === user.cuid);
+    return users.length > 0;
+  });
+}
+
 export default {
   getRooms,
   createRoom,
   getRoom,
   deleteRoom,
   updateRoom,
+  getRoomsOfUser,
 };

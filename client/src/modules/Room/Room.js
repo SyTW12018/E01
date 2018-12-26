@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
   Container, Header, Input,
 } from 'semantic-ui-react';
-import WebSocket from '../WebSocket/WebSocket';
+//import WebSocket from '../WebSocket/WebSocket';
+
+import Userlist from './components/UsersList/UsersList'
 
 class Room extends Component {
   constructor(props) {
@@ -34,6 +36,19 @@ class Room extends Component {
   render() {
     const { messages, connected } = this.state;
     return (
+
+      <Container fluid>
+
+      <Userlist/>
+
+      </Container>
+    );
+  }
+}
+
+export default Room;
+
+/*
       <Container>
         <WebSocket
           onConnected={this.onConnected}
@@ -58,10 +73,6 @@ class Room extends Component {
             ))}
           </ul>
         </div>
-
+        
       </Container>
-    );
-  }
-}
-
-export default Room;
+*/

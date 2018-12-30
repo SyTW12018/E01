@@ -7,7 +7,7 @@ const connections = new Map();
 const invokeControllers = (channel, data, user) => {
   if (controllers.has(channel)) {
     controllers.get(channel).forEach(async (controller) => {
-      await controller(data, user);
+      await controller(data, user, channel);
     });
   }
 };
@@ -30,7 +30,7 @@ const onConnection = (conn) => {
           return conn.write(JSON.stringify({ errors: [ 'Authentication needed' ] }));
         }
 
-        return conn.write(JSON.stringify(dataObj));
+        // return conn.write(JSON.stringify(dataObj));
       } catch (error) {
         return conn.write(JSON.stringify({ errors: [ error.message ] }));
       }
@@ -48,10 +48,10 @@ const register = (channel, controller) => {
   }
 };
 
-const sendToUser = (user, data) => {
+const sendToUser = (user, data, channel) => {
   if (connections.has(user.cuid)) {
     const conn = connections.get(user.cuid);
-    conn.write(JSON.stringify(data));
+    conn.write(JSON.stringify({ channel, data }));
   }
 };
 
@@ -62,6 +62,11 @@ const initialize = (server) => {
   wsServer.installHandlers(server, { prefix: '/ws' });
 };
 
-export default server => initialize(server);
+export default (server) => {
+  initialize(server);
+  return {
+    register,
+  };
+};
 
-export { register, sendToUser };
+export { sendToUser };

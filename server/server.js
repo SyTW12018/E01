@@ -12,7 +12,7 @@ import usersRoutes from './routes/UserRoutes';
 import roomsRoutes from './routes/RoomRoutes';
 import authRoutes from './routes/AuthRoutes';
 import auth from './middlewares/AuthMiddleware';
-import createWSServer, { register } from './controllers/WebSocketController';
+import wsController from './controllers/WebSocketController';
 import ChatsController from './controllers/ChatsController';
 
 const app = express();
@@ -77,7 +77,7 @@ const server = app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
 
-createWSServer(server);
-register('chats', ChatsController());
+const wsServer = wsController(server);
+wsServer.register('chats', ChatsController());
 
 export default app;

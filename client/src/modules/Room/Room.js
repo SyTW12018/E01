@@ -12,6 +12,8 @@ class Room extends Component {
       connected: false,
       messages: [],
     };
+
+    this.roomName = props.match.params.roomName;
   }
 
   onMessage = (message) => {
@@ -26,8 +28,9 @@ class Room extends Component {
     const { connected } = this.state;
     if (connected) {
       this.ws.send({
+        roomName: this.roomName,
         text: this.messageInput.value,
-      });
+      }, 'chats');
     }
   };
 
@@ -38,7 +41,6 @@ class Room extends Component {
         <WebSocket
           onConnected={this.onConnected}
           onData={this.onMessage}
-          channel='room'
           ref={(ws) => { this.ws = ws; }}
         />
         <Header>

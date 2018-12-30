@@ -26,16 +26,19 @@ class WebSocket extends Component {
 
     this.cookies = props.cookies;
     this.socket = new SockJS(`http${props.secure ? 's' : ''}://${props.serverDomain}/${props.wsPath}`);
+    this.socket.error = props.onError;
+    this.socket.onopen = () => {
+      this.send(true, 'control');
+      props.onConnected();
+    };
   }
 
   componentDidMount() {
-    const { onConnected, onData, onError } = this.props;
-    this.socket.onopen = () => onConnected();
+    const { onData } = this.props;
     this.socket.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
       onData(data.data, data.channel);
     };
-    this.socket.error = onError;
   }
 
   send(data, channel) {

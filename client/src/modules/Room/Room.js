@@ -52,7 +52,7 @@ class Room extends Component {
   };
 
   onMessage = (message, channel) => {
-    if (channel === 'chats') {
+    if (channel === 'chats' && message.roomName === this.roomName) {
       this.setState(state => ({ messages: [ ...state.messages, message ] }));
     }
   };

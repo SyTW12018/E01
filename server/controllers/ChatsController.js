@@ -8,7 +8,7 @@ async function messageReceived(data, user, channel) {
 
     if (users.length > 0) {
       room.users.forEach((user) => {
-        sendToUser(user, data, channel);
+        sendToUser(data, user, channel);
       });
     }
   }

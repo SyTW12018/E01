@@ -12,6 +12,17 @@ const invokeControllers = (channel, data, user) => {
   }
 };
 
+const addConn = (user, conn) => {
+  if (connections.has(user.cuid)) {
+    const match = connections.get(user.cuid).filter(currentConn => currentConn.id === conn.id);
+    if (match.length === 0) {
+      connections.set(user.cuid, [ ...connections.get(user.cuid), conn ]);
+    }
+  } else {
+    connections.set(user.cuid, [ conn ]);
+  }
+};
+
 const onConnection = (conn) => {
   conn.on('data', async (data) => {
     if (typeof data === 'string') {
@@ -20,7 +31,8 @@ const onConnection = (conn) => {
         const user = await AuthService.getUser(dataObj.authToken);
 
         if (user) {
-          connections.set(user.cuid, conn);
+          addConn(user, conn);
+
           if (dataObj.channel) {
             invokeControllers(dataObj.channel, dataObj.data, user);
           } else {
@@ -29,8 +41,6 @@ const onConnection = (conn) => {
         } else {
           return conn.write(JSON.stringify({ errors: [ 'Authentication needed' ] }));
         }
-
-        // return conn.write(JSON.stringify(dataObj));
       } catch (error) {
         return conn.write(JSON.stringify({ errors: [ error.message ] }));
       }
@@ -48,10 +58,12 @@ const register = (channel, controller) => {
   }
 };
 
-const sendToUser = (user, data, channel) => {
+const sendToUser = (data, user, channel) => {
   if (connections.has(user.cuid)) {
-    const conn = connections.get(user.cuid);
-    conn.write(JSON.stringify({ channel, data }));
+    const conns = connections.get(user.cuid);
+    conns.forEach((conn) => {
+      conn.write(JSON.stringify({ channel, data }));
+    });
   }
 };
 

@@ -5,6 +5,7 @@ import InfoSection from './components/InfoSection/InfoSection';
 import FeaturesSection from './components/FeaturesSection/FeaturesSection';
 
 const LandingPage = () => (
+
   <Container fluid>
 
     <HeaderSection />

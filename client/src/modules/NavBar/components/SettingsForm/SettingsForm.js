@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Form } from 'formsy-semantic-ui-react';
 import {
-  Modal, Button, Message, Grid, Header, Icon, Container, Divider,
+  Modal, Button, Message, Grid, Header, Icon, Container, Divider, Dropdown,
 } from 'semantic-ui-react';
 import '../Form.css';
 import PropTypes from 'prop-types';
@@ -25,25 +25,23 @@ export default class SettingsForm extends Component {
     this.form = null;
     this.refreshAuth = props.refreshAuth;
   }
-///Esta es a la función que se llamará cuando se le de a submit
+
   update = async (formData) => {
     this.setState({ isLoading: true });
 
     let errors = [];
     try {
-   ///   const result = await axios.get(///petición a la base de datos o al backend'/signup', {
-        ///Auí formaría la estructura del dato recibido para luego mostrarlo
-        const result = await axios.post('/signup', {
-            user: {
-              email: formData.email,
-              name: formData.username,
-              password: formData.password,
-            },
-          });
-          if (result.status === 201) {
-            this.refreshAuth();
-            return;
-          }
+      const result = await axios.post('/signup', {
+        user: {
+          email: formData.email,
+          name: formData.username,
+          password: formData.password,
+        },
+      });
+      if (result.status === 201) {
+        this.refreshAuth();
+        return;
+      }
     } catch (e) {
       const responseErrors = e.response.data.errors;
       if (responseErrors && Array.isArray(responseErrors)) {
@@ -70,7 +68,7 @@ export default class SettingsForm extends Component {
 
     return (
       <Modal
-        trigger={<Button onClick={() => this.setState({ isModalOpen: true })} inverted>Settings</Button>}
+        trigger={<Dropdown.Item text='Account' icon='cog' onClick={() => this.setState({ isModalOpen: true })} />}
         open={isModalOpen}
         onClose={() => this.setState({ isModalOpen: false, errors: [] })}
         size='tiny'
@@ -81,7 +79,7 @@ export default class SettingsForm extends Component {
           <Grid verticalAlign='middle'>
             <Grid.Column>
               <Header textAlign='center' size='large'>
-                <Icon name='user icon' />
+                <Icon name='weixin' />
                 My Profile
               </Header>
 
@@ -91,13 +89,14 @@ export default class SettingsForm extends Component {
                 warning
                 size='large'
                 loading={isLoading}
-                ///siguiente línea a meditarla probablemente cambiar .register a .update
+                // /siguiente línea a meditarla probablemente cambiar .register a .update
                 onValidSubmit={this.update}
                 onValid={() => this.setState({ isValid: true })}
                 onInvalid={() => this.setState({ isValid: false })}
                 ref={(ref) => { this.form = ref; }}
               >
-                <Form.Input disabled
+                <Form.Input
+                  disabled
                   className='hiddenLabel'
                   name='email'
                   fluid

@@ -5,6 +5,6 @@ import Room from './Room';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<Room />, div);
+  ReactDOM.render(<Room match={{ params: { roomName: 'test' } }} />, div);
   ReactDOM.unmountComponentAtNode(div);
 });

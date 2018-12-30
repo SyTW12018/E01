@@ -4,7 +4,7 @@ import {
 } from 'semantic-ui-react';
 import React from 'react';
 import NavBar from '../../../NavBar/NavBar';
-import RoomNameInput from '../../../RoomNameInput/RoomNameInput';
+import RoomNameInput from './components/RoomNameInput/RoomNameInput';
 import BgImage from './header.jpg';
 import styles from './HeaderSection.css';
 

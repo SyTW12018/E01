@@ -1,17 +1,18 @@
 /* eslint-disable no-console */
-
 import path from 'path';
 import express from 'express';
-import sockjs from 'sockjs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import methodOverride from 'method-override';
-import users from './routes/UserRoutes';
-import rooms from './routes/RoomRoutes';
-import auth, { login, register, getCurrentUser } from './middlewares/AuthMiddleware';
+import usersRoutes from './routes/UserRoutes';
+import roomsRoutes from './routes/RoomRoutes';
+import authRoutes from './routes/AuthRoutes';
+import auth from './middlewares/AuthMiddleware';
+import wsController from './controllers/WebSocketController';
+import ChatsController from './controllers/ChatsController';
 
 const app = express();
 dotenv.config();
@@ -25,9 +26,6 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(cookieParser());
 app.use(methodOverride());
 app.use(auth());
-app.post('/login', login());
-app.post('/signup', register());
-app.get('/user', getCurrentUser());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
@@ -38,18 +36,19 @@ const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/videocon';
 if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(mongoUrl, { useNewUrlParser: true })
     .then(() => {
-      console.log(`MongoDB connection open to ${mongoUrl}`);
+      if (process.env.DEBUG) console.log(`MongoDB connection open to ${mongoUrl}`);
     })
     .catch((error) => {
       if (error) {
-        console.errors(`Cannot connect to MongoDB on ${mongoUrl}`);
+        console.error(`Cannot connect to MongoDB on ${mongoUrl}`);
         process.exit(1);
       }
     });
 }
 
-app.use('/', users);
-app.use('/', rooms);
+app.use('/', authRoutes);
+app.use('/', usersRoutes);
+app.use('/', roomsRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
@@ -77,17 +76,7 @@ const server = app.listen(app.get('port'), () => {
   console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
 });
 
-// WebSocket server
-const wsServer = sockjs.createServer();
-wsServer.on('connection', (connection) => {
-  console.log('Connected client');
-
-  connection.on('data', (msg) => {
-    console.log(`Data: ${msg}`);
-    connection.write(msg);
-  });
-});
-
-wsServer.installHandlers(server, { prefix: '/ws' });
+const wsServer = wsController(server);
+wsServer.register('chats', ChatsController());
 
 export default app;

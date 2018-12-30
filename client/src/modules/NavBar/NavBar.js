@@ -1,12 +1,15 @@
 import {
-  Container, Menu, Header, Loader, Dimmer, Icon,
+  Container, Menu, Header, Loader, Dimmer, Icon, Dropdown,
 } from 'semantic-ui-react';
 import React from 'react';
+import { withCookies } from 'react-cookie';
 import { AuthConsumer } from 'react-check-auth';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
+import SettingsForm from './components/SettingsForm/SettingsForm.js';
 import './NavBar.css';
+
 
 const NotLogged = refreshAuth => (
   <Menu
@@ -27,6 +30,7 @@ const Logged = (userInfo, refreshAuth) => (
   <Menu
     size='large'
     secondary
+    inverted
   >
     <Menu.Item position='right'>
       <Header inverted size='small'>
@@ -36,9 +40,33 @@ const Logged = (userInfo, refreshAuth) => (
     </Menu.Item>
 
     <Menu.Item>
-      <LogOutButton refreshAuth={refreshAuth} />
+      <Icon name='cog' size='large' />
+
+        <Dropdown inline text='Settings'>
+          <Dropdown.Menu>
+            <Dropdown.Item text='Profile' />
+            <Dropdown.Divider />
+            <Menu.Item>
+              <LogOutButton refreshAuth={refreshAuth} />
+            </Menu.Item>
+          </Dropdown.Menu>
+        </Dropdown>
     </Menu.Item>
-  </Menu>
+
+    {/*
+    <Menu.Item>
+      <Header inverted size='small'>
+        <Header.Content>
+          <SettingsForm refreshAuth={refreshAuth}/>
+        </Header.Content>
+      </Header>
+    </Menu.Item>
+    */}
+
+    {/*<Menu.Item>
+      <LogOutButton refreshAuth={refreshAuth} />
+    </Menu.Item>*/}
+    </Menu>
 );
 
 const Loading = () => (

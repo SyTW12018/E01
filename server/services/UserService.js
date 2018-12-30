@@ -1,4 +1,5 @@
 import cuid from 'cuid';
+import bcrypt from 'bcrypt';
 import User from '../models/User';
 
 let userStorage = [];
@@ -78,6 +79,7 @@ async function removeTemporalUsers() {
 async function registerUser(user) {
   const newUser = user;
   if (!newUser.cuid) newUser.cuid = cuid();
+  newUser.password = await bcrypt.hash(newUser.password, 5);
   const registeredUser = await User.create(newUser);
   return parseUser(registeredUser);
 }
@@ -123,8 +125,13 @@ async function getUserByEmail(email) {
  * @returns {Promise<*>}
  */
 async function getUserByEmailAndPassword(email, password) {
-  const user = await User.findOne({ email, password }).select('cuid name email password role slug dateAdded').exec();
+  const user = await User.findOne({ email }).select('cuid name email password role slug dateAdded').exec();
   if (!user) {
+    return null;
+  }
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
     return null;
   }
 

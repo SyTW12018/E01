@@ -31,22 +31,16 @@ class WebSocket extends Component {
   componentDidMount() {
     const { onConnected, onData, onError } = this.props;
     this.socket.onopen = () => onConnected();
-    this.socket.onmessage = msg => onData(JSON.parse(msg.data));
+    this.socket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data);
+      onData(data.data, data.channel);
+    };
     this.socket.error = onError;
   }
 
   send(data, channel) {
-    let dataJson;
-    if (typeof data === 'object') {
-      dataJson = JSON.stringify(data);
-    } else if (typeof data === 'string') {
-      dataJson = data;
-    } else {
-      throw new Error('Invalid data format.');
-    }
-
     const authToken = this.cookies.get('authToken', { doNotParse: true });
-    this.socket.send(JSON.stringify({ authToken, channel, data: dataJson }));
+    this.socket.send(JSON.stringify({ authToken, channel, data }));
   }
 
   render() {

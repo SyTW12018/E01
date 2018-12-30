@@ -6,7 +6,7 @@ async function messageReceived(data, user, channel) {
   if (room) {
     const users = room.users.filter(roomUser => roomUser.cuid === user.cuid);
 
-    if (!users.empty()) {
+    if (users.length > 0) {
       room.users.forEach((user) => {
         sendToUser(user, data, channel);
       });

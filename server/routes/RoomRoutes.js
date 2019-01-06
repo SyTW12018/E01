@@ -8,6 +8,9 @@ const router = new Router();
 // Join a room
 router.post('/rooms/:name', roomNameValidator, RoomController.joinRoom);
 
+// Leave a room
+router.patch('/rooms/:name', roomNameValidator, RoomController.leaveRoom);
+
 // Get all rooms
 router.get('/rooms', RoleRequired('admin'), RoomController.getRooms);
 

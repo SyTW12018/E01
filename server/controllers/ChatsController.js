@@ -1,5 +1,5 @@
 import RoomService from '../services/RoomService';
-import { sendToUser } from './WebSocketController';
+import { send } from './WebSocketController';
 
 async function messageReceived(data, user, channel) {
   const room = await RoomService.getRoom(data.roomName);
@@ -8,7 +8,9 @@ async function messageReceived(data, user, channel) {
 
     if (users.length > 0) {
       room.users.forEach((user) => {
-        sendToUser(data, user, channel);
+        if (user.conn) {
+          send(user.conn, data, channel);
+        }
       });
     }
   }

@@ -19,9 +19,17 @@ class Room extends Component {
     };
 
     this.roomName = formatName(props.match.params.roomName);
+  }
 
+  componentDidMount() {
     (async () => {
       await this.joinRoom();
+    })();
+  }
+
+  componentWillUnmount() {
+    (async () => {
+      await this.leaveRoom();
     })();
   }
 
@@ -51,30 +59,40 @@ class Room extends Component {
     });
   };
 
+  leaveRoom = async () => {
+    await axios.patch(`/rooms/${this.roomName}`);
+    this.setState({ joined: false });
+  };
+
   onMessage = (message, channel) => {
     if (channel === 'chats' && message.roomName === this.roomName) {
       this.setState(state => ({ messages: [ ...state.messages, message ] }));
+    } else if (channel === 'rooms') {
+      if (message.ok) {
+        this.setState(() => ({ wsConnected: true }));
+      }
     }
   };
 
   onConnected = () => {
-    this.setState(() => ({ wsConnected: true }));
+    this.sendData({ roomName: this.roomName }, 'rooms');
+  };
+
+  sendData = (data, channel) => {
+    this.ws.send(data, channel);
   };
 
   sendMessage = () => {
-    const { wsConnected } = this.state;
-    if (wsConnected) {
-      this.ws.send({
-        roomName: this.roomName,
-        text: this.messageInput.value,
-      }, 'chats');
-    }
+    this.sendData({
+      roomName: this.roomName,
+      text: this.messageInput.value,
+    }, 'chats');
   };
 
-  RoomInfo = userInfo => (
+  RoomInfo = (userInfo, joined) => (
     <Container fluid>
       <Header>
-        {`ROOM ${this.roomName}`}
+        {`ROOM ${this.roomName}: ${joined ? 'connected' : 'not connected'}`}
       </Header>
       <Header>
         {`cuid: ${userInfo.cuid}`}
@@ -83,7 +101,7 @@ class Room extends Component {
   );
 
   render() {
-    const { messages, wsConnected } = this.state;
+    const { messages, wsConnected, joined } = this.state;
     return (
       <Container>
         <WebSocket
@@ -92,7 +110,7 @@ class Room extends Component {
           ref={(ws) => { this.ws = ws; }}
         />
         <AuthConsumer>
-          {({ userInfo }) => (userInfo ? this.RoomInfo(userInfo) : null)}
+          {({ userInfo }) => (userInfo ? this.RoomInfo(userInfo, joined) : null)}
         </AuthConsumer>
         <Input
           ref={(input) => { if (input) this.messageInput = input.inputRef; }}

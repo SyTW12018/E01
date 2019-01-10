@@ -10,6 +10,23 @@ const formatName = (str) => {
   return name;
 };
 
+const getAxiosErrors = (e) => {
+  if (!e || !e.response || !e.response.data || !e.response.data.errors) return [];
+
+  let errors = [];
+  const responseErrors = e.response.data.errors;
+  if (responseErrors && Array.isArray(responseErrors)) {
+    errors = responseErrors.map((error) => {
+      if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
+      return error;
+    });
+  } else {
+    errors = [ e.message ];
+  }
+
+  return errors;
+};
+
 export {
-  formatName,
+  formatName, getAxiosErrors,
 };

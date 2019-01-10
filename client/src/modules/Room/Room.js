@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { AuthConsumer } from 'react-check-auth';
 import axios from 'axios';
-import {
-  Container, Dimmer, Loader,
-} from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
+import Loader from '../Loader/Loader';
 import WebSocket from '../WebSocket/WebSocket';
 import VideoConference from './components/VideoConference/VideoConference';
 import { formatName, getAxiosErrors } from '../../utils';
@@ -70,12 +69,6 @@ class Room extends Component {
     this.ws.send(data, channel);
   };
 
-  Loading = () => (
-    <Dimmer active>
-      <Loader size='massive' />
-    </Dimmer>
-  );
-
   render() {
     const { wsConnected, joined, errors } = this.state;
 
@@ -94,10 +87,10 @@ class Room extends Component {
 
             if (errors.length > 0) {
               // TODO show errors
-              return <this.Loading />;
+              return <Loader />;
             }
 
-            return <this.Loading />;
+            return <Loader text='Connecting...' />;
           }}
         </AuthConsumer>
       </Container>

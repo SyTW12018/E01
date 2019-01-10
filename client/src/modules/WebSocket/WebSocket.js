@@ -1,9 +1,9 @@
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import SockJS from 'sockjs-client';
 import { withCookies } from 'react-cookie';
 
-class WebSocket extends Component {
+class WebSocket extends PureComponent {
   static propTypes = {
     onData: PropTypes.func,
     secure: PropTypes.bool,

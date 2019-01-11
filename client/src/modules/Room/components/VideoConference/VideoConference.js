@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Container, Header } from 'semantic-ui-react';
 import * as SWRTC from '@andyet/simplewebrtc';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router';
 import Loader from '../../../Loader/Loader';
+import MessageModal from '../../Room';
 
-const API_KEY = '7d23837284fa02e360bfe43e';
+const API_KEY = '7d23837284fa02e360bfe43g';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
 
 class VideoConference extends Component {
@@ -15,6 +17,10 @@ class VideoConference extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      goBack: false,
+    };
 
     this.store = SWRTC.createStore();
   }
@@ -29,6 +35,11 @@ class VideoConference extends Component {
 
   render() {
     const { username, roomName } = this.props;
+    const { goBack } = this.state;
+
+    if (goBack) {
+      return <Redirect push to='/' />;
+    }
 
     return (
       <Container fluid>
@@ -40,13 +51,17 @@ class VideoConference extends Component {
           </SWRTC.Connecting>
 
           <SWRTC.Disconnected store={this.store} configUrl={CONFIG_URL}>
-            <Loader text='Lost connection. Reattempting to join...' />
+            <Loader text='Lost connection, reattempting to join...' />
           </SWRTC.Disconnected>
 
           <SWRTC.Failed store={this.store} configUrl={CONFIG_URL}>
-            <p>
-            There was an error initializing the client. The service might not be available.
-            </p>
+            <MessageModal
+              open
+              text='There was an error initializing the client, the service might not be available. Try again later'
+              onClose={() => { this.setState({ goBack: true }); }}
+              headerText='Ups, something went wrong!'
+              buttonText='Go back'
+            />
           </SWRTC.Failed>
 
           <SWRTC.Connected store={this.store} configUrl={CONFIG_URL}>
@@ -75,9 +90,9 @@ class VideoConference extends Component {
                     </div>
 
                     <div>
-                      {localVideos.map(video => <SWRTC.Video media={video} />)}
+                      {localVideos.map((video, i) => <SWRTC.Video key={i} media={video} />)}
 
-                      {remoteVideos.map(video => <SWRTC.Video media={video} />)}
+                      {remoteVideos.map((video, i) => <SWRTC.Video key={i + 10} media={video} />)}
                     </div>
 
                   </Container>);

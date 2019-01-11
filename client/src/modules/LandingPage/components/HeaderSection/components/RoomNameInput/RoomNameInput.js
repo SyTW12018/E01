@@ -22,7 +22,8 @@ export default class RoomNameInput extends Component {
   };
 
   joinRoom = async () => {
-    this.setState({ redirect: true });
+    const { roomName } = this.state;
+    if (roomName.length > 0) this.setState({ redirect: true });
   };
 
   render() {

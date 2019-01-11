@@ -11,7 +11,7 @@ const formatName = (str) => {
 };
 
 const getAxiosErrors = (e) => {
-  if (!e || !e.response || !e.response.data || !e.response.data.errors) return [];
+  if (!e || !e.response || !e.response.data) return [];
 
   let errors = [];
   const responseErrors = e.response.data.errors;

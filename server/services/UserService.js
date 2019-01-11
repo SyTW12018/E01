@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/User';
 
 let userStorage = [];
+let tempCount = 0;
 
 function parseUser(user) {
   return {
@@ -39,10 +40,8 @@ async function getRegisteredUsers() {
  * @returns {Promise<Array>}
  */
 async function getUsers() {
-  let users = [];
-
   const temporalUsers = await getTemporalUsers();
-  users = temporalUsers.map(user => ({ ...user, role: 'temporalUser' }));
+  let users = temporalUsers.map(user => ({ ...user, role: 'temporalUser' }));
 
   const registeredUsers = await getRegisteredUsers();
   users = users.concat(registeredUsers.map(user => (parseUser(user))));
@@ -57,9 +56,11 @@ async function getUsers() {
 async function addTemporalUser() {
   const newUser = {
     cuid: cuid(),
+    name: `Anonymous #${tempCount}`,
     dateAdded: new Date(),
   };
   userStorage.push(newUser);
+  tempCount += 1;
   return { ...newUser, role: 'temporalUser' };
 }
 

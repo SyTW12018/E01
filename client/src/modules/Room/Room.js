@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { AuthConsumer } from 'react-check-auth';
 import axios from 'axios';
 import { Container } from 'semantic-ui-react';
+import { Redirect } from 'react-router';
 import Loader from '../Loader/Loader';
+import MessageModal from '../MessageModal/MessageModal';
 import WebSocket from '../WebSocket/WebSocket';
 import VideoConference from './components/VideoConference/VideoConference';
 import { formatName, getAxiosErrors } from '../../utils';
@@ -15,6 +17,7 @@ class Room extends Component {
       joined: false,
       wsConnected: false,
       errors: [],
+      goBack: false,
     };
 
     this.roomName = formatName(props.match.params.roomName);
@@ -70,7 +73,13 @@ class Room extends Component {
   };
 
   render() {
-    const { wsConnected, joined, errors } = this.state;
+    const {
+      wsConnected, joined, errors, goBack,
+    } = this.state;
+
+    if (goBack) {
+      return <Redirect push to='/' />;
+    }
 
     return (
       <Container>
@@ -82,12 +91,19 @@ class Room extends Component {
         <AuthConsumer>
           {({ userInfo }) => {
             if (userInfo && wsConnected && joined && errors.length === 0) {
-              return <VideoConference username={userInfo.cuid} roomName={this.roomName} />;
+              return <VideoConference username={userInfo.name} roomName={this.roomName} />;
             }
 
             if (errors.length > 0) {
-              // TODO show errors
-              return <Loader />;
+              return (
+                <MessageModal
+                  open={errors.length > 0}
+                  errors={errors}
+                  onClose={() => { this.setState({ goBack: true }); }}
+                  headerText='Ups, something went wrong!'
+                  buttonText='Go back'
+                />
+              );
             }
 
             return <Loader text='Connecting...' />;

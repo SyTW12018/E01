@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Loader from '../../../Loader/Loader';
 import MessageModal from '../../Room';
 
-const API_KEY = '7d23837284fa02e360bfe43g';
+const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
 
 class VideoConference extends Component {

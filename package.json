@@ -31,9 +31,7 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "gulp": "^3.9.1",
-    "gulp-help": "^1.6.1",
-    "require-dot-file": "^0.4.0",
+    "semantic-ui": "^2.4.2",
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
     "concurrently": "^4.0.1",

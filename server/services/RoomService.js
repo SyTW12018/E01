@@ -1,4 +1,4 @@
-const MAX_SIZE = 7;
+const MAX_SIZE = 6;
 let roomsStorage = [];
 
 /**

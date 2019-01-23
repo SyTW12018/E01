@@ -6,6 +6,7 @@ import {
 } from 'semantic-ui-react';
 import '../Form.css';
 import PropTypes from 'prop-types';
+import { getAxiosErrors } from '../../../../utils';
 
 export default class SettingsForm extends Component {
   static propTypes = {
@@ -43,15 +44,7 @@ export default class SettingsForm extends Component {
         return;
       }
     } catch (e) {
-      const responseErrors = e.response.data.errors;
-      if (responseErrors && Array.isArray(responseErrors)) {
-        errors = responseErrors.map((error) => {
-          if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
-          return error;
-        });
-      } else {
-        errors = [ e.message ];
-      }
+      errors = getAxiosErrors(e);
     }
 
     this.setState({

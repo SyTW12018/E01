@@ -5,29 +5,29 @@ import registerUserValidator from '../validators/RegisterUserValidator';
 import UserController from '../controllers/UserController';
 import RoleRequired from '../middlewares/RoleRequired';
 
-const router = new Router();
+const UserRoutes = new Router();
 
 // Get all users
-router.get('/users', RoleRequired('admin'), UserController.getUsers);
+UserRoutes.get('/users', RoleRequired('admin'), UserController.getUsers);
 
 // Get one user by cuid
-router.get('/users/:cuid',
+UserRoutes.get('/users/:cuid',
   [ RoleRequired('admin'), cuidValidator ],
   UserController.getUser);
 
 // Add a new user
-router.post('/users',
+UserRoutes.post('/users',
   [ RoleRequired('admin'), registerUserValidator ],
   UserController.registerUser);
 
 // Update a user
-router.put('/users/:cuid',
+UserRoutes.put('/users/:cuid',
   [ RoleRequired('admin'), cuidValidator, updateUserValidator ],
   UserController.updateUser);
 
 // Delete a user by cuid
-router.delete('/users/:cuid',
+UserRoutes.delete('/users/:cuid',
   [ RoleRequired('admin'), cuidValidator ],
   UserController.deleteUser);
 
-export default router;
+export default UserRoutes;

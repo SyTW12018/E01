@@ -1,5 +1,5 @@
 import RoomService from '../services/RoomService';
-import wrapAsync from '../utils/AsyncWrapper';
+import wrapAsync from '../utils/wrapAsync';
 import { send } from './WebSocketController';
 
 function parseRoom(room) {

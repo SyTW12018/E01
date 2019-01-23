@@ -3,6 +3,7 @@ import {
   Container, Header, Input,
 } from 'semantic-ui-react';
 import WebSocket from '../WebSocket/WebSocket';
+import Vision from '../ComponenteVision/components/Vision/Vision';
 
 class Room extends Component {
   constructor(props) {
@@ -35,6 +36,7 @@ class Room extends Component {
     const { messages, connected } = this.state;
     return (
       <Container>
+        <Vision/>
         <WebSocket
           onConnected={this.onConnected}
           onData={this.onMessage}

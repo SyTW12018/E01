@@ -5,6 +5,9 @@
   "description": "A video conferencing platform",
   "main": "index.js",
   "homepage": "https://github.com/SyTW12018/E01-videocon#readme",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc --reporter=lcovonly mocha server/tests --opts mocha.opts",
     "test:client": "cd client && npm test && cd ..",

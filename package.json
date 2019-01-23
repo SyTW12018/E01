@@ -13,7 +13,7 @@
     "test:client": "cd client && npm test && cd ..",
     "test:all": "npm test && cd client && npm test && cd ..",
     "start": "npm run server",
-    "postinstall": "cd client && npm install --ignore-scripts && npm run build:all && cd ..",
+    "postinstall": "npm install semantic-ui --ignore-scripts && cd client && npm install && npm run build:all && cd ..",
     "server": "cross-env NODE_ENV=production node scripts/start-server.js",
     "server:debug": "cross-env DEBUG=true node scripts/start-server.js",
     "client": "node scripts/start-client.js",
@@ -31,7 +31,6 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "semantic-ui": "^2.4.2",
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
     "concurrently": "^4.0.1",
@@ -67,6 +66,7 @@
     "ms": "^2.1.1",
     "node-rsa": "^1.0.1",
     "sanitize-html": "^1.19.1",
+    "semantic-ui": "^2.4.2",
     "sockjs": "^0.3.19"
   }
 }

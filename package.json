@@ -7,8 +7,11 @@
   "homepage": "https://github.com/SyTW12018/E01-videocon#readme",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc --reporter=lcovonly mocha server/tests --opts mocha.opts",
+    "test:client": "cd client && npm test && cd ..",
+    "test:all": "npm test && cd client && npm test && cd ..",
     "start": "npm run server",
-    "server": "node scripts/start-server.js",
+    "postinstall": "cd client && npm install --ignore-scripts && npm run build:all && cd ..",
+    "server": "cross-env NODE_ENV=production node scripts/start-server.js",
     "server:debug": "cross-env DEBUG=true node scripts/start-server.js",
     "client": "node scripts/start-client.js",
     "lint": "eslint .",

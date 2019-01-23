@@ -2,24 +2,12 @@ import sockjs from 'sockjs';
 import AuthService from '../services/AuthService';
 
 const controllers = new Map();
-const connections = new Map();
 
-const invokeControllers = (channel, data, user) => {
+const invokeControllers = (channel, data, user, conn) => {
   if (controllers.has(channel)) {
     controllers.get(channel).forEach(async (controller) => {
-      await controller(data, user, channel);
+      await controller(data, user, channel, conn);
     });
-  }
-};
-
-const addConn = (user, conn) => {
-  if (connections.has(user.cuid)) {
-    const match = connections.get(user.cuid).filter(currentConn => currentConn.id === conn.id);
-    if (match.length === 0) {
-      connections.set(user.cuid, [ ...connections.get(user.cuid), conn ]);
-    }
-  } else {
-    connections.set(user.cuid, [ conn ]);
   }
 };
 
@@ -31,12 +19,10 @@ const onConnection = (conn) => {
         const user = await AuthService.getUser(dataObj.authToken);
 
         if (user) {
-          addConn(user, conn);
-
           if (dataObj.channel) {
-            invokeControllers(dataObj.channel, dataObj.data, user);
+            invokeControllers(dataObj.channel, dataObj.data, user, conn);
           } else {
-            invokeControllers('*', dataObj.data, user);
+            invokeControllers('*', dataObj.data, user, conn);
           }
         } else {
           return conn.write(JSON.stringify({ errors: [ 'Authentication needed' ] }));
@@ -58,13 +44,8 @@ const register = (channel, controller) => {
   }
 };
 
-const sendToUser = (data, user, channel) => {
-  if (connections.has(user.cuid)) {
-    const conns = connections.get(user.cuid);
-    conns.forEach((conn) => {
-      conn.write(JSON.stringify({ channel, data }));
-    });
-  }
+const send = (conn, data, channel) => {
+  conn.write(JSON.stringify({ channel, data }));
 };
 
 const initialize = (server) => {
@@ -81,4 +62,4 @@ export default (server) => {
   };
 };
 
-export { sendToUser };
+export { send };

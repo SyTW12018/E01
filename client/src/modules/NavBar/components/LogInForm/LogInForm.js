@@ -6,6 +6,7 @@ import {
   Modal, Button, Message, Grid, Header, Icon, Container, Divider,
 } from 'semantic-ui-react';
 import '../Form.css';
+import { getAxiosErrors } from '../../../../utils';
 
 export default class LogInForm extends Component {
   static propTypes = {
@@ -42,15 +43,7 @@ export default class LogInForm extends Component {
         return;
       }
     } catch (e) {
-      const responseErrors = e.response.data.errors;
-      if (responseErrors && Array.isArray(responseErrors)) {
-        errors = responseErrors.map((error) => {
-          if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
-          return error;
-        });
-      } else {
-        errors = [ e.message ];
-      }
+      errors = getAxiosErrors(e);
     }
 
     this.setState({

@@ -13,6 +13,7 @@ import authRoutes from './routes/AuthRoutes';
 import auth from './middlewares/AuthMiddleware';
 import wsController from './controllers/WebSocketController';
 import ChatsController from './controllers/ChatsController';
+import { WsRoomController } from './controllers/RoomController';
 
 const app = express();
 dotenv.config();
@@ -77,6 +78,7 @@ const server = app.listen(app.get('port'), () => {
 });
 
 const wsServer = wsController(server);
+wsServer.register('rooms', WsRoomController());
 wsServer.register('chats', ChatsController());
 
 export default app;

@@ -15,14 +15,5 @@ cache:
     - node_modules
     - client/node_modules
 script:
-  - cd client
-  - npm install --ignore-scripts
-  - npm test
-  - cd ..
-  - npm install
-  - npm test
+  - npm run test:all
   - sonar-scanner
-env:
-  global:
-    - SKIP_PREFLIGHT_CHECK=true
-    - NODE_ENV=test

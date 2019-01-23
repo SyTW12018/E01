@@ -1,11 +1,11 @@
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import SockJS from 'sockjs-client';
 import { withCookies } from 'react-cookie';
 
-class WebSocket extends Component {
+class WebSocket extends PureComponent {
   static propTypes = {
-    onData: PropTypes.func.isRequired,
+    onData: PropTypes.func,
     secure: PropTypes.bool,
     serverDomain: PropTypes.string,
     wsPath: PropTypes.string,
@@ -14,6 +14,7 @@ class WebSocket extends Component {
   };
 
   static defaultProps = {
+    onData: () => {},
     secure: false,
     serverDomain: window.location.host,
     wsPath: 'ws',
@@ -27,10 +28,7 @@ class WebSocket extends Component {
     this.cookies = props.cookies;
     this.socket = new SockJS(`http${props.secure ? 's' : ''}://${props.serverDomain}/${props.wsPath}`);
     this.socket.error = props.onError;
-    this.socket.onopen = () => {
-      this.send(true, 'control');
-      props.onConnected();
-    };
+    this.socket.onopen = props.onConnected;
   }
 
   componentDidMount() {

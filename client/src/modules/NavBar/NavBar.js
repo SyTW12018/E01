@@ -1,8 +1,9 @@
-import {
-  Container, Menu, Header, Loader, Dimmer, Icon, Dropdown,
-} from 'semantic-ui-react';
 import React from 'react';
+import {
+  Container, Menu, Header, Icon, Dropdown,
+} from 'semantic-ui-react';
 import { AuthConsumer } from 'react-check-auth';
+import Loader from '../Loader/Loader';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
@@ -48,19 +49,13 @@ const Logged = (userInfo, refreshAuth) => (
   </Menu>
 );
 
-const Loading = () => (
-  <Dimmer active>
-    <Loader size='massive' />
-  </Dimmer>
-);
-
 const render = (props) => {
   const {
     userInfo, isLoading, refreshAuth,
   } = props;
 
   if (isLoading) {
-    return Loading();
+    return <Loader />;
   }
 
   if (userInfo && userInfo.role && userInfo.role !== 'temporalUser') {

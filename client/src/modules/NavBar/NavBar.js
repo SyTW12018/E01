@@ -10,7 +10,6 @@ import LogOutButton from './components/LogOutButton/LogOutButton';
 import SettingsForm from './components/SettingsForm/SettingsForm';
 import './NavBar.css';
 
-
 const NotLogged = refreshAuth => (
   <Menu
     size='large'

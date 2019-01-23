@@ -15,18 +15,18 @@ import wsController from './controllers/WebSocketController';
 import ChatsController from './controllers/ChatsController';
 import { WsRoomController } from './controllers/RoomController';
 
-const app = express();
+const server = express();
 dotenv.config();
 
-app.set('port', process.env.PORT || 3001);
+server.set('port', process.env.PORT || 3001);
 
-if (process.env.DEBUG) app.use(morgan('dev')); // log every request to the console
-app.use(bodyParser.urlencoded({ extended: 'true' })); // parse application/x-www-form-urlencoded
-app.use(bodyParser.json()); // parse application/json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-app.use(cookieParser());
-app.use(methodOverride());
-app.use(auth());
+if (process.env.DEBUG) server.use(morgan('dev')); // log every request to the console
+server.use(bodyParser.urlencoded({ extended: 'true' })); // parse application/x-www-form-urlencoded
+server.use(bodyParser.json()); // parse application/json
+server.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+server.use(cookieParser());
+server.use(methodOverride());
+server.use(auth());
 
 // Set native promises as mongoose promise
 mongoose.Promise = global.Promise;
@@ -47,21 +47,21 @@ if (process.env.NODE_ENV !== 'test') {
     });
 }
 
-app.use('/', authRoutes);
-app.use('/', usersRoutes);
-app.use('/', roomsRoutes);
+server.use('/', authRoutes);
+server.use('/', usersRoutes);
+server.use('/', roomsRoutes);
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+  server.use(express.static('client/build'));
 
   // Redirect unknown requests to the react app
-  app.get('*', (req, res) => {
+  server.get('*', (req, res) => {
     res.sendFile(path.join(`${__dirname}/../client/build/index.html`));
   });
 }
 
 // Errors handling
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   if (err) {
     // It can be a Runtime Error
     if (process.env.DEBUG) {
@@ -73,12 +73,12 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   }
 });
 
-const server = app.listen(app.get('port'), () => {
-  console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${app.get('port')}`);
+const expressServer = server.listen(server.get('port'), () => {
+  console.log(`${process.env.NODE_ENV === 'test' ? 'Test server' : 'Server'} running on port ${server.get('port')}`);
 });
 
-const wsServer = wsController(server);
+const wsServer = wsController(expressServer);
 wsServer.register('rooms', WsRoomController());
 wsServer.register('chats', ChatsController());
 
-export default app;
+export default server;

@@ -1,25 +1,25 @@
 import React from 'react';
-import { Dimmer, Loader } from 'semantic-ui-react';
+import { Dimmer, Loader as SLoader } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
-function Loading(props) {
+function Loader(props) {
   const { size, text } = props;
 
   return (
     <Dimmer active>
-      <Loader size={size}>{text}</Loader>
+      <SLoader size={size}>{text}</SLoader>
     </Dimmer>
   );
 }
 
-Loading.propTypes = {
+Loader.propTypes = {
   size: PropTypes.string,
   text: PropTypes.string,
 };
 
-Loading.defaultProps = {
+Loader.defaultProps = {
   size: 'massive',
   text: '',
 };
 
-export default Loading;
+export default Loader;

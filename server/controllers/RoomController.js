@@ -1,5 +1,5 @@
 import RoomService from '../services/RoomService';
-import wrapAsync from '../utils/AsyncWrapper';
+import wrapAsync from '../utils/wrapAsync';
 import { send } from './WebSocketController';
 
 function parseRoom(room) {
@@ -38,14 +38,15 @@ async function joinRoom(req, res) {
       return res.status(200).json({ room: parseRoom(room) });
     }
 
-    room.users.push({ cuid: req.user.cuid, owner: false });
+    const newRoom = { ...room };
+    newRoom.users = [ ...room.users, { cuid: req.user.cuid, owner: false } ];
     try {
-      await RoomService.updateRoom(roomName, room);
+      await RoomService.updateRoom(roomName, newRoom);
     } catch (error) {
       return res.status(202).json({ errors: [ 'The room is full' ] });
     }
 
-    return res.status(200).json({ room: parseRoom(room) });
+    return res.status(200).json({ room: parseRoom(newRoom) });
   }
 
   const newRoom = await RoomService.createRoom(roomName, req.user);
@@ -64,9 +65,10 @@ async function leaveRoom(req, res) {
   const room = await RoomService.getRoom(roomName);
   if (room) {
     if (room.users.find(user => user.cuid === req.user.cuid)) {
-      room.users = room.users.filter(user => user.cuid !== req.user.cuid);
-      await RoomService.updateRoom(roomName, room);
-      return res.status(200).json({ room: parseRoom(room) });
+      const newRoom = { ...room };
+      newRoom.users = room.users.filter(user => user.cuid !== req.user.cuid);
+      await RoomService.updateRoom(roomName, newRoom);
+      return res.status(200).json({ room: parseRoom(newRoom) });
     }
 
     return res.status(202).end();
@@ -109,9 +111,10 @@ const WsRoomController = () => async (data, user, channel, conn) => {
   const room = await RoomService.getRoom(data.roomName);
   if (room) {
     if (room.users.find(userR => userR.cuid === user.cuid)) {
-      room.users = room.users.map(userR => (userR.cuid !== user.cuid ? userR : { ...userR, conn }));
+      const newRoom = { ...room };
+      newRoom.users = room.users.map(userR => (userR.cuid !== user.cuid ? userR : { ...userR, conn }));
 
-      await RoomService.updateRoom(data.roomName, room);
+      await RoomService.updateRoom(data.roomName, newRoom);
       send(conn, { ok: true }, channel);
     }
   }

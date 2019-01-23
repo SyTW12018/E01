@@ -3,7 +3,7 @@ import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
 import UserService from '../services/UserService';
 import User from '../models/User';
-import wrapAsync from '../utils/AsyncWrapper';
+import wrapAsync from '../utils/wrapAsync';
 
 /**
  * Get all users

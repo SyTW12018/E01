@@ -1,13 +1,13 @@
 /* global it describe run beforeEach before */
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../server';
+import server from '../server';
 import { cleanDatabase, prepareDatabase, loginAsAdmin } from './TestHelper';
 
 chai.use(chaiHttp);
 
-const url = `http://localhost:${app.get('port')}`;
-const agent = chai.request.agent(app);
+const url = `http://localhost:${server.get('port')}`;
+const agent = chai.request.agent(server);
 
 before(prepareDatabase);
 beforeEach(cleanDatabase);

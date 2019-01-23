@@ -43,7 +43,9 @@
       "src/modules/**/*.{js,jsx}",
       "!<rootDir>/node_modules/"
     ],
-    "coverageReporters": ["lcovonly"]
+    "coverageReporters": [
+      "lcovonly"
+    ]
   },
   "browserslist": [
     ">0.2%",

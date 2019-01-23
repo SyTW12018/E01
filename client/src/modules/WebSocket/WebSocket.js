@@ -15,7 +15,7 @@ class WebSocket extends PureComponent {
 
   static defaultProps = {
     onData: () => {},
-    secure: false,
+    secure: window.location.protocol === 'https:',
     serverDomain: window.location.host,
     wsPath: 'ws',
     onError: () => {},

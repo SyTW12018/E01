@@ -55,7 +55,6 @@ class Room extends Component {
 
   leaveRoom = async () => {
     await axios.patch(`/rooms/${this.roomName}`);
-    this.setState({ joined: false });
   };
 
   onData = (data, channel) => {
@@ -91,7 +90,7 @@ class Room extends Component {
         <AuthConsumer>
           {({ userInfo }) => {
             if (userInfo && wsConnected && joined && errors.length === 0) {
-              return <VideoConference username={userInfo.name} roomName={this.roomName} />;
+              return <VideoConference cuid={userInfo.cuid} username={userInfo.name} roomName={this.roomName} />;
             }
 
             if (errors.length > 0) {

@@ -18,7 +18,15 @@ function MessageModal(props) {
       {headerText !== '' ? <Modal.Header>{headerText}</Modal.Header> : null}
       <Modal.Content>
         {(() => {
-          if (errors.length > 0) {
+          if (errors.length === 1) {
+            return (
+              <Message negative>
+                <p>{errors[0]}</p>
+              </Message>
+            );
+          }
+
+          if (errors.length > 1) {
             return (
               <Message
                 negative

@@ -13,6 +13,7 @@
     "formsy-semantic-ui-react": "^0.3.3",
     "prop-types": "^15.6.2",
     "react": "^16.6.0",
+    "react-avatar": "^3.5.0",
     "react-check-auth": "^0.2.0-alpha.2",
     "react-cookie": "^3.0.8",
     "react-dom": "^16.6.0",

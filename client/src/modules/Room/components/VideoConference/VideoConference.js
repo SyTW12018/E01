@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { Container, Header } from 'semantic-ui-react';
+import { Container, Header, Button } from 'semantic-ui-react';
 import * as SWRTC from '@andyet/simplewebrtc';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
 import Loader from '../../../Loader/Loader';
-import MessageModal from '../../Room';
+import MessageModal from '../../../MessageModal/MessageModal';
+import UsersList from './components/UsersList/UsersList';
 
 const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
 
 class VideoConference extends Component {
   static propTypes = {
+    cuid: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     roomName: PropTypes.string.isRequired,
   };
@@ -23,7 +25,16 @@ class VideoConference extends Component {
     };
 
     this.store = SWRTC.createStore();
+    this.userData = JSON.stringify({ cuid: props.cuid, username: props.username });
+    this.user = null;
+    this.setDisplayName = null;
   }
+
+  setUserInfo = () => {
+    if (this.user && this.setDisplayName && this.user.displayName !== this.userData) {
+      this.setDisplayName(this.userData);
+    }
+  };
 
   RoomInfo = ({ username, roomName }) => (
     <Container fluid>
@@ -46,6 +57,8 @@ class VideoConference extends Component {
         <this.RoomInfo username={username} roomName={roomName} />
         <SWRTC.Provider store={this.store} configUrl={CONFIG_URL}>
 
+          <SWRTC.RemoteAudioPlayer store={this.store} />
+
           <SWRTC.Connecting store={this.store} configUrl={CONFIG_URL}>
             <Loader text={`Connecting to ${roomName}...`} />
           </SWRTC.Connecting>
@@ -57,7 +70,9 @@ class VideoConference extends Component {
           <SWRTC.Failed store={this.store} configUrl={CONFIG_URL}>
             <MessageModal
               open
-              text='There was an error initializing the client, the service might not be available. Try again later'
+              errors={
+                [ 'There was an error initializing the client, the service might not be available, try again later' ]
+              }
               onClose={() => { this.setState({ goBack: true }); }}
               headerText='Ups, something went wrong!'
               buttonText='Go back'
@@ -65,10 +80,8 @@ class VideoConference extends Component {
           </SWRTC.Failed>
 
           <SWRTC.Connected store={this.store} configUrl={CONFIG_URL}>
-            {/* Request the user's media */}
             <SWRTC.RequestUserMedia audio video auto store={this.store} />
 
-            {/* Connect to a room with a name and optional password */}
             <SWRTC.Room name={roomName} store={this.store}>
               {({
                 room, peers, localMedia, remoteMedia,
@@ -80,22 +93,51 @@ class VideoConference extends Component {
                 const remoteVideos = remoteMedia.filter(m => m.kind === 'video');
                 const localVideos = localMedia.filter(m => m.kind === 'video' && m.shared);
 
+                if (localVideos.length === 0) {
+                  return (
+                    <MessageModal
+                      open
+                      text='Please, allow the use of your camera and microphone to the application'
+                      onClose={() => { this.setState({ goBack: true }); }}
+                      headerText='We need some permissions'
+                      buttonText={'I don\'t have a camera or microphone'}
+                    />
+                  );
+                }
+
                 return (
                   <Container fluid>
                     <h1>{room.providedName}</h1>
                     <div>
-                      <span>
-                        {peers.length}
-                      </span>
+                      <UsersList users={peers} />
                     </div>
 
                     <div>
-                      {localVideos.map((video, i) => <SWRTC.Video key={i} media={video} />)}
+                      <SWRTC.Video key={localVideos[0].id} media={localVideos[0]} />
 
-                      {remoteVideos.map((video, i) => <SWRTC.Video key={i + 10} media={video} />)}
+                      <SWRTC.UserControls
+                        render={({
+                          user, isMuted, mute, unmute, setDisplayName,
+                        }) => {
+                          this.user = user;
+                          this.setDisplayName = setDisplayName;
+                          window.setTimeout(this.setUserInfo, 1000);
+                          return (
+                            <div>
+                              <Button onClick={() => (isMuted ? unmute() : mute())}>
+                                {isMuted ? 'Unmute' : 'Mute'}
+                              </Button>
+                            </div>
+                          );
+                        }}
+                        store={this.store}
+                      />
+
+                      {remoteVideos.map(video => <SWRTC.Video key={video.id} media={video} />)}
                     </div>
 
-                  </Container>);
+                  </Container>
+                );
               }}
             </SWRTC.Room>
           </SWRTC.Connected>

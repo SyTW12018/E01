@@ -3,10 +3,10 @@ import { login, register, getCurrentUser } from '../middlewares/AuthMiddleware';
 import loginValidator from '../validators/LoginValidator';
 import registerUserValidator from '../validators/RegisterUserValidator';
 
-const router = new Router();
+const AuthRoutes = new Router();
 
-router.post('/login', loginValidator, login());
-router.post('/signup', registerUserValidator, register());
-router.get('/user', getCurrentUser());
+AuthRoutes.post('/login', loginValidator, login());
+AuthRoutes.post('/signup', registerUserValidator, register());
+AuthRoutes.get('/user', getCurrentUser());
 
-export default router;
+export default AuthRoutes;

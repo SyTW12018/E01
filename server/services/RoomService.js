@@ -1,3 +1,4 @@
+const MAX_SIZE = 6;
 let roomsStorage = [];
 
 /**
@@ -65,11 +66,18 @@ async function updateRoom(name, newRoom) {
     return null;
   }
 
-  // TODO validate newRoom, throw if not valid, ex. is full
+  if (newRoom.users.length > MAX_SIZE) {
+    throw new Error('Maximum size exceeded');
+  }
+
+  if (newRoom.users.length === 0) {
+    await deleteRoom(name);
+    return null;
+  }
 
   roomsStorage = roomsStorage.filter(room => room.name !== name);
-  roomsStorage.push(newRoom);
-  return { newRoom };
+  roomsStorage.push({ ...newRoom, name });
+  return { ...newRoom, name };
 }
 
 /**

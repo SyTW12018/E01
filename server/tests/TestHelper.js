@@ -56,4 +56,16 @@ async function loginAsAdmin(agent) {
     });
 }
 
-export { cleanDatabase, prepareDatabase, loginAsAdmin };
+async function loginAsNotAdmin(agent) {
+  return agent.post('/login')
+    .send({
+      user: {
+        email: 'juan@juan.com',
+        password: 'juanjuan',
+      },
+    });
+}
+
+export {
+  cleanDatabase, prepareDatabase, loginAsAdmin, loginAsNotAdmin,
+};

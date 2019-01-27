@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { AuthConsumer } from 'react-check-auth';
 import axios from 'axios';
-import {
-  Container, Header, Input,
-} from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
+import { Redirect } from 'react-router';
+import Loader from '../Loader/Loader';
+import MessageModal from '../MessageModal/MessageModal';
 import WebSocket from '../WebSocket/WebSocket';
-import { formatName } from '../../utils';
+import VideoConference from './components/VideoConference/VideoConference';
+import { formatName, getAxiosErrors } from '../../utils';
 
 class Room extends Component {
   constructor(props) {
@@ -15,13 +17,21 @@ class Room extends Component {
       joined: false,
       wsConnected: false,
       errors: [],
-      messages: [],
+      goBack: false,
     };
 
     this.roomName = formatName(props.match.params.roomName);
+  }
 
+  componentDidMount() {
     (async () => {
       await this.joinRoom();
+    })();
+  }
+
+  componentWillUnmount() {
+    (async () => {
+      await this.leaveRoom();
     })();
   }
 
@@ -34,15 +44,7 @@ class Room extends Component {
         return;
       }
     } catch (e) {
-      const responseErrors = e.response.data.errors;
-      if (responseErrors && Array.isArray(responseErrors)) {
-        errors = responseErrors.map((error) => {
-          if (typeof error === 'object') return (error.msg ? error.msg : 'Unknown error');
-          return error;
-        });
-      } else {
-        errors = [ e.message ];
-      }
+      errors = getAxiosErrors(e);
     }
 
     this.setState({
@@ -51,64 +53,61 @@ class Room extends Component {
     });
   };
 
-  onMessage = (message, channel) => {
-    if (channel === 'chats' && message.roomName === this.roomName) {
-      this.setState(state => ({ messages: [ ...state.messages, message ] }));
+  leaveRoom = async () => {
+    await axios.patch(`/rooms/${this.roomName}`);
+  };
+
+  onData = (data, channel) => {
+    if (channel === 'rooms' && data.ok) {
+      this.setState(() => ({ wsConnected: true }));
     }
   };
 
   onConnected = () => {
-    this.setState(() => ({ wsConnected: true }));
+    this.sendData({ roomName: this.roomName }, 'rooms');
   };
 
-  sendMessage = () => {
-    const { wsConnected } = this.state;
-    if (wsConnected) {
-      this.ws.send({
-        roomName: this.roomName,
-        text: this.messageInput.value,
-      }, 'chats');
-    }
+  sendData = (data, channel) => {
+    this.ws.send(data, channel);
   };
-
-  RoomInfo = userInfo => (
-    <Container fluid>
-      <Header>
-        {`ROOM ${this.roomName}`}
-      </Header>
-      <Header>
-        {`cuid: ${userInfo.cuid}`}
-      </Header>
-    </Container>
-  );
 
   render() {
-    const { messages, wsConnected } = this.state;
+    const {
+      wsConnected, joined, errors, goBack,
+    } = this.state;
+
+    if (goBack) {
+      return <Redirect push to='/' />;
+    }
+
     return (
       <Container>
         <WebSocket
           onConnected={this.onConnected}
-          onData={this.onMessage}
+          onData={this.onData}
           ref={(ws) => { this.ws = ws; }}
         />
         <AuthConsumer>
-          {({ userInfo }) => (userInfo ? this.RoomInfo(userInfo) : null)}
-        </AuthConsumer>
-        <Input
-          ref={(input) => { if (input) this.messageInput = input.inputRef; }}
-          placeholder='Message...'
-          action={{
-            loading: !wsConnected, content: 'Send', onClick: this.sendMessage, primary: true,
-          }}
-        />
-        <div>
-          <ul>
-            {messages.map((msg, i) => (
-              <li key={i}>{msg.text}</li>
-            ))}
-          </ul>
-        </div>
+          {({ userInfo }) => {
+            if (userInfo && wsConnected && joined && errors.length === 0) {
+              return <VideoConference cuid={userInfo.cuid} username={userInfo.name} roomName={this.roomName} />;
+            }
 
+            if (errors.length > 0) {
+              return (
+                <MessageModal
+                  open={errors.length > 0}
+                  errors={errors}
+                  onClose={() => { this.setState({ goBack: true }); }}
+                  headerText='Ups, something went wrong!'
+                  buttonText='Go back'
+                />
+              );
+            }
+
+            return <Loader text='Connecting...' />;
+          }}
+        </AuthConsumer>
       </Container>
     );
   }

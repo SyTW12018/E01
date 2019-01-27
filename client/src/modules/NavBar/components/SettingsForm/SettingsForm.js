@@ -7,6 +7,7 @@ import {
 import { Form } from 'formsy-semantic-ui-react';
 import '../Form.css';
 import PropTypes from 'prop-types';
+import { getAxiosErrors } from '../../../../utils';
 
 
 class NestedModal extends Component {
@@ -27,6 +28,32 @@ class NestedModal extends Component {
     this.form = null;
     this.refreshAuth = props.refreshAuth;
   }
+
+  update = async (formData) => {
+    this.setState({ isLoading: true });
+
+    let errors = [];
+    try {
+      const result = await axios.post('/signup', {
+        user: {
+          email: formData.email,
+          name: formData.username,
+          password: formData.password,
+        },
+      });
+      if (result.status === 201) {
+        this.refreshAuth();
+        return;
+      }
+    } catch (e) {
+      errors = getAxiosErrors(e);
+    }
+
+    this.setState({
+      isLoading: false,
+      errors,
+    });
+  };
 
   render() {
     const {
@@ -104,7 +131,7 @@ class NestedModal extends Component {
                     isDefaultRequiredValue: 'Password is required',
                   }}
                 />
-                
+
 
                 <Form.Input
                   className='hiddenLabel'
@@ -201,7 +228,7 @@ export default class SettingsForm extends Component {
             <Icon size='large' name='mail' />
             <List.Content>{` ${userInfo.email}`}</List.Content>
           </List.Item>
-      
+
           <List.Item>
             <Icon size='large' name='lock' />
             <List.Content>Password</List.Content>

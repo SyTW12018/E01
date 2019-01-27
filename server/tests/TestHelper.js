@@ -47,7 +47,7 @@ async function cleanDatabase() {
 }
 
 async function loginAsAdmin(agent) {
-  return agent.post('/login')
+  return agent.post('/auth/login')
     .send({
       user: {
         email: 'may@may.com',
@@ -57,7 +57,7 @@ async function loginAsAdmin(agent) {
 }
 
 async function loginAsNotAdmin(agent) {
-  return agent.post('/login')
+  return agent.post('/auth/login')
     .send({
       user: {
         email: 'juan@juan.com',

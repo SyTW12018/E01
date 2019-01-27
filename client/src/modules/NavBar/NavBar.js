@@ -7,7 +7,7 @@ import Loader from '../Loader/Loader';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import LogInForm from './components/LogInForm/LogInForm';
 import LogOutButton from './components/LogOutButton/LogOutButton';
-import SettingsForm from './components/SettingsForm/SettingsForm';
+import UpdateForm from './components/UpdateForm/UpdateForm';
 import './NavBar.css';
 
 const NotLogged = refreshAuth => (
@@ -38,7 +38,7 @@ const Logged = (userInfo, refreshAuth) => (
         <Header.Content>
           <Dropdown simple text={userInfo.name}>
             <Dropdown.Menu>
-              <SettingsForm refreshAuth={refreshAuth} />
+              <UpdateForm refreshAuth={refreshAuth} userInfo={userInfo} />
               <LogOutButton dropdown refreshAuth={refreshAuth} />
             </Dropdown.Menu>
           </Dropdown>

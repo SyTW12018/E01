@@ -2,15 +2,15 @@ import ms from 'ms';
 import AuthService from '../services/AuthService';
 import UserService from '../services/UserService';
 
-async function createTempUser(req, res) {
-  req.user = await UserService.addTemporalUser();
-  await sendToken(req.user, res);
-}
-
-async function sendToken(user, res) {
+const sendToken = async (user, res) => {
   const token = await AuthService.generateToken(user.cuid);
   res.cookie('authToken', token, { maxAge: ms('0.5y') });
-}
+};
+
+const createTempUser = async (req, res) => {
+  req.user = await UserService.addTemporalUser();
+  await sendToken(req.user, res);
+};
 
 const login = () => async (req, res) => {
   const user = await UserService.getUserByEmailAndPassword(req.body.user.email, req.body.user.password);
@@ -32,6 +32,30 @@ const register = () => async (req, res) => {
   const newUser = await UserService.registerUser(req.body.user);
   await UserService.deleteTemporalUser(req.user.cuid);
   return res.status(201).json({ cuid: newUser.cuid });
+};
+
+const update = () => async (req, res) => {
+  if (!req.user || req.user.role === 'temporalUser') {
+    return res.status(400).json({ errors: [ 'You must be registered to update your profile' ] });
+  }
+
+  const updatedUser = req.body.user;
+  updatedUser.cuid = req.user.cuid;
+  let user = await UserService.getUserByEmailAndPassword(req.user.email, updatedUser.currentPassword);
+  if (!user) {
+    return res.status(400).json({ errors: [ 'Invalid current password' ] });
+  }
+
+  user = await UserService.getUserByEmail(updatedUser.email);
+  if (user && user.cuid !== updatedUser.cuid) {
+    return res.status(400).json({ errors: [ 'The email is already in use' ] });
+  }
+
+  if (updatedUser.newPassword && updatedUser.newPassword !== '') {
+    updatedUser.password = updatedUser.newPassword;
+  }
+  const result = await UserService.updateUser(updatedUser);
+  return res.status(result ? 200 : 400).json({ cuid: updatedUser.cuid });
 };
 
 const getCurrentUser = () => async (req, res) => {
@@ -67,5 +91,6 @@ export default middleware;
 export {
   login,
   register,
+  update,
   getCurrentUser,
 };

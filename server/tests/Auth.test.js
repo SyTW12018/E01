@@ -2,7 +2,9 @@
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../server';
-import { cleanDatabase, prepareDatabase, loginAsAdmin } from './TestHelper';
+import {
+  cleanDatabase, prepareDatabase, loginAsAdmin, loginAsNotAdmin,
+} from './TestHelper';
 
 chai.use(chaiHttp);
 
@@ -60,7 +62,7 @@ describe('Web tokens', () => {
 
 describe('Login', () => {
   it('should login on valid request', async () => {
-    const res = await chai.request(url).post('/login').send({
+    const res = await chai.request(url).post('/auth/login').send({
       user: {
         email: 'alberto@alberto.com',
         password: 'albertoalberto',
@@ -71,7 +73,7 @@ describe('Login', () => {
   });
 
   it('should not login on invalid request', async () => {
-    const res = await chai.request(url).post('/login').send({
+    const res = await chai.request(url).post('/auth/login').send({
       user: {
         email: 'alberto@alberto.com',
         password: 'albertoalbert',
@@ -83,7 +85,7 @@ describe('Login', () => {
 
 describe('Register', () => {
   it('should register on valid request', async () => {
-    let res = await chai.request(url).post('/signup').send({
+    let res = await chai.request(url).post('/auth/register').send({
       user: {
         name: 'Maria',
         email: 'maria@maria.com',
@@ -125,7 +127,7 @@ describe('Register', () => {
   });
 
   it('should not register on invalid request', async () => {
-    const res = await chai.request(url).post('/signup').send({
+    const res = await chai.request(url).post('/auth/register').send({
       user: {
         name: 'Maria',
         email: 'mariamaria.com',
@@ -136,7 +138,7 @@ describe('Register', () => {
   });
 
   it('should not register on invalid request (same email)', async () => {
-    const res = await chai.request(url).post('/signup').send({
+    const res = await chai.request(url).post('/auth/register').send({
       user: {
         name: 'Maria',
         email: 'may@may.com',
@@ -144,6 +146,118 @@ describe('Register', () => {
       },
     });
     expect(res).to.have.status(400);
+  });
+});
+
+describe('Update', () => {
+  it('should update on valid request', async () => {
+    await loginAsNotAdmin(agent);
+
+    let res = await agent.post('/auth/update').send({
+      user: {
+        name: 'Juan2',
+        email: 'juan2@juan2.com',
+        currentPassword: 'juanjuan',
+        newPassword: 'juan2juan2',
+      },
+    });
+    expect(res).to.have.status(200);
+
+    await loginAsAdmin(agent);
+
+    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body).to.have.property('user');
+    expect(res.body.user).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body.user).to.have.property('name').to.be.equal('Juan2');
+    expect(res.body.user).to.have.property('email').to.be.equal('juan2@juan2.com');
+    expect(res.body.user).to.have.property('slug').to.be.equal('juan2');
+    expect(res.body.user).to.have.property('role').to.be.equal('registeredUser');
+    expect(res.body.user).to.not.have.property('password');
+    expect(res).to.have.status(200);
+
+    res = await chai.request(url).post('/auth/login').send({
+      user: {
+        email: 'juan2@juan2.com',
+        password: 'juan2juan2',
+      },
+    });
+    expect(res).to.have.cookie('authToken');
+    expect(res).to.have.status(200);
+  });
+
+  it('should not update on invalid request (invalid email)', async () => {
+    await loginAsNotAdmin(agent);
+
+    let res = await agent.post('/auth/update').send({
+      user: {
+        name: 'Juan2',
+        email: 'juan2juan2.com',
+        currentPassword: 'juanjuan',
+      },
+    });
+    expect(res).to.have.status(400);
+
+    await loginAsAdmin(agent);
+
+    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body).to.have.property('user');
+    expect(res.body.user).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body.user).to.have.property('name').to.be.equal('Juan');
+    expect(res.body.user).to.have.property('email').to.be.equal('juan@juan.com');
+    expect(res.body.user).to.have.property('slug').to.be.equal('juan');
+    expect(res.body.user).to.have.property('role').to.be.equal('registeredUser');
+    expect(res.body.user).to.not.have.property('password');
+    expect(res).to.have.status(200);
+  });
+
+  it('should not update on invalid request (duplicated email)', async () => {
+    await loginAsNotAdmin(agent);
+
+    let res = await agent.post('/auth/update').send({
+      user: {
+        name: 'Juan2',
+        email: 'may@may.com',
+        currentPassword: 'juanjuan',
+      },
+    });
+    expect(res).to.have.status(400);
+
+    await loginAsAdmin(agent);
+
+    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body).to.have.property('user');
+    expect(res.body.user).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body.user).to.have.property('name').to.be.equal('Juan');
+    expect(res.body.user).to.have.property('email').to.be.equal('juan@juan.com');
+    expect(res.body.user).to.have.property('slug').to.be.equal('juan');
+    expect(res.body.user).to.have.property('role').to.be.equal('registeredUser');
+    expect(res.body.user).to.not.have.property('password');
+    expect(res).to.have.status(200);
+  });
+
+  it('should not update on invalid request (invalid current password)', async () => {
+    await loginAsNotAdmin(agent);
+
+    let res = await agent.post('/auth/update').send({
+      user: {
+        name: 'Juan2',
+        email: 'juan2@juan2.com',
+        currentPassword: 'tresetf',
+      },
+    });
+    expect(res).to.have.status(400);
+
+    await loginAsAdmin(agent);
+
+    res = await agent.get('/users/cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body).to.have.property('user');
+    expect(res.body.user).to.have.property('cuid').to.be.equal('cjoogdu2x0000gctsqv3m95nd');
+    expect(res.body.user).to.have.property('name').to.be.equal('Juan');
+    expect(res.body.user).to.have.property('email').to.be.equal('juan@juan.com');
+    expect(res.body.user).to.have.property('slug').to.be.equal('juan');
+    expect(res.body.user).to.have.property('role').to.be.equal('registeredUser');
+    expect(res.body.user).to.not.have.property('password');
+    expect(res).to.have.status(200);
   });
 });
 

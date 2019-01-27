@@ -32,7 +32,7 @@ export default class LogInForm extends Component {
 
     let errors = [];
     try {
-      const result = await axios.post('/login', {
+      const result = await axios.post('/auth/login', {
         user: {
           email: formData.email,
           password: formData.password,

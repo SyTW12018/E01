@@ -10,7 +10,7 @@ import Room from './modules/Room/Room';
 
 // ReactDOM.render(<LandingPage />, document.getElementById('root'));
 ReactDOM.render(
-  <AuthProvider authUrl='/user'>
+  <AuthProvider authUrl='/auth/user'>
     <BrowserRouter>
       <Switch>
         <Route path='/room/:roomName' component={Room} />

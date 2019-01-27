@@ -40,5 +40,5 @@
 
 .ui.list {
     padding: 30px !important;
-    word-break: break-word;      /* IE */
+    word-break: break-word;
 }

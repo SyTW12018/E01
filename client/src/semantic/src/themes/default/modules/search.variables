@@ -65,7 +65,7 @@
 @resultPriceFloat: right;
 @resultPriceColor: @green;
 
-/* Special Message */
+/* Special ChatMessage */
 @messageVerticalPadding: 1em;
 @messageHorizontalPadding: 1em;
 @messageHeaderFontSize: @medium;

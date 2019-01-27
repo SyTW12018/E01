@@ -110,7 +110,7 @@
 @itemDescriptionMargin: 0em 0em 0em 1em;
 @itemDescriptionColor: @lightTextColor;
 
-/* Message */
+/* ChatMessage */
 @messagePadding: @selectionItemPadding;
 @messageFontWeight: @normal;
 @messageColor: @unselectedTextColor;

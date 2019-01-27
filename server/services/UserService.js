@@ -57,7 +57,7 @@ async function getUsers() {
 async function addTemporalUser() {
   const newUser = {
     cuid: cuid(),
-    name: `Anonymous #${tempCount}`,
+    name: `Anonymous ${tempCount}`,
     dateAdded: new Date(),
   };
   userStorage.push(newUser);

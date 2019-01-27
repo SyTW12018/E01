@@ -1,5 +1,5 @@
 /*******************************
-            Message
+            ChatMessage
 *******************************/
 
 // @textColor
@@ -64,7 +64,7 @@
         Types
 --------------------*/
 
-/* Icon Message */
+/* Icon ChatMessage */
 @iconSize: 3em;
 @iconOpacity: 0.8;
 @iconContentDistance: 0rem;

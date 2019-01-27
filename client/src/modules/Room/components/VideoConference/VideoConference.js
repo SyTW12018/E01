@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 import Loader from '../../../Loader/Loader';
 import MessageModal from '../../../MessageModal/MessageModal';
 import UsersList from './components/UsersList/UsersList';
+import Chat from './components/Chat/Chat';
 
 const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
@@ -45,7 +46,7 @@ class VideoConference extends Component {
   );
 
   render() {
-    const { username, roomName } = this.props;
+    const { username, roomName, cuid } = this.props;
     const { goBack } = this.state;
 
     if (goBack) {
@@ -110,6 +111,10 @@ class VideoConference extends Component {
                     <h1>{room.providedName}</h1>
                     <div>
                       <UsersList users={peers} />
+                    </div>
+
+                    <div>
+                      <Chat roomName={roomName} cuid={cuid} />
                     </div>
 
                     <div>

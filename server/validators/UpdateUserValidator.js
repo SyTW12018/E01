@@ -5,7 +5,6 @@ export default new Validator({
     in: [ 'body' ],
     errorMessage: 'Invalid email',
     isEmail: true,
-    optional: true,
   },
   'user.name': {
     in: [ 'body' ],
@@ -14,14 +13,16 @@ export default new Validator({
     isLength: {
       options: { min: 3, max: 25 },
     },
-    optional: true,
   },
-  'user.password': {
+  'user.newPassword': {
     in: [ 'body' ],
-    errorMessage: 'Invalid password',
+    errorMessage: 'Invalid new password',
     isLength: {
       options: { min: 5, max: 40 },
     },
     optional: true,
+  },
+  'user.currentPassword': {
+    in: [ 'body' ],
   },
 }).getMiddleware();

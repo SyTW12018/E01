@@ -1,5 +1,6 @@
 import cuid from 'cuid';
 import bcrypt from 'bcrypt';
+import slug from 'limax';
 import User from '../models/User';
 
 let userStorage = [];
@@ -80,6 +81,7 @@ async function removeTemporalUsers() {
 async function registerUser(user) {
   const newUser = user;
   if (!newUser.cuid) newUser.cuid = cuid();
+  newUser.slug = slug(newUser.name.toLowerCase(), { lowercase: true });
   newUser.password = await bcrypt.hash(newUser.password, 5);
   const registeredUser = await User.create(newUser);
   return parseUser(registeredUser);
@@ -126,6 +128,8 @@ async function getUserByEmail(email) {
  * @returns {Promise<*>}
  */
 async function getUserByEmailAndPassword(email, password) {
+  if (!email || !password) return null;
+
   const user = await User.findOne({ email }).select('cuid name email password role slug dateAdded').exec();
   if (!user) {
     return null;
@@ -176,8 +180,32 @@ async function deleteTemporalUser(cuid) {
  * @returns {Promise<*>}
  */
 async function updateUser(user) {
-  const result = await User.updateOne({ cuid: user.cuid }, user).exec();
-  return (result.n ? { cuid } : null);
+  const updatedUser = user;
+  if (updatedUser.name) updatedUser.slug = slug(updatedUser.name.toLowerCase(), { lowercase: true });
+
+  let result;
+  if (updatedUser.password && updatedUser.password !== '') {
+    updatedUser.password = await bcrypt.hash(updatedUser.password, 5);
+    result = await User.updateOne({ cuid: updatedUser.cuid },
+      {
+        $set: {
+          name: updatedUser.name,
+          slug: updatedUser.slug,
+          email: updatedUser.email,
+          password: updatedUser.password,
+        },
+      }).exec();
+  } else {
+    result = await User.updateOne({ cuid: updatedUser.cuid },
+      {
+        $set: {
+          name: updatedUser.name,
+          slug: updatedUser.slug,
+          email: updatedUser.email,
+        },
+      }).exec();
+  }
+  return (result.n ? { cuid: updatedUser.cuid } : null);
 }
 
 export default {

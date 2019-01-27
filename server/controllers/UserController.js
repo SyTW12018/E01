@@ -1,5 +1,4 @@
 import cuid from 'cuid';
-import slug from 'limax';
 import sanitizeHtml from 'sanitize-html';
 import UserService from '../services/UserService';
 import User from '../models/User';
@@ -30,7 +29,6 @@ async function registerUser(req, res) {
   });
 
   newUser.name = sanitizeHtml(newUser.name);
-  newUser.slug = slug(newUser.name.toLowerCase(), { lowercase: true });
   newUser.cuid = cuid();
 
   const user = await UserService.registerUser(newUser);
@@ -71,7 +69,6 @@ async function deleteUser(req, res) {
 async function updateUser(req, res) {
   const { user } = req.body;
   user.cuid = req.params.cuid;
-  if (user.name) user.slug = slug(user.name.toLowerCase(), { lowercase: true });
   const result = await UserService.updateUser(user);
   return res.status(result ? 200 : 404).json({ cuid: req.params.cuid });
 }

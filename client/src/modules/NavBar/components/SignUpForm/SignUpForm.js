@@ -24,15 +24,15 @@ export default class SignUpForm extends Component {
     };
 
     this.form = null;
-    this.refreshAuth = props.refreshAuth;
   }
 
   register = async (formData) => {
     this.setState({ isLoading: true });
+    const { refreshAuth } = this.props;
 
     let errors = [];
     try {
-      const result = await axios.post('/signup', {
+      const result = await axios.post('/auth/register', {
         user: {
           email: formData.email,
           name: formData.username,
@@ -40,7 +40,7 @@ export default class SignUpForm extends Component {
         },
       });
       if (result.status === 201) {
-        this.refreshAuth();
+        refreshAuth();
         return;
       }
     } catch (e) {

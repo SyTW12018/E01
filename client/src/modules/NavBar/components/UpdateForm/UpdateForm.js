@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Form } from 'formsy-semantic-ui-react';
 import {
   Modal, Button, Message, Grid, Header, Icon, Container, Divider, Dropdown,
 } from 'semantic-ui-react';
+import { Form } from 'formsy-semantic-ui-react';
 import '../Form.css';
 import PropTypes from 'prop-types';
 import { getAxiosErrors } from '../../../../utils';
 
-export default class SettingsForm extends Component {
+class UpdateForm extends Component {
   static propTypes = {
+    userInfo: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     refreshAuth: PropTypes.func.isRequired,
   };
 
@@ -24,23 +25,24 @@ export default class SettingsForm extends Component {
     };
 
     this.form = null;
-    this.refreshAuth = props.refreshAuth;
   }
 
   update = async (formData) => {
     this.setState({ isLoading: true });
+    const { refreshAuth } = this.props;
 
     let errors = [];
     try {
-      const result = await axios.post('/signup', {
+      const result = await axios.post('/auth/update', {
         user: {
           email: formData.email,
           name: formData.username,
-          password: formData.password,
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
         },
       });
-      if (result.status === 201) {
-        this.refreshAuth();
+      if (result.status === 200) {
+        refreshAuth();
         return;
       }
     } catch (e) {
@@ -55,9 +57,9 @@ export default class SettingsForm extends Component {
 
   render() {
     const {
-      isModalOpen, isValid, isLoading, errors,
+      isModalOpen, errors, isValid, isLoading,
     } = this.state;
-
+    const { userInfo } = this.props;
 
     return (
       <Modal
@@ -73,7 +75,7 @@ export default class SettingsForm extends Component {
             <Grid.Column>
               <Header textAlign='center' size='large'>
                 <Icon name='weixin' />
-                My Profile
+                Your profile
               </Header>
 
               <Divider />
@@ -82,22 +84,26 @@ export default class SettingsForm extends Component {
                 warning
                 size='large'
                 loading={isLoading}
-                // /siguiente línea a meditarla probablemente cambiar .register a .update
                 onValidSubmit={this.update}
                 onValid={() => this.setState({ isValid: true })}
                 onInvalid={() => this.setState({ isValid: false })}
                 ref={(ref) => { this.form = ref; }}
               >
                 <Form.Input
-                  disabled
                   className='hiddenLabel'
                   name='email'
+                  value={userInfo.email}
                   fluid
                   required
                   icon='at'
                   iconPosition='left'
-                  placeholder='Aquí iría el email recibido de algún lado'
-
+                  placeholder='E-mail address'
+                  validations='isEmail'
+                  errorLabel={<Message warning />}
+                  validationErrors={{
+                    isEmail: 'Enter a valid e-mail',
+                    isDefaultRequiredValue: 'E-mail is required',
+                  }}
                 />
 
                 <Form.Input
@@ -105,6 +111,7 @@ export default class SettingsForm extends Component {
                   name='username'
                   fluid
                   required
+                  value={userInfo.name}
                   icon='user'
                   iconPosition='left'
                   placeholder='Username'
@@ -124,12 +131,22 @@ export default class SettingsForm extends Component {
 
                 <Form.Input
                   className='hiddenLabel'
-                  name='password'
+                  name='currentPassword'
                   fluid
                   required
                   icon='lock'
                   iconPosition='left'
-                  placeholder='Password'
+                  placeholder='Current password'
+                  type='password'
+                />
+
+                <Form.Input
+                  className='hiddenLabel'
+                  name='newPassword'
+                  fluid
+                  icon='lock'
+                  iconPosition='left'
+                  placeholder='New password'
                   type='password'
                   validations={{
                     minLength: 5,
@@ -139,31 +156,13 @@ export default class SettingsForm extends Component {
                   validationErrors={{
                     minLength: 'The password must have a length between 5 and 40',
                     maxLength: 'The password must have a length between 5 and 40',
-                    isDefaultRequiredValue: 'Password is required',
-                  }}
-                />
-
-                <Form.Input
-                  className='hiddenLabel'
-                  name='passwordRepeat'
-                  fluid
-                  required
-                  icon='lock'
-                  iconPosition='left'
-                  placeholder='Repeat password'
-                  type='password'
-                  validations='equalsField:password'
-                  errorLabel={<Message warning />}
-                  validationErrors={{
-                    isDefaultRequiredValue: 'Password is required',
-                    equalsField: 'Passwords doesn\'t match',
                   }}
                 />
 
                 { errors.length > 0 ? (
                   <Message
                     negative
-                    header="Can't create a new account!"
+                    header="Can't update your profile!"
                     list={errors}
                   />
                 ) : (null)}
@@ -175,7 +174,7 @@ export default class SettingsForm extends Component {
                     fluid
                     size='large'
                     color='orange'
-                    content='Register'
+                    content='Update profile'
                     disabled={!isValid || isLoading}
                   />
                 </Container>
@@ -189,3 +188,5 @@ export default class SettingsForm extends Component {
     );
   }
 }
+
+export default UpdateForm;

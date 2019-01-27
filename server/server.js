@@ -47,7 +47,7 @@ if (process.env.NODE_ENV !== 'test') {
     });
 }
 
-server.use('/', authRoutes);
+server.use('/auth', authRoutes);
 server.use('/', usersRoutes);
 server.use('/', roomsRoutes);
 

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import cuidValidator from '../validators/CuidValidator';
-import updateUserValidator from '../validators/UpdateUserValidator';
 import registerUserValidator from '../validators/RegisterUserValidator';
 import UserController from '../controllers/UserController';
 import RoleRequired from '../middlewares/RoleRequired';
@@ -22,7 +21,7 @@ UserRoutes.post('/users',
 
 // Update a user
 UserRoutes.put('/users/:cuid',
-  [ RoleRequired('admin'), cuidValidator, updateUserValidator ],
+  [ RoleRequired('admin'), cuidValidator, registerUserValidator ],
   UserController.updateUser);
 
 // Delete a user by cuid

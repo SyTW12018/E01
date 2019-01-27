@@ -1,11 +1,13 @@
 import React from 'react';
+import styles from './ChatSection.css';
 
 const Message = ({ chat, user }) => (
-  <div className={`item ${user === chat.username ? 'right' : 'left'}`}>
-      <div className="ui message">
-    {user !== chat.username}
-    {chat.content}
-      </div>
+  <div class={styles.ui}>
+    <br/>
+    <p> {chat.username} </p>
+    <div className="ui message">
+        {chat.content}
+    </div>
   </div>
 );
 

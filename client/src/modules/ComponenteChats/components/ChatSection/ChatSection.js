@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Message from './Message.js';
-import './ChatSection.css';
+import styles from './ChatSection.css';
 
 
 class ChatSection extends React.Component {
@@ -10,37 +10,30 @@ class ChatSection extends React.Component {
 
         this.state = {
             chats: [{
-                username: "Derecha",
-                content: <p>Hello World!</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
+                username: "Moderador",
+                content: <p>El chat está activo</p>,
             }, {
                 username: "Izquierda",
                 content: <p>Prueba de chat</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }, {
                 username: "Derecha",
                 content: <p>Mensaje recibido gracias por todo</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }, {
                 username: "Izquierda",
                 content: <p>Lorem ipsum dolor sit amet, nibh ipsum. Cum class sem inceptos incidunt sed sed. Tempus wisi enim id, arcu sed lectus aliquam, nulla vitae est bibendum molestie elit risus.</p>,
-                img: "http://i.imgur.com/ARbQZix.jpg",
             }, {
                 username: "Derecha",
                 content: <p>Esto es un placeholder como una casa</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }, {
                 username: "Derecha",
                 content: <p>Videocon es una aplicacion de videoconferencia para hablar con tus amigos</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }, {
-                username: "Derecha",
+                username: "Izquierda",
                 content: <p>Conectate ahora con nostros!</p>,
                 img: "http://i.imgur.com/Tj5DGiO.jpg",
             }, {
                 username: "Izquierda",
                 content: <p>Magnifica Aplicación!</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }]
         };
 
@@ -66,7 +59,6 @@ class ChatSection extends React.Component {
             chats: this.state.chats.concat([{
                 username: "Derecha",
                 content: <p>{ReactDOM.findDOMNode(this.refs.msg).value}</p>,
-                img: "http://i.imgur.com/Tj5DGiO.jpg",
             }])
         }, () => {
             ReactDOM.findDOMNode(this.refs.msg).value = "";
@@ -74,11 +66,11 @@ class ChatSection extends React.Component {
     }
 
     render() {
-        const username = "Derecha";
+        const username = "Izquierda";
         const { chats } = this.state;
 
         return (
-            <div className="Chatroom">
+            <div className={styles.Chatroom}>
                 <h3>Chat</h3>
                 <div className="ui raised very padded text container segment">
                     <ul className="ui list" ref="chats">

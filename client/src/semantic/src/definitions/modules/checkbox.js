@@ -41,7 +41,7 @@ $.fn.checkbox = function(parameters) {
         className       = settings.className,
         namespace       = settings.namespace,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -166,7 +166,7 @@ $.fn.checkbox = function(parameters) {
             ;
           }
           else {
-            module.error(error.notFound);
+            module.errors(error.notFound);
           }
         },
 
@@ -640,8 +640,8 @@ $.fn.checkbox = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -727,7 +727,7 @@ $.fn.checkbox = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -815,7 +815,7 @@ $.fn.checkbox.settings = {
     readOnly      : 'read-only'
   },
 
-  error     : {
+  errors     : {
     method       : 'The method you called is not defined'
   },
 

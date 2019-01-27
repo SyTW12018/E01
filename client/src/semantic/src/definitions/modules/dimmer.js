@@ -43,7 +43,7 @@ $.fn.dimmer = function(parameters) {
         selector        = settings.selector,
         namespace       = settings.namespace,
         className       = settings.className,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -519,8 +519,8 @@ $.fn.dimmer = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -609,7 +609,7 @@ $.fn.dimmer = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -700,7 +700,7 @@ $.fn.dimmer.settings = {
   onShow      : function(){},
   onHide      : function(){},
 
-  error   : {
+  errors   : {
     method   : 'The method you called is not defined.'
   },
 

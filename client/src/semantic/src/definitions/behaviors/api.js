@@ -49,7 +49,7 @@ $.api = $.fn.api = function(parameters) {
         namespace       = settings.namespace,
         metadata        = settings.metadata,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
         className       = settings.className,
 
         // define namespaces for modules
@@ -142,7 +142,7 @@ $.api = $.fn.api = function(parameters) {
               response
             ;
             if(window.Storage === undefined) {
-              module.error(error.noStorage);
+              module.errors(error.noStorage);
               return;
             }
             response = sessionStorage.getItem(url);
@@ -158,7 +158,7 @@ $.api = $.fn.api = function(parameters) {
               return;
             }
             if(window.Storage === undefined) {
-              module.error(error.noStorage);
+              module.errors(error.noStorage);
               return;
             }
             if( $.isPlainObject(response) ) {
@@ -203,7 +203,7 @@ $.api = $.fn.api = function(parameters) {
           // check if before send cancelled request
           if(requestSettings === false) {
             module.cancelled = true;
-            module.error(error.beforeSend);
+            module.errors(error.beforeSend);
             return;
           }
           else {
@@ -214,7 +214,7 @@ $.api = $.fn.api = function(parameters) {
           url = module.get.templatedURL();
 
           if(!url && !module.is.mocked()) {
-            module.error(error.missingURL);
+            module.errors(error.missingURL);
             return;
           }
 
@@ -370,7 +370,7 @@ $.api = $.fn.api = function(parameters) {
                   ;
                   // remove value
                   if(value === undefined) {
-                    module.error(error.requiredParameter, variable, url);
+                    module.errors(error.requiredParameter, variable, url);
                     url = false;
                     return false;
                   }
@@ -437,7 +437,7 @@ $.api = $.fn.api = function(parameters) {
                 data = $.extend(true, {}, data, formData);
               }
               else {
-                module.error(error.missingSerialize);
+                module.errors(error.missingSerialize);
                 module.debug('Cant extend data. Replacing data with form data', data, formData);
                 data = formData;
               }
@@ -567,22 +567,22 @@ $.api = $.fn.api = function(parameters) {
                 return true;
               }
               else if(status == 'invalid') {
-                module.debug('JSON did not pass success test. A server-side error has most likely occurred', response);
+                module.debug('JSON did not pass success test. A server-side errors has most likely occurred', response);
               }
               else if(status == 'error') {
                 if(xhr !== undefined) {
-                  module.debug('XHR produced a server error', status, httpMessage);
-                  // make sure we have an error to display to console
+                  module.debug('XHR produced a server errors', status, httpMessage);
+                  // make sure we have an errors to display to console
                   if( xhr.status != 200 && httpMessage !== undefined && httpMessage !== '') {
-                    module.error(error.statusMessage + httpMessage, ajaxSettings.url);
+                    module.errors(error.statusMessage + httpMessage, ajaxSettings.url);
                   }
                   settings.onError.call(context, errorMessage, $module, xhr);
                 }
               }
 
               if(settings.errorDuration && status !== 'aborted') {
-                module.debug('Adding error state');
-                module.set.error();
+                module.debug('Adding errors state');
+                module.set.errors();
                 if( module.should.removeError() ) {
                   setTimeout(module.remove.error, settings.errorDuration);
                 }
@@ -668,9 +668,9 @@ $.api = $.fn.api = function(parameters) {
         },
 
         set: {
-          error: function() {
-            module.verbose('Adding error state to element', $context);
-            $context.addClass(className.error);
+          errors: function() {
+            module.verbose('Adding errors state to element', $context);
+            $context.addClass(className.errors);
           },
           loading: function() {
             module.verbose('Adding loading state to element', $context);
@@ -680,9 +680,9 @@ $.api = $.fn.api = function(parameters) {
         },
 
         remove: {
-          error: function() {
-            module.verbose('Removing error state from element', $context);
-            $context.removeClass(className.error);
+          errors: function() {
+            module.verbose('Removing errors state from element', $context);
+            $context.removeClass(className.errors);
           },
           loading: function() {
             module.verbose('Removing loading state from element', $context);
@@ -700,10 +700,10 @@ $.api = $.fn.api = function(parameters) {
             ;
           },
           errorFromRequest: function(response, status, httpMessage) {
-            return ($.isPlainObject(response) && response.error !== undefined)
-              ? response.error // use json error message
-              : (settings.error[status] !== undefined) // use server error message
-                ? settings.error[status]
+            return ($.isPlainObject(response) && response.errors !== undefined)
+              ? response.errors // use json errors message
+              : (settings.errors[status] !== undefined) // use server errors message
+                ? settings.errors[status]
                 : httpMessage
             ;
           },
@@ -721,22 +721,22 @@ $.api = $.fn.api = function(parameters) {
             if(runSettings) {
               if(runSettings.success !== undefined) {
                 module.debug('Legacy success callback detected', runSettings);
-                module.error(error.legacyParameters, runSettings.success);
+                module.errors(error.legacyParameters, runSettings.success);
                 runSettings.onSuccess = runSettings.success;
               }
               if(runSettings.failure !== undefined) {
                 module.debug('Legacy failure callback detected', runSettings);
-                module.error(error.legacyParameters, runSettings.failure);
+                module.errors(error.legacyParameters, runSettings.failure);
                 runSettings.onFailure = runSettings.failure;
               }
               if(runSettings.complete !== undefined) {
                 module.debug('Legacy complete callback detected', runSettings);
-                module.error(error.legacyParameters, runSettings.complete);
+                module.errors(error.legacyParameters, runSettings.complete);
                 runSettings.onComplete = runSettings.complete;
               }
             }
             if(runSettings === undefined) {
-              module.error(error.noReturnedValue);
+              module.errors(error.noReturnedValue);
             }
             if(runSettings === false) {
               return runSettings;
@@ -811,7 +811,7 @@ $.api = $.fn.api = function(parameters) {
             if(action) {
               module.debug('Looking up url for action', action, settings.api);
               if(settings.api[action] === undefined && !module.is.mocked()) {
-                module.error(error.missingAction, settings.action, settings.api);
+                module.errors(error.missingAction, settings.action, settings.api);
                 return;
               }
               url = settings.api[action];
@@ -892,8 +892,8 @@ $.api = $.fn.api = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -979,7 +979,7 @@ $.api = $.fn.api = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -1054,7 +1054,7 @@ $.api.settings = {
   // whether to hide errors after a period of time
   hideError         : 'auto',
 
-  // duration for error state
+  // duration for errors state
   errorDuration     : 2000,
 
   // whether parameters should be encoded with encodeURIComponent
@@ -1114,7 +1114,7 @@ $.api.settings = {
   // failed JSON success test
   onFailure   : function(response, $module) {},
 
-  // server error
+  // server errors
   onError     : function(errorMessage, $module) {},
 
   // request aborted
@@ -1123,11 +1123,11 @@ $.api.settings = {
   successTest : false,
 
   // errors
-  error : {
+  errors : {
     beforeSend        : 'The before send function has aborted the request',
-    error             : 'There was an error with your request',
+    errors             : 'There was an errors with your request',
     exitConditions    : 'API Request Aborted. Exit conditions met',
-    JSONParse         : 'JSON could not be parsed during error handling',
+    JSONParse         : 'JSON could not be parsed during errors handling',
     legacyParameters  : 'You are using legacy API success callback names',
     method            : 'The method you called is not defined',
     missingAction     : 'API action used but no url was defined',
@@ -1135,9 +1135,9 @@ $.api.settings = {
     missingURL        : 'No URL specified for api event',
     noReturnedValue   : 'The beforeSend callback must return a settings object, beforeSend ignored.',
     noStorage         : 'Caching responses locally requires session storage',
-    parseError        : 'There was an error parsing your request',
+    parseError        : 'There was an errors parsing your request',
     requiredParameter : 'Missing a required URL parameter: ',
-    statusMessage     : 'Server gave an error: ',
+    statusMessage     : 'Server gave an errors: ',
     timeout           : 'Your request timed out'
   },
 
@@ -1148,7 +1148,7 @@ $.api.settings = {
 
   className: {
     loading : 'loading',
-    error   : 'error'
+    errors   : 'error'
   },
 
   selector: {

@@ -48,7 +48,7 @@ $.fn.accordion = function(parameters) {
         className       = settings.className,
         namespace       = settings.namespace,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -424,8 +424,8 @@ $.fn.accordion = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -511,7 +511,7 @@ $.fn.accordion = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -584,7 +584,7 @@ $.fn.accordion.settings = {
   onClose         : function(){}, // callback after closing animation
   onChange        : function(){}, // callback after closing or opening animation
 
-  error: {
+  errors: {
     method : 'The method you called is not defined'
   },
 

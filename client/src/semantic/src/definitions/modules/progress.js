@@ -54,7 +54,7 @@ $.fn.progress = function(parameters) {
         metadata        = settings.metadata,
         namespace       = settings.namespace,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -342,7 +342,7 @@ $.fn.progress = function(parameters) {
 
         is: {
           complete: function() {
-            return module.is.success() || module.is.warning() || module.is.error();
+            return module.is.success() || module.is.warning() || module.is.errors();
           },
           success: function() {
             return $module.hasClass(className.success);
@@ -350,8 +350,8 @@ $.fn.progress = function(parameters) {
           warning: function() {
             return $module.hasClass(className.warning);
           },
-          error: function() {
-            return $module.hasClass(className.error);
+          errors: function() {
+            return $module.hasClass(className.errors);
           },
           active: function() {
             return $module.hasClass(className.active);
@@ -391,19 +391,19 @@ $.fn.progress = function(parameters) {
             module.verbose('Removing warning state');
             $module.removeClass(className.warning);
           },
-          error: function() {
-            module.verbose('Removing error state');
-            $module.removeClass(className.error);
+          errors: function() {
+            module.verbose('Removing errors state');
+            $module.removeClass(className.errors);
           }
         },
 
         set: {
           barWidth: function(value) {
             if(value > 100) {
-              module.error(error.tooHigh, value);
+              module.errors(error.tooHigh, value);
             }
             else if (value < 0) {
-              module.error(error.tooLow, value);
+              module.errors(error.tooLow, value);
             }
             else {
               $bar
@@ -499,7 +499,7 @@ $.fn.progress = function(parameters) {
               : module.percent
             ;
             if(percent === 100) {
-              if(settings.autoSuccess && !(module.is.warning() || module.is.error() || module.is.success())) {
+              if(settings.autoSuccess && !(module.is.warning() || module.is.errors() || module.is.success())) {
                 module.set.success();
                 module.debug('Automatically triggering success at 100%');
               }
@@ -584,10 +584,10 @@ $.fn.progress = function(parameters) {
               settings.onWarning.call(element, module.value, module.total);
             });
           },
-          error : function(text) {
-            text = text || settings.text.error;
-            module.debug('Setting error state');
-            $module.addClass(className.error);
+          errors : function(text) {
+            text = text || settings.text.errors;
+            module.debug('Setting errors state');
+            $module.addClass(className.errors);
             module.remove.active();
             module.remove.success();
             module.remove.warning();
@@ -642,7 +642,7 @@ $.fn.progress = function(parameters) {
             ;
             value = module.get.numericValue(value);
             if(value === false) {
-              module.error(error.nonNumeric, value);
+              module.errors(error.nonNumeric, value);
             }
             value = module.get.normalizedValue(value);
             if( module.has.total() ) {
@@ -711,8 +711,8 @@ $.fn.progress = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -798,7 +798,7 @@ $.fn.progress = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -886,7 +886,7 @@ $.fn.progress.settings = {
   onError       : function(value, total){},
   onWarning     : function(value, total){},
 
-  error    : {
+  errors    : {
     method     : 'The method you called is not defined.',
     nonNumeric : 'Progress value is non numeric',
     tooHigh    : 'Value specified is above 100%',
@@ -911,7 +911,7 @@ $.fn.progress.settings = {
 
   text : {
     active  : false,
-    error   : false,
+    errors   : false,
     success : false,
     warning : false,
     percent : '{percent}%',
@@ -920,7 +920,7 @@ $.fn.progress.settings = {
 
   className : {
     active  : 'active',
-    error   : 'error',
+    errors   : 'error',
     success : 'success',
     warning : 'warning'
   }

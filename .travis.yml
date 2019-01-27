@@ -1,12 +1,19 @@
 language: node_js
+dist: trusty
 node_js:
   - 8
   - 9
   - 10
   - 11
+addons:
+  sonarcloud:
+    organization: "sytw12018"
+    token:
+      secure: "M1SmKywT8c+ORZqo3VD1fzmIaX0SEWmTbUPVLvXcEN4qeLxV8is2ozJyBy47BWOMcTInNQQeNNlpdmgTMWflDjCZLH/f+M16inLVGdFB+a4lqAxNo12el0/oq9HvCiDglAUAKFCUmaV+mOE07/YU/p/hDpzcEM3SFhxjkHu+X6GNVEi+jhe40Bm1+BQetdPZEeRlKc319jKpTk/ZmcdOdCG0JUXhweRDsggtaorK9MMofrlZYbfM1yt9Qxjq/oEeZRyUdzsZT8+pcDZJUUXoPL3d5N4igs59SwErykCICcjubjY/uUw18kwBCCYS5syxvkz3+A32MFXkoBveyuogmO9R36Ohde5M61PM9h5MOxHgLYEof8h/YBh94HMeUOGFWdJE1LwpmUVp2NhLur0v0Pqn5J49tQuV5tASqAxH3f+curIp3OtYHbFp/GmrslUT8vKyDMjV+a62gcYNIRmZKHT+3Tnw+EaJ41PsUpn/AAyXhyTwIDSn87FeHhNp2h4rNPQjTxVrSuRCIbjlmXlWv/zhxUxeE5Dt8vqIpEKRT9AbxlOf3HuzTadAB2UqqvqTyqT3ePn5MUDKoA2Wsu0kGFvAOB9a0Cyc4LCjqWZ1qhWrPW6NOYdmSaC21sjyx3xfrgZ0EkSIn90yhHa6JSSp+m4IAAhsAcz4QZOXjKa0xi0="
 cache:
   directories:
     - node_modules
     - client/node_modules
 script:
-  - cd client && npm i && npm test
+  - npm run test:all
+  - sonar-scanner

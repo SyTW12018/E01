@@ -43,7 +43,7 @@ $.fn.rating = function(parameters) {
         className       = settings.className,
         metadata        = settings.metadata,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
 
         eventNamespace  = '.' + namespace,
         moduleNamespace = 'module-' + namespace,
@@ -315,8 +315,8 @@ $.fn.rating = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -467,7 +467,7 @@ $.fn.rating.settings = {
 
   onRate        : function(rating){},
 
-  error         : {
+  errors         : {
     method    : 'The method you called is not defined',
     noMaximum : 'No maximum rating specified. Cannot generate HTML automatically'
   },

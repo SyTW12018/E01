@@ -41,7 +41,7 @@ $.fn.nag = function(parameters) {
 
         className       = settings.className,
         selector        = settings.selector,
-        error           = settings.error,
+        error           = settings.errors,
         namespace       = settings.namespace,
 
         eventNamespace  = '.' + namespace,
@@ -209,7 +209,7 @@ $.fn.nag = function(parameters) {
               module.debug('Value stored using cookie', key, value, options);
             }
             else {
-              module.error(error.noCookieStorage);
+              module.errors(error.noCookieStorage);
               return;
             }
           },
@@ -228,7 +228,7 @@ $.fn.nag = function(parameters) {
               storedValue = $.cookie(key);
             }
             else {
-              module.error(error.noCookieStorage);
+              module.errors(error.noCookieStorage);
             }
             if(storedValue == 'undefined' || storedValue == 'null' || storedValue === undefined || storedValue === null) {
               storedValue = undefined;
@@ -250,7 +250,7 @@ $.fn.nag = function(parameters) {
               $.removeCookie(key, options);
             }
             else {
-              module.error(error.noStorage);
+              module.errors(error.noStorage);
             }
           }
         },
@@ -307,8 +307,8 @@ $.fn.nag = function(parameters) {
         },
         error: function() {
           if(!settings.silent) {
-            module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
-            module.error.apply(console, arguments);
+            module.error = Function.prototype.bind.call(console.errors, console, settings.name + ':');
+            module.errors.apply(console, arguments);
           }
         },
         performance: {
@@ -394,7 +394,7 @@ $.fn.nag = function(parameters) {
                 return false;
               }
               else {
-                module.error(error.method, query);
+                module.errors(error.method, query);
                 return false;
               }
             });
@@ -475,7 +475,7 @@ $.fn.nag.settings = {
   key           : 'nag',
   value         : 'dismiss',
 
-  error: {
+  errors: {
     noCookieStorage : '$.cookie is not included. A storage solution is required.',
     noStorage       : 'Neither $.cookie or store is defined. A storage solution is required for storing state',
     method          : 'The method you called is not defined.'

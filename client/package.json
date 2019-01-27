@@ -1,0 +1,59 @@
+{
+  "name": "videocon-client",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3001/",
+  "author": "E01",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@andyet/simplewebrtc": "^1.7.4",
+    "axios": "^0.18.0",
+    "cleanstr": "0.0.1",
+    "formsy-react": "^1.1.5",
+    "formsy-semantic-ui-react": "^0.3.3",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.0",
+    "react-avatar": "^3.5.0",
+    "react-check-auth": "^0.2.0-alpha.2",
+    "react-cookie": "^3.0.8",
+    "react-dom": "^16.6.0",
+    "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.1",
+    "react-scroll-parallax": "^1.3.5",
+    "redux": "^4.0.1",
+    "remove-accents": "^0.4.2",
+    "sanitize-html": "^1.19.3",
+    "semantic-ui-react": "^0.84.0",
+    "sockjs-client": "^1.3.0",
+    "stripchar": "^1.2.1"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  },
+  "scripts": {
+    "start": "cross-env SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "build": "cross-env SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "build:semantic": "cd src/semantic && gulp build",
+    "build:all": "npm run build:semantic && npm run build",
+    "test": "cross-env CI=true SKIP_PREFLIGHT_CHECK=true react-scripts test --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/modules/**/*.{js,jsx}",
+      "!<rootDir>/node_modules/"
+    ],
+    "coverageReporters": [
+      "lcovonly"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

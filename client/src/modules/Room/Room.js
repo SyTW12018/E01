@@ -5,7 +5,6 @@ import { Container } from 'semantic-ui-react';
 import { Redirect } from 'react-router';
 import Loader from '../Loader/Loader';
 import MessageModal from '../MessageModal/MessageModal';
-import WebSocket from '../WebSocket/WebSocket';
 import VideoConference from './components/VideoConference/VideoConference';
 import { formatName, getAxiosErrors } from '../../utils';
 
@@ -15,7 +14,6 @@ class Room extends Component {
 
     this.state = {
       joined: false,
-      wsConnected: false,
       errors: [],
       goBack: false,
     };
@@ -57,39 +55,18 @@ class Room extends Component {
     await axios.patch(`/rooms/${this.roomName}`);
   };
 
-  onData = (data, channel) => {
-    if (channel === 'rooms' && data.ok) {
-      this.setState(() => ({ wsConnected: true }));
-    }
-  };
-
-  onConnected = () => {
-    this.sendData({ roomName: this.roomName }, 'rooms');
-  };
-
-  sendData = (data, channel) => {
-    this.ws.send(data, channel);
-  };
-
   render() {
-    const {
-      wsConnected, joined, errors, goBack,
-    } = this.state;
+    const { joined, errors, goBack } = this.state;
 
     if (goBack) {
       return <Redirect push to='/' />;
     }
 
     return (
-      <Container>
-        <WebSocket
-          onConnected={this.onConnected}
-          onData={this.onData}
-          ref={(ws) => { this.ws = ws; }}
-        />
+      <Container fluid>
         <AuthConsumer>
           {({ userInfo }) => {
-            if (userInfo && wsConnected && joined && errors.length === 0) {
+            if (userInfo && joined && errors.length === 0) {
               return <VideoConference cuid={userInfo.cuid} username={userInfo.name} roomName={this.roomName} />;
             }
 

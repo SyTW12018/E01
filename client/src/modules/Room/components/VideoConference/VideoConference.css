@@ -1,0 +1,62 @@
+:local(.flexContainer) {
+    display: flex !important;
+    flex-flow: column;
+    height: 100%;
+}
+
+:local(.flexStatic) {
+    flex: 0 1 auto;
+}
+
+:local(.flexGrowVertical) {
+    flex: 1 1 auto;
+}
+
+:local(.verticalMargin) {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+}
+
+:local(.noMargin) {
+    margin: 0 !important;
+}
+
+:local(.noPadding) {
+    padding: 0 !important;
+}
+
+:local(.noTopPadding) {
+    padding-top: 0 !important;
+}
+
+:local(.noMinHeight) {
+    min-height: unset !important;
+}
+
+:local(.fullHeight) {
+    height: 100% !important;
+}
+
+:local(.darkBackground) {
+    background-color: #000000;
+    background-image: url("dark-geometric.png");
+}
+
+:local(.chat) {
+    margin-top: 0 !important;
+    margin-bottom: 1em !important;
+}
+
+:local(.messagesContainer) {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    position: relative;
+}
+
+:local(.messages) {
+    position: absolute;
+}
+
+.comment {
+    margin-top: 0.5em !important;
+}

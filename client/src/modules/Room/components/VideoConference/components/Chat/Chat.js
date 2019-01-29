@@ -1,15 +1,15 @@
 import React from 'react';
 import {
-  Container, Comment, Input, Dimmer, Loader, Button, Form,
+  Container, Comment, Input, Dimmer, Loader, Button, Form, Segment, Header,
 } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import Avatar from 'react-avatar';
 import WebSocket from '../../../../../WebSocket/WebSocket';
+import styles from '../../VideoConference.css';
 
 class Chat extends React.Component {
   static propTypes = {
     roomName: PropTypes.string.isRequired,
-    cuid: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -21,6 +21,18 @@ class Chat extends React.Component {
       messages: [],
     };
   }
+
+  componentDidMount() {
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom = () => {
+    if (this.messagesEnd) this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+  };
 
   onData = (data, channel) => {
     const { roomName } = this.props;
@@ -67,8 +79,8 @@ class Chat extends React.Component {
   };
 
   Loading = () => (
-    <Container fluid>
-      <Dimmer active>
+    <Container fluid className={styles.flexGrowVertical}>
+      <Dimmer inverted active>
         <Loader />
       </Dimmer>
     </Container>
@@ -78,19 +90,25 @@ class Chat extends React.Component {
     const { messages } = this.state;
 
     return (
-      <Comment.Group>
-        {messages.map((message, i) => (
-          <Comment key={`${message.sender.cuid}@@${i}`}>
-            <Avatar name={message.sender.name} round size='2.5em' className='avatar' />
-            <Comment.Content>
-              <Comment.Author as='span'>{message.sender.name}</Comment.Author>
-              <Comment.Metadata>
-                <div>{message.time}</div>
-              </Comment.Metadata>
-              <Comment.Text style={{ whiteSpace: 'pre-line' }}>{`${message.content}`}</Comment.Text>
-            </Comment.Content>
-          </Comment>
-        ))}
+      <Comment.Group className={`${styles.messagesContainer} ${styles.noMargin}`}>
+        <Container fluid className={styles.messages}>
+          {messages.map((message, i) => (
+            <Comment key={`${message.sender.cuid}@@${i}`}>
+              <Avatar name={message.sender.name} round size='2.5em' className='avatar' />
+              <Comment.Content>
+                <Comment.Author as='span'>{message.sender.name}</Comment.Author>
+                <Comment.Metadata>
+                  <div>{message.time}</div>
+                </Comment.Metadata>
+                <Comment.Text style={{ whiteSpace: 'pre-line' }}>{`${message.content}`}</Comment.Text>
+              </Comment.Content>
+            </Comment>
+          ))}
+          <div
+            style={{ float: 'left', clear: 'both' }}
+            ref={(el) => { this.messagesEnd = el; }}
+          />
+        </Container>
       </Comment.Group>
     );
   };
@@ -109,27 +127,32 @@ class Chat extends React.Component {
     const { wsConnected, message } = this.state;
 
     return (
-      <Container fluid>
-        <WebSocket
-          onConnected={this.onConnected}
-          onData={this.onData}
-          ref={(ws) => { this.ws = ws; }}
-        />
-
-        {wsConnected ? <this.Loaded /> : <this.Loading />}
-
-        <Form>
-          <Input
-            action={<this.SendButton />}
-            placeholder='Message...'
-            fluid
-            value={message}
-            loading={!wsConnected}
-            onChange={(e) => { this.setState({ message: e.target.value }); }}
+      <Segment.Group className={`${styles.flexGrowVertical} ${styles.flexContainer} ${styles.chat}`}>
+        <Segment inverted color='orange' textAlign='center' className={styles.flexStatic}>
+          <Header size='medium'>Chat</Header>
+        </Segment>
+        <Segment className={`${styles.flexGrowVertical} ${styles.flexContainer} ${styles.noTopPadding}`}>
+          <WebSocket
+            onConnected={this.onConnected}
+            onData={this.onData}
+            ref={(ws) => { this.ws = ws; }}
           />
-        </Form>
 
-      </Container>
+          {wsConnected ? <this.Loaded /> : <this.Loading />}
+
+          <Form className={styles.flexStatic}>
+            <Input
+              action={<this.SendButton />}
+              placeholder='Message...'
+              fluid
+              value={message}
+              loading={!wsConnected}
+              onChange={(e) => { this.setState({ message: e.target.value }); }}
+            />
+          </Form>
+
+        </Segment>
+      </Segment.Group>
     );
   }
 }

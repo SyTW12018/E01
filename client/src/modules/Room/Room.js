@@ -63,7 +63,7 @@ class Room extends Component {
     }
 
     return (
-      <Container fluid>
+      <Container fluid style={{ height: '100vh' }}>
         <AuthConsumer>
           {({ userInfo }) => {
             if (userInfo && joined && errors.length === 0) {

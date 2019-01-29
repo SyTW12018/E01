@@ -9,6 +9,7 @@ import Loader from '../../../Loader/Loader';
 import MessageModal from '../../../MessageModal/MessageModal';
 import UsersList from './components/UsersList/UsersList';
 import Chat from './components/Chat/Chat';
+import styles from './VideoConference.css';
 
 const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
@@ -46,6 +47,7 @@ class VideoConference extends Component {
       padded
       textAlign='center'
       color='orange'
+      className={styles.flexStatic}
     >
       <Header inverted size='medium'>
         <Header.Content>
@@ -57,14 +59,14 @@ class VideoConference extends Component {
   );
 
   Room = ({ peers, localVideos, remoteVideos }) => {
-    const { roomName, cuid } = this.props;
+    const { roomName } = this.props;
 
     return (
-      <Container fluid>
-        <Grid>
-          <Grid.Row style={{ height: '100%' }}>
-            <Grid.Column width={13}>
-              <div>
+      <Container fluid className={styles.flexGrowVertical}>
+        <Grid className={`${styles.fullHeight} ${styles.noMargin}`}>
+          <Grid.Row className={`${styles.fullHeight} ${styles.noPadding}`}>
+            <Grid.Column width={13} className={styles.noPadding}>
+              <Container fluid className={styles.fullHeight}>
                 <SWRTC.Video key={localVideos[0].id} media={localVideos[0]} />
 
                 <SWRTC.UserControls
@@ -86,11 +88,11 @@ class VideoConference extends Component {
                 />
 
                 {remoteVideos.map(video => <SWRTC.Video key={video.id} media={video} />)}
-              </div>
+              </Container>
             </Grid.Column>
-            <Grid.Column width={3}>
+            <Grid.Column width={3} className={styles.flexContainer}>
               <UsersList users={peers} />
-              <Chat roomName={roomName} cuid={cuid} />
+              <Chat roomName={roomName} />
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -107,7 +109,7 @@ class VideoConference extends Component {
     }
 
     return (
-      <Container fluid>
+      <Container fluid className={`${styles.flexContainer} ${styles.darkBackground}`}>
         <this.RoomInfo roomName={roomName} />
         <SWRTC.Provider store={this.store} configUrl={CONFIG_URL}>
 

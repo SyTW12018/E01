@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Container, Comment, Input, Dimmer, Loader, Button, Form, Segment, Header,
 } from 'semantic-ui-react';
@@ -7,7 +7,7 @@ import Avatar from 'react-avatar';
 import WebSocket from '../../../../../WebSocket/WebSocket';
 import styles from '../../VideoConference.css';
 
-class Chat extends React.Component {
+class Chat extends Component {
   static propTypes = {
     roomName: PropTypes.string.isRequired,
   };

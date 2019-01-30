@@ -66,6 +66,12 @@
     position: absolute;
 }
 
+:local(.userControls) {
+    flex: 0 1 content;
+    margin-top: 0 !important;
+    margin-bottom: 1em !important;
+}
+
 :local(.localVideo) {
     position: absolute;
     bottom: 1rem;
@@ -75,7 +81,6 @@
 
 :local(.videoLayoutColumn) {
     padding-right: 0 !important;
-    padding-bottom: 0.5rem !important;
 }
 
 .comment {

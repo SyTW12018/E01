@@ -11,6 +11,7 @@ import UsersList from './components/UsersList/UsersList';
 import Chat from './components/Chat/Chat';
 import styles from './VideoConference.css';
 import VideoLayout from './components/VideoLayout/VideoLayout';
+import UserControls from './components/UserControls/UserControls';
 
 const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
@@ -30,15 +31,23 @@ class VideoConference extends Component {
     };
 
     this.store = SWRTC.createStore();
-    this.userData = JSON.stringify({ cuid: props.cuid, username: props.username });
-    this.user = null;
-    this.setDisplayName = null;
   }
 
-  setUserInfo = () => {
-    if (this.user && this.setDisplayName && this.user.displayName !== this.userData) {
-      this.setDisplayName(this.userData);
-    }
+  addUsernameToMedia = (peers, media) => {
+    let newMedia = media;
+    peers.forEach((peer) => {
+      if (peer.id === media.owner.split('/').pop()) {
+        let username;
+        try {
+          ({ username } = JSON.parse(peer.displayName));
+        } catch (e) {
+          username = 'Loading...';
+        }
+        newMedia = { ...media, username };
+      }
+    });
+
+    return newMedia;
   };
 
   RoomInfo = ({ roomName }) => (
@@ -60,7 +69,8 @@ class VideoConference extends Component {
   );
 
   Room = ({ peers, localVideos, remoteVideos }) => {
-    const { roomName } = this.props;
+    const { roomName, cuid, username } = this.props;
+    const newRemoteVideos = remoteVideos.map(media => this.addUsernameToMedia(peers, media));
 
     return (
       <Container fluid className={`${styles.flexGrowVertical} ${styles.darkBackground}`}>
@@ -68,36 +78,13 @@ class VideoConference extends Component {
           <Grid.Row className={`${styles.fullHeight} ${styles.noPadding}`}>
             <Grid.Column width={13} className={styles.noPadding}>
               <Container fluid className={styles.fullHeight}>
-                <VideoLayout localVideos={localVideos} remoteVideos={remoteVideos} />
-
-                { /*
-                  <SWRTC.Video key={localVideos[ 0 ].id} media={localVideos[ 0 ]}/>
-
-                  < SWRTC.UserControls
-                  render={({
-                  user, isMuted, mute, unmute, setDisplayName,
-                }) => {
-                  this.user = user;
-                  this.setDisplayName = setDisplayName;
-                  window.setTimeout(this.setUserInfo, 1000);
-                  return (
-                  <div>
-                  <Button onClick={() => (isMuted ? unmute() : mute())}>
-                  {isMuted ? 'Unmute' : 'Mute'}
-                  </Button>
-                  </div>
-                  );
-                }}
-                  store={this.store}
-                  />
-
-                {remoteVideos.map(video => <SWRTC.Video key={video.id} media={video} />)}
-                */}
+                <VideoLayout localVideos={localVideos} remoteVideos={newRemoteVideos} />
               </Container>
             </Grid.Column>
             <Grid.Column width={3} className={styles.flexContainer}>
               <UsersList users={peers} />
               <Chat roomName={roomName} />
+              <UserControls store={this.store} cuid={cuid} username={username} />
             </Grid.Column>
           </Grid.Row>
         </Grid>

@@ -37,6 +37,14 @@
     height: 100% !important;
 }
 
+:local(.fullWidth) {
+    width: 100% !important;
+}
+
+:local(.centerContent) {
+    text-align: center !important;
+}
+
 :local(.darkBackground) {
     background-color: #000000;
     background-image: url("dark-geometric.png");
@@ -51,12 +59,31 @@
     flex: 1 1 auto;
     overflow-y: auto;
     position: relative;
+    min-height: 50px;
 }
 
 :local(.messages) {
     position: absolute;
 }
 
+:local(.localVideo) {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 10;
+}
+
+:local(.videoLayoutColumn) {
+    padding-right: 0 !important;
+    padding-bottom: 0.5rem !important;
+}
+
 .comment {
     margin-top: 0.5em !important;
+}
+
+video {
+    max-height: 100%;
+    max-width: 100%;
+    height: 100%;
 }

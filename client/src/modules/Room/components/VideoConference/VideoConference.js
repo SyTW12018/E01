@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Container, Header, Button, Segment, Grid,
+  Container, Header, Segment, Grid,
 } from 'semantic-ui-react';
 import * as SWRTC from '@andyet/simplewebrtc';
 import PropTypes from 'prop-types';
@@ -10,6 +10,7 @@ import MessageModal from '../../../MessageModal/MessageModal';
 import UsersList from './components/UsersList/UsersList';
 import Chat from './components/Chat/Chat';
 import styles from './VideoConference.css';
+import VideoLayout from './components/VideoLayout/VideoLayout';
 
 const API_KEY = '7d23837284fa02e360bfe43e';
 const CONFIG_URL = `https://api.simplewebrtc.com/config/guest/${API_KEY}`;
@@ -62,32 +63,36 @@ class VideoConference extends Component {
     const { roomName } = this.props;
 
     return (
-      <Container fluid className={styles.flexGrowVertical}>
+      <Container fluid className={`${styles.flexGrowVertical} ${styles.darkBackground}`}>
         <Grid className={`${styles.fullHeight} ${styles.noMargin}`}>
           <Grid.Row className={`${styles.fullHeight} ${styles.noPadding}`}>
             <Grid.Column width={13} className={styles.noPadding}>
               <Container fluid className={styles.fullHeight}>
-                <SWRTC.Video key={localVideos[0].id} media={localVideos[0]} />
+                <VideoLayout localVideos={localVideos} remoteVideos={remoteVideos} />
 
-                <SWRTC.UserControls
+                { /*
+                  <SWRTC.Video key={localVideos[ 0 ].id} media={localVideos[ 0 ]}/>
+
+                  < SWRTC.UserControls
                   render={({
-                    user, isMuted, mute, unmute, setDisplayName,
-                  }) => {
-                    this.user = user;
-                    this.setDisplayName = setDisplayName;
-                    window.setTimeout(this.setUserInfo, 1000);
-                    return (
-                      <div>
-                        <Button onClick={() => (isMuted ? unmute() : mute())}>
-                          {isMuted ? 'Unmute' : 'Mute'}
-                        </Button>
-                      </div>
-                    );
-                  }}
+                  user, isMuted, mute, unmute, setDisplayName,
+                }) => {
+                  this.user = user;
+                  this.setDisplayName = setDisplayName;
+                  window.setTimeout(this.setUserInfo, 1000);
+                  return (
+                  <div>
+                  <Button onClick={() => (isMuted ? unmute() : mute())}>
+                  {isMuted ? 'Unmute' : 'Mute'}
+                  </Button>
+                  </div>
+                  );
+                }}
                   store={this.store}
-                />
+                  />
 
                 {remoteVideos.map(video => <SWRTC.Video key={video.id} media={video} />)}
+                */}
               </Container>
             </Grid.Column>
             <Grid.Column width={3} className={styles.flexContainer}>

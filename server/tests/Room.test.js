@@ -58,7 +58,7 @@ describe('Rooms', () => {
     const res = await chai.request(url).post('/rooms/room_1');
     expect(res.body).to.have.property('errors');
     expect(res.body.errors[0]).to.be.equal('The room is full');
-    expect(res).to.have.status(202);
+    expect(res).to.have.status(503);
   });
 
   it('should get all rooms', async () => {

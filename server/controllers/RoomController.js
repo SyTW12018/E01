@@ -43,7 +43,7 @@ async function joinRoom(req, res) {
     try {
       await RoomService.updateRoom(roomName, newRoom);
     } catch (error) {
-      return res.status(202).json({ errors: [ 'The room is full' ] });
+      return res.status(503).json({ errors: [ 'The room is full' ] });
     }
 
     return res.status(200).json({ room: parseRoom(newRoom) });

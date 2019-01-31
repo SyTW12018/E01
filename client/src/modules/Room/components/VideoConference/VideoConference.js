@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Container, Header, Segment, Grid,
+  Container, Header, Segment, Grid, Responsive,
 } from 'semantic-ui-react';
 import * as SWRTC from '@andyet/simplewebrtc';
 import PropTypes from 'prop-types';
@@ -75,7 +75,8 @@ class VideoConference extends Component {
     return (
       <Container fluid className={`${styles.flexGrowVertical} ${styles.darkBackground}`}>
         <Grid className={`${styles.fullHeight} ${styles.noMargin}`}>
-          <Grid.Row className={`${styles.fullHeight} ${styles.noPadding}`}>
+
+          <Responsive as={Grid.Row} minWidth={1300} className={`${styles.fullHeight} ${styles.noPadding}`}>
             <Grid.Column width={13} className={styles.noPadding}>
               <Container fluid className={styles.fullHeight}>
                 <VideoLayout localVideos={localVideos} remoteVideos={newRemoteVideos} />
@@ -86,7 +87,17 @@ class VideoConference extends Component {
               <Chat roomName={roomName} />
               <UserControls store={this.store} cuid={cuid} username={username} />
             </Grid.Column>
-          </Grid.Row>
+          </Responsive>
+
+          <Responsive as={Grid.Row} maxWidth={1300} className={`${styles.fullHeight} ${styles.noPadding}`}>
+            <Grid.Column className={styles.noPadding}>
+              <Container fluid className={styles.fullHeight}>
+                <UserControls store={this.store} cuid={cuid} username={username} invisible />
+                <VideoLayout localVideos={localVideos} remoteVideos={newRemoteVideos} />
+              </Container>
+            </Grid.Column>
+          </Responsive>
+
         </Grid>
       </Container>
     );

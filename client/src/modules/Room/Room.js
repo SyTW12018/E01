@@ -22,16 +22,28 @@ class Room extends Component {
   }
 
   componentDidMount() {
+    this.setupBeforeUnloadListener();
     (async () => {
       await this.joinRoom();
     })();
   }
 
   componentWillUnmount() {
+    this.onLeave();
+  }
+
+  onLeave = () => {
     (async () => {
       await this.leaveRoom();
     })();
-  }
+  };
+
+  setupBeforeUnloadListener = () => {
+    window.addEventListener('beforeunload', (ev) => {
+      ev.preventDefault();
+      return this.onLeave();
+    });
+  };
 
   joinRoom = async () => {
     let errors = [];

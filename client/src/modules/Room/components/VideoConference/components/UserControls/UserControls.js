@@ -10,6 +10,11 @@ class UserControls extends Component {
     store: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     cuid: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
+    invisible: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    invisible: false,
   };
 
   constructor(props) {
@@ -29,12 +34,28 @@ class UserControls extends Component {
   };
 
   render() {
-    const { store, username } = this.props;
+    const { store, username, invisible } = this.props;
     const { goBack } = this.state;
 
     if (goBack) {
       return (
         <Redirect to='/' />
+      );
+    }
+
+    if (invisible) {
+      return (
+        <SWRTCUserControls
+          render={({
+            user, setDisplayName,
+          }) => {
+            this.user = user;
+            this.setDisplayName = setDisplayName;
+            window.setTimeout(this.setUserInfo, 1000);
+            return null;
+          }}
+          store={store}
+        />
       );
     }
 

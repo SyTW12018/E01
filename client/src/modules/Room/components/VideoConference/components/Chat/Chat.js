@@ -63,7 +63,7 @@ class Chat extends Component {
   };
 
   sendData = (data, channel) => {
-    this.ws.send(data, channel);
+    if (this.ws) this.ws.send(data, channel);
   };
 
   sendMessage = () => {
